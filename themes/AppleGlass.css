@@ -245,3 +245,27 @@ input[type="search"], .searchfields-txtSearch {
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.30); }
+
+/* ============================================================
+   emby-beautify 兼容修复 (2026-08-10)
+   Apple Glass 目标 4.10; 在 4.8/4.9 上与 emby-crx 轮播冲突
+   (.card overflow:hidden 会裁剪 misty-banner 轮播大图)
+   以下规则恢复轮播容器正常显示
+   ============================================================ */
+.misty-banner .cardBox,
+.misty-banner .cardImageContainer,
+.misty-banner .cardScalable,
+.misty-banner .cardImage {
+  overflow: visible !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.misty-banner .card:hover {
+  transform: none !important;
+}
+.misty-banner .cardBox:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
