@@ -15,7 +15,7 @@
 # ─────────── 首页美化 styles (互斥, 三选一) ───────────
 MANIFEST_STYLES=(
   "home_beautify|style|✨ emby-home-beautify|4.9|沉浸式首页轮播 (最近添加/Backdrop/Logo/简介)|styles/home_beautify|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"emby-crx/home.js\" defer></script>|emby-crx/home.js"
-  "emby_crx|style|🎨 emby-crx|4.8|加载动画+Banner轮播+媒体库悬浮增强|styles/emby_crx|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"emby-crx/common-utils.js\"></script>|<script src=\"emby-crx/jquery-3.6.0.min.js\"></script>|<script src=\"emby-crx/md5.min.js\"></script>|<script src=\"emby-crx/main.js\"></script>|emby-crx/main.js"
+  "emby_crx|style|🎨 emby-crx|4.8|加载动画+Banner轮播+媒体库悬浮 (自动匹配媒体库)|styles/emby_crx|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"emby-crx/common-utils.js\"></script>|<script src=\"emby-crx/jquery-3.6.0.min.js\"></script>|<script src=\"emby-crx/md5.min.js\"></script>|<script src=\"emby-crx/main.js\"></script>|emby-crx/main.js"
   "emby_fluent|style|🪟 emby-fluent|4.8|Fluent 设计语言风格 (emby-crx 皮肤版)|styles/emby_fluent|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"emby-crx/common-utils.js\"></script>|<script src=\"emby-crx/jquery-3.6.0.min.js\"></script>|<script src=\"emby-crx/md5.min.js\"></script>|<script src=\"emby-crx/main.js\"></script>|emby-crx/main.js"
 )
 
@@ -64,28 +64,16 @@ manifest_field() {
 
 # 注入行: feature 从字段8到NF-1(排除末尾conflicts), 其他从7到NF-1
 manifest_inject_lines() {
+  # 注入行 = 所有以 < 开头的字段 (script/link 标签)
   local entry="$1"
-  local nf
-  nf=$(echo "$entry" | awk -F'|' '{print NF}')
-  if [ "$(manifest_field "$entry" 2)" = "feature" ]; then
-    echo "$entry" | awk -F'|' '{ for(i=8;i<NF-1;i++) print $i }'
-  elif [ "$nf" -ge 9 ]; then
-    echo "$entry" | awk -F'|' '{ for(i=7;i<NF-1;i++) print $i }'
-  else
-    echo "$entry" | awk -F'|' '{ for(i=7;i<NF;i++) print $i }'
-  fi
+  echo "$entry" | awk -F'|' '{ for(i=1;i<=NF;i++) if (substr($i,1,1)=="<") print $i }'
 }
 
-# marker: feature/带conflicts的theme 为倒数第二字段(末尾是conflicts), 其他为最后字段
+# marker: 资源路径字段 (包含 / 或 .css 的字段, 用于幂等/卸载匹配)
+# 规则: 从后往前找第一个匹配 路径模式 的字段
 manifest_marker() {
   local entry="$1"
-  local nf
-  nf=$(echo "$entry" | awk -F'|' '{print NF}')
-  if [ "$(manifest_field "$entry" 2)" = "feature" ] || [ "$nf" -gt 8 ]; then
-    echo "$entry" | awk -F'|' '{print $(NF-1)}'
-  else
-    echo "$entry" | awk -F'|' '{print $NF}'
-  fi
+  echo "$entry" | awk -F'|' '{ for(i=NF;i>=1;i--) if ($i ~ /\// || $i ~ /\.css$/) { print $i; exit } }'
 }
 
 # conflicts: 最后字段 (任何类型都可带)
