@@ -247,7 +247,10 @@ pick_style() {
   local entries=()
   while IFS= read -r line; do
     name="$(manifest_field "$line" 3)"; compat="$(manifest_field "$line" 4)"; desc="$(manifest_field "$line" 5)"
-    if manifest_compat "$compat" "$VER"; then
+    local smarker
+    smarker="$(manifest_marker "$line")"
+    # 过滤: 已安装的 或 与已装组件冲突的, 不出现在菜单
+    if manifest_compat "$compat" "$VER" && ! is_installed "$smarker" && ! has_conflict_installed "$line"; then
       printf '  │     [%d] %-28s %s\n' "$i" "$name" "$desc"
       entries+=("$(manifest_field "$line" 1)")
       [ -z "$defname" ] && { def=$i; defname="$(manifest_field "$line" 1)"; }
@@ -275,9 +278,14 @@ pick_themes() {
   local entries=()
   while IFS= read -r line; do
     name="$(manifest_field "$line" 3)"; desc="$(manifest_field "$line" 5)"
-    printf '  │     [%2d] %-26s %s\n' "$i" "$name" "$desc"
-    entries+=("$(manifest_field "$line" 1)")
-    i=$((i+1))
+    local tmarker
+    tmarker="$(manifest_marker "$line")"
+    # 过滤: 已装 或 冲突项不显示
+    if ! is_installed "$tmarker" && ! has_conflict_installed "$line"; then
+      printf '  │     [%2d] %-26s %s\n' "$i" "$name" "$desc"
+      entries+=("$(manifest_field "$line" 1)")
+      i=$((i+1))
+    fi
   done < <(manifest_list theme)
   echo "  └─────────────────────────────────────────────────────────┘"
   c_ask "选择 (如: 1,3,5): "
@@ -306,9 +314,14 @@ pick_features() {
   local entries=()
   while IFS= read -r line; do
     name="$(manifest_field "$line" 3)"; desc="$(manifest_field "$line" 5)"
-    printf '  │     [%2d] %-28s %s\n' "$i" "$name" "$desc"
-    entries+=("$(manifest_field "$line" 1)")
-    i=$((i+1))
+    local fmarker
+    fmarker="$(manifest_marker "$line")"
+    # 过滤: 已装 或 冲突项不显示
+    if ! is_installed "$fmarker" && ! has_conflict_installed "$line"; then
+      printf '  │     [%2d] %-28s %s\n' "$i" "$name" "$desc"
+      entries+=("$(manifest_field "$line" 1)")
+      i=$((i+1))
+    fi
   done < <(manifest_list feature)
   echo "  └─────────────────────────────────────────────────────────┘"
   c_ask "选择 (如: 1,3,5): "
