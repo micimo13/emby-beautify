@@ -1,0 +1,247 @@
+/* ============================================================
+   Apple Glass v6 — a rounded, frosted, monospace theme for Emby
+   Target: Emby Web 4.10
+   v2: flat-at-rest cards w/ hover depth, glass segmented tabs,
+       capsule search, thin rounded scrollbars.
+   v3: dropped letter-spacing + added icon guard; restored list spacing.
+   v4: removed the SF-Pro font override entirely — it was shifting text
+       off-center in pills/buttons. Back to Emby's native InterVariable.
+       (The garbled top-right cast/sync icons are native Emby, not this
+       theme — it never touches .md-icon glyphs.)
+   v5: Space Mono UI font (icon guard keeps .md-icon on Material Symbols);
+       tab labels flex-centered so they never sit off-center.
+   v6: flex-center Live TV guide filter chips (Space Mono sat low → clipped).
+   Install: Dashboard → Branding → Custom CSS → paste → Save → refresh.
+   Scope: shape, material, typography. Leaves Emby's accent + layout intact.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+  --ag-font: 'Space Mono', ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --ag-r-sm: 10px;     /* inputs, small controls */
+  --ag-r-md: 16px;     /* cards, posters, list rows */
+  --ag-r-lg: 22px;     /* dialogs, sheets, OSD */
+  --ag-r-pill: 980px;  /* buttons, tags, progress */
+  --ag-blur: saturate(180%) blur(22px);
+  --ag-glass: rgba(28, 28, 30, 0.62);
+  --ag-glass-light: rgba(72, 72, 74, 0.45);
+  --ag-hairline: rgba(255, 255, 255, 0.10);
+  --ag-shadow: 0 10px 34px rgba(0, 0, 0, 0.38);
+  --ag-shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.26);
+  --ag-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ---------- Typography: Space Mono (monospace sans-serif) ----------
+   Applied to text + form/button elements; body inheritance covers the rest. */
+body, input, button, select, textarea,
+.emby-button, .emby-input, .emby-textarea, .emby-select,
+.cardText, .listItemBodyText, .sectionTitle, .navMenuOptionText, .dialog {
+  font-family: var(--ag-font) !important;
+}
+
+/* ICON GUARD — MUST stay immediately after the font rule above.
+   Header buttons carry BOTH .md-icon and .headerButton/.emby-button*, so two
+   !important font-family rules collide; with equal specificity, source order
+   wins. Re-asserting the icon font LAST guarantees glyphs never inherit the
+   text font — this is exactly what broke the cast/settings icons before. */
+.md-icon, [class*="md-icon"] {
+  font-family: 'Material Symbols Rounded' !important;
+}
+
+/* ---------- Frosted top header ---------- */
+.skinHeader {
+  background: var(--ag-glass) !important;
+  -webkit-backdrop-filter: var(--ag-blur);
+  backdrop-filter: var(--ag-blur);
+  border-bottom: 1px solid var(--ag-hairline) !important;
+}
+
+/* ---------- Frosted side drawer ---------- */
+.mainDrawer, .navDrawer, .navDrawerScrollContainer {
+  background: var(--ag-glass) !important;
+  -webkit-backdrop-filter: var(--ag-blur);
+  backdrop-filter: var(--ag-blur);
+}
+.navMenuOption {
+  border-radius: var(--ag-r-md) !important;
+  margin: 2px 8px !important;
+  transition: background .2s var(--ag-ease) !important;
+}
+.navMenuOption:hover, .navMenuOption-selected {
+  background: var(--ag-glass-light) !important;
+}
+
+/* ---------- Cards & posters ---------- */
+/* Flat & clean at rest; depth + hairline appear on hover (Apple-style). */
+.card { transition: transform .25s var(--ag-ease) !important; }
+.cardBox, .cardBox-bottompadded {
+  border-radius: var(--ag-r-md) !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.28) !important;
+  overflow: hidden !important;
+  transition: box-shadow .25s var(--ag-ease), border-color .25s var(--ag-ease) !important;
+}
+.card:hover .cardBox, .card:focus-within .cardBox {
+  box-shadow: var(--ag-shadow) !important;
+  border-color: var(--ag-hairline) !important;
+}
+.cardImageContainer, .cardScalable, .cardImage, .cardPadder,
+.cardOverlayContainer {
+  border-radius: var(--ag-r-md) !important;
+}
+.cardImageContainer, .cardScalable, .cardImage { overflow: hidden !important; }
+.card:hover { transform: translateY(-4px) scale(1.015); }
+.cardOverlayButton, .cardOverlayButton-br { border-radius: 50% !important; }
+
+/* progress on cards -> capsule */
+.itemProgressBar, .itemLinearProgress {
+  border-radius: var(--ag-r-pill) !important;
+  overflow: hidden !important;
+  height: 4px !important;
+}
+
+/* ---------- Buttons: capsule ---------- */
+.emby-button, .button-flat, .button-submit, .raised, .detailButton,
+.btnPlayState, .emby-tab-button, .button-link {
+  border-radius: var(--ag-r-pill) !important;
+  transition: transform .15s var(--ag-ease), background .2s var(--ag-ease) !important;
+}
+.raised, .button-submit, .detailButton { box-shadow: var(--ag-shadow-sm) !important; }
+.raised:hover, .button-submit:hover, .detailButton:hover { transform: translateY(-1px); }
+.raised:active, .button-submit:active { transform: translateY(0) scale(0.98); }
+/* circular icon buttons */
+.paper-icon-button-light, .fab, .headerButton,
+.autoSize.paper-icon-button-light {
+  border-radius: 50% !important;
+  transition: background .2s var(--ag-ease) !important;
+}
+
+/* ---------- Inputs / selects ---------- */
+.emby-input, .emby-textarea, .emby-select, .inputContainer .emby-input,
+input.emby-input, textarea.emby-textarea, select.emby-select {
+  border-radius: var(--ag-r-sm) !important;
+  border: 1px solid var(--ag-hairline) !important;
+}
+.searchFields .emby-input, .searchfields-icon, .txtSearchField,
+input[type="search"], .searchfields-txtSearch {
+  border-radius: var(--ag-r-pill) !important;
+}
+
+/* ---------- Dialogs / sheets / popovers: glass ---------- */
+.dialog, .formDialog, .focuscontainer, .actionSheet, .dialogContent,
+.formDialogContent, .actionSheetContent, .promptDialog, .popup {
+  border-radius: var(--ag-r-lg) !important;
+}
+.dialog, .formDialog, .actionSheet, .promptDialog {
+  background: var(--ag-glass) !important;
+  -webkit-backdrop-filter: var(--ag-blur);
+  backdrop-filter: var(--ag-blur);
+  border: 1px solid var(--ag-hairline) !important;
+  box-shadow: var(--ag-shadow) !important;
+}
+/* action-sheet items keep an inset pill (isolated popover, safe);
+   list rows only get rounding so they stay aligned with their headers */
+.actionSheetMenuItem {
+  border-radius: var(--ag-r-md) !important;
+  margin: 2px 6px !important;
+  transition: background .18s var(--ag-ease) !important;
+}
+.listItem {
+  border-radius: var(--ag-r-md) !important;
+  transition: background .18s var(--ag-ease) !important;
+}
+.actionSheetMenuItem:hover, .listItem:hover {
+  background: var(--ag-glass-light) !important;
+}
+
+/* ---------- Detail-page imagery ---------- */
+.detailImageContainer, .itemDetailImage, .detailImage, .personImage,
+.chapterThumbContainer, .listItemImage {
+  border-radius: var(--ag-r-md) !important;
+  overflow: hidden !important;
+}
+
+/* ---------- Tags / chips / indicators -> capsule ---------- */
+.itemTags a, .tagList .emby-button, .emby-chip, .mediaInfoItem,
+.countIndicator, .playedIndicator {
+  border-radius: var(--ag-r-pill) !important;
+}
+
+/* ---------- Avatars stay round ---------- */
+.headerUserButtonRound, .userImage, .cardImage-round {
+  border-radius: 50% !important;
+}
+
+/* ---------- Sliders -> capsule tracks ---------- */
+.mdl-slider-background-flex, .mdl-slider-background-upper,
+.mdl-slider-background-lower {
+  border-radius: var(--ag-r-pill) !important;
+}
+
+/* ---------- Now-playing bar & video OSD: glass ---------- */
+.nowPlayingBar {
+  background: var(--ag-glass) !important;
+  -webkit-backdrop-filter: var(--ag-blur);
+  backdrop-filter: var(--ag-blur);
+  border-top: 1px solid var(--ag-hairline) !important;
+  border-radius: var(--ag-r-lg) var(--ag-r-lg) 0 0 !important;
+}
+.osdControls, .videoOsdBottom { border-radius: var(--ag-r-lg) !important; }
+
+/* ---------- Toasts ---------- */
+.toast {
+  border-radius: var(--ag-r-md) !important;
+  background: var(--ag-glass) !important;
+  -webkit-backdrop-filter: var(--ag-blur);
+  backdrop-filter: var(--ag-blur);
+  box-shadow: var(--ag-shadow) !important;
+}
+
+/* ---------- Tabs: glass segmented control ---------- */
+.headerTabs, .emby-tabs, .emby-tabs-slider {
+  background: var(--ag-glass-light) !important;
+  -webkit-backdrop-filter: var(--ag-blur);
+  backdrop-filter: var(--ag-blur);
+  border: 1px solid var(--ag-hairline) !important;
+  border-radius: var(--ag-r-pill) !important;
+  padding: 3px !important;
+}
+.emby-tab-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  padding: 0.45em 1.15em !important;
+  border-radius: var(--ag-r-pill) !important;
+  transition: background .2s var(--ag-ease) !important;
+}
+.emby-tab-button-active {
+  background: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: var(--ag-shadow-sm) !important;
+}
+
+/* ---------- Live TV guide filter chips ----------
+   Same fix as the tabs: Space Mono's glyphs sit lower in the line box than
+   Inter, so in these tight .raised-mini chips (inside a scrollX row with
+   overflow-y:hidden) the text bottom clipped. Flex-center + line-height:1
+   re-centers the glyphs within the chip so nothing is cut off. */
+.guide-filter-button,
+.btnGuideCategory,
+.btnGuideTag {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+/* ---------- Thin, rounded Apple-style scrollbars ---------- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: var(--ag-r-pill);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.30); }
