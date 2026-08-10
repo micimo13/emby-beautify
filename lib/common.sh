@@ -198,7 +198,8 @@ push_assets() {
       fname="$(basename "$f")"
       # config.js 保护: 容器内已有且 parentId 非空 → 跳过覆盖
       if [ "$fname" = "config.js" ]; then
-        if docker exec "$CONTAINER" sh -c "grep -q 'parentId.*[0-9a-zA-Z]' '$dst_dir/config.js'" 2>/dev/null; then
+        # 仅当容器 config.js 的实际配置行(this.parentId = "含ID")非空才保护
+        if docker exec "$CONTAINER" sh -c "grep -qE '^\s*this\.parentId\s*=\s*\"[0-9a-fA-F,]' '$dst_dir/config.js'" 2>/dev/null; then
           echo "    ⏭ 保留容器内 config.js (已配置媒体库, 避免覆盖破坏轮播)"
           continue
         fi
