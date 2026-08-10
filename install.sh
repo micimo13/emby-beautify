@@ -148,6 +148,10 @@ install_manifest_entry() {
     style)
       dst_dir="/system/dashboard-ui/emby-crx"
       push_assets "$src_dir" "$dst_dir"
+      # emby-crx/fluent 装完后自动配置轮播媒体库
+      if [ "$id" = "emby_crx" ] || [ "$id" = "emby_fluent" ]; then
+        auto_config_crx
+      fi
       ;;
     theme)
       dst_dir="/system/dashboard-ui/emby-crx"
@@ -179,6 +183,58 @@ install_manifest_entry() {
   rm -f "$inject_file"
   c_ok "✓ [$name] 完成"
 }
+
+# ── emby-crx 轮播自动配置: config.js parentId 为空时, 自动检测媒体库 ID 填充 ──
+auto_config_crx() {
+  local cfg_file="/system/dashboard-ui/emby-crx/config.js"
+  if ! docker exec "$CONTAINER" sh -c "[ -f '$cfg_file' ]" 2>/dev/null; then
+    c_warn "未找到 config.js，跳过自动配置"
+    return 0
+  fi
+  if docker exec "$CONTAINER" sh -c "grep -qE 'this\.parentId\s*=\s*\"[0-9a-fA-F,]' '$cfg_file'" 2>/dev/null; then
+    c_info "config.js 已配置媒体库 ID，跳过自动配置"
+    return 0
+  fi
+  c_info "config.js parentId 为空，尝试自动检测媒体库 ID..."
+
+  # 宿主机上容器的映射端口
+  local mapped=""
+  mapped=$(docker port "$CONTAINER" 2>/dev/null | grep -E "^8096/tcp" | head -1 | awk -F'->' '{print $2}' | tr -d ' ' | cut -d':' -f2)
+  [ -z "$mapped" ] && { c_warn "未找到容器 8096 端口映射，跳过自动配置"; return 0; }
+  local base="http://127.0.0.1:$mapped"
+
+  # 尝试常见账号
+  local token="" uid="" user pass body resp
+  for entry in "micimo|Vanvy1991.11.8" "vanvy|Vanvy1991.11.8" "admin|admin"; do
+    user="${entry%%|*}"; pass="${entry##*|}"
+    body="{\"Username\":\"$user\",\"Pw\":\"$pass\"}"
+    resp=$(curl -s --max-time 6 -X POST "$base/emby/Users/AuthenticateByName"       -H "Content-Type: application/json"       -H "X-Emby-Client: emby-beautify"       -H "X-Emby-Device-Id: auto01"       -H "X-Emby-Device-Name: auto"       -H "X-Emby-Client-Version: 1.0"       -d "$body" 2>/dev/null)
+    token=$(echo "$resp" | grep -oE '"AccessToken":"[^"]+' | head -1 | cut -d'"' -f4)
+    if [ -n "$token" ]; then
+      uid=$(echo "$resp" | grep -oE '"Id":"[^"]+' | head -1 | cut -d'"' -f4)
+      c_info "登录成功: $user"
+      break
+    fi
+  done
+  if [ -z "$token" ]; then
+    c_warn "自动登录失败（尝试 micimo/vanvy/admin），跳过自动配置"
+    c_warn "可手动编辑: docker exec $CONTAINER vi $cfg_file"
+    return 0
+  fi
+
+  # 获取媒体库 ID
+  local views ids=""
+  views=$(curl -s --max-time 6 "$base/emby/Users/$uid/Views?api_key=$token" 2>/dev/null)
+  ids=$(echo "$views" | grep -oE '"Id":"[0-9a-fA-F]+"' | sed 's/"Id":"//;s/"//' | tr '\n' ',' | sed 's/,$//')
+  if [ -z "$ids" ]; then
+    c_warn "未获取到媒体库 ID，跳过自动配置（可手动编辑 config.js）"
+    return 0
+  fi
+  c_info "检测到媒体库 ($(echo "$ids" | tr ',' '\n' | wc -l) 个)"
+  docker exec "$CONTAINER" sh -c "sed -i 's|this.parentId = \"\";|this.parentId = \"$ids\";|' '$cfg_file'" 2>/dev/null
+  c_ok "✅ config.js 已自动配置媒体库 ID"
+}
+
 
 # ─────────────────────────────── 交互菜单 ───────────────────────────────
 
