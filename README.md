@@ -88,7 +88,43 @@ curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/o
 
 ---
 
-## 📸 效果预览
+## 📸 真实效果展示
+
+> 以下截图来自 **Vanvy 自研媒体库**（Emby 4.9 + emby-home-beautify 轮播 + 自定义主题）的真实运行效果。
+
+### 🏠 首页轮播
+<p align="center">
+  <img src="docs/screenshots/real-home-01.jpg" width="85%" alt="首页轮播 - 完美世界剧场版"/>
+</p>
+
+### 📄 作品详情页
+<p align="center">
+  <img src="docs/screenshots/real-detail-01.jpg" width="85%" alt="作品详情页 - 完美世界剧场版"/>
+</p>
+
+### 🎬 动漫分类列表页
+<p align="center">
+  <img src="docs/screenshots/real-list-01.jpg" width="85%" alt="动漫分类列表页"/>
+</p>
+
+### 📺 剧集列表页
+<p align="center">
+  <img src="docs/screenshots/real-detail-02.jpg" width="85%" alt="剧集列表页"/>
+</p>
+
+### 🎞️ 动漫作品详情页
+<p align="center">
+  <img src="docs/screenshots/real-detail-03.jpg" width="85%" alt="动漫作品详情页"/>
+</p>
+
+### 🗂️ 动漫作品列表页
+<p align="center">
+  <img src="docs/screenshots/real-list-02.jpg" width="85%" alt="动漫作品列表页"/>
+</p>
+
+---
+
+### 🎨 整合开源项目效果（参考）
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/18238152/235510774-666d9006-cbad-4b97-9a73-ad5334cb7eee.png" width="48%" alt="emby-crx 效果1"/>
