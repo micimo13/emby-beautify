@@ -1,0 +1,773 @@
+/* emby4.8 标题多行显示 */
+.cardText.cardText-first.cardText-first-padded .cardMediaInfoItem.itemAction.textActionButton.cardTextActionButton.emby-button.button-link {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+    display: block !important;
+    max-width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+    vertical-align: middle !important;
+    line-height: normal !important;
+}
+/* 搜索页面---------------------------------------------*/
+/*【搜索界面】搜索输入框添加圆角样式*/
+input.searchfields-txtSearch {
+    padding: 0.6em;
+    padding-left: 1em;
+    border-radius: 30px;
+}
+
+/*【搜索界面】猜您喜欢使用平铺样式*/
+.searchSuggestionsList div {
+    display: inline-block;
+}
+
+/*【搜索界面】猜您喜欢添加底色背景样式*/
+.searchSuggestionsList a {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    margin: 5px;
+    font-size: 90%;
+    text-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* 媒体库内------------------------------------------------- */
+/*【媒体库内】屏蔽按标题名称排序右侧导航栏*/
+.alphaPicker.alphaPicker-vertical {
+    display: none;
+}
+
+/*【媒体库内】即将播出栏目改为完全显示无需滑动*/
+@media not all and (min-width: 50em) {
+    .upcomingContainer .backdropCard.card-hoverable {
+        width: 50%;
+    }
+}
+.upcomingContainer .itemsContainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* 节目界面----------------------------------------------------- */
+/*【节目界面】背景图片提高遮罩亮度并使背景图片模糊化*/
+@media all and (min-width: 50em) {
+    .backgroundContainer.itemBackgroundContainer.itemBackgroundContainer-preventbackdrop.withBackdrop {
+        background: linear-gradient(
+            77deg,
+            rgba(0, 0, 0, 0.7) -20%,
+            rgba(0, 0, 0, 0.6) -50%,
+            rgba(0, 0, 0, 0.3) 100%
+        ) !important;
+        opacity: 1;
+    }
+    .backdropContainer.backdropContainer-preventbackdrop {
+        transform: scale(1.05);
+        filter: blur(1.8em) saturate(1.3);
+    }
+}
+
+/*【节目界面】背景图片提高遮罩亮度后的简介文字阴影和折叠显示行数*/
+@media all and (min-width: 50em) {
+    .overview-text.readOnlyContent {
+        text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.91);
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
+    .layout-tv.noScrollY .overview-text.readOnlyContent {
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        line-height: 1.46em;
+    }
+}
+
+/*【节目界面】背景图片提高遮罩亮度后的剧集简介文字不透明度*/
+.listItem-overview.listItemBodyText,
+.layout-tv .listItem-overview.listItemBodyText {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+/*【节目界面】全局使用圆角样式和选中状态使用圆角样式*/
+.scrollFrameY .cardImageContainer,
+.scrollFrameY .cardOverlayContainer,
+.scrollFrameY .listItemImage {
+    contain: layout;
+    border-radius: 0.75em;
+}
+
+/*【节目界面】艺术家和作曲家页面使用圆角头像样式*/
+.cardContent-round.defaultCardBackground {
+    border-radius: 10em;
+}
+
+/*【节目界面】【桌面模式】媒体选中状态添加边框样式*/
+.card-hoverable.focusable:hover .cardOverlayContainer {
+    transition: opacity 0ms ease-in-out;
+    box-shadow: 0 0 0 0.27em
+        hsl(var(--theme-primary-color-hue), var(--theme-primary-color-saturation), var(--theme-primary-color-lightness)) !important;
+}
+
+/*【节目界面】修复音乐媒体库界面边框异常*/
+.squareCard .cardOverlayContainer {
+    transform: scale(0.957);
+    border-radius: 0;
+}
+.bannerCard .cardOverlayContainer {
+    transform: scale(1);
+    border-radius: 0;
+}
+.detailImageContainer.detailImageContainer-main .cardOverlayContainer,
+.osdRemoteControlImageCardBox .cardOverlayContainer {
+    transform: scale(1);
+}
+.flex-direction-column.darkContentContainer {
+    --button-background-alpha: 0.4;
+}
+
+/*【节目界面】【电视模式】媒体选中状态添加边框样式*/
+.layout-tv .card:focus > .cardBox-focustransform .cardContent.coveredImage {
+    border: 0.3em solid;
+    color: hsl(
+        var(--theme-primary-color-hue),
+        var(--theme-primary-color-saturation),
+        var(--theme-primary-color-lightness
+    );
+}
+
+/*【节目界面】【桌面模式】媒体选中状态添加边框和颜色*/
+.scrollY .card:focus .cardContent-bxsborder {
+    box-shadow: 0 0 0 0.27em
+        hsl(var(--theme-primary-color-hue), var(--theme-primary-color-saturation), var(--theme-primary-color-lightness)) !important;
+}
+
+/*【节目界面】【电视模式】媒体选中状态添加边框和颜色*/
+.scrollY .card:focus-visible .cardContent-bxsborder-fv {
+    box-shadow: 0 0 0 0.27em
+        hsl(var(--theme-primary-color-hue), var(--theme-primary-color-saturation), var(--theme-primary-color-lightness)) !important;
+}
+
+/*【节目界面】【电视模式】优化媒体库最近栏目的显示样式*/
+.layout-tv .suggestions.padded-bottom-page .sectionTitle-cards {
+    margin-top: 3em;
+}
+
+.secondaryText.focusPreviewOverview,
+.readOnlyContent {
+    -webkit-line-clamp: 3;
+    max-width: 90ch !important;
+}
+
+/*【节目界面】媒体类型标签链接自动换行样式*/
+.focusable .mediaInfoItem:last-child {
+    width: 100%;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+    margin-left: 0.2em;
+}
+
+/*【节目界面】媒体库影评指数样式修复*/
+.mediaInfoItem.mediaInfoCriticRating {
+    width: max-content;
+}
+
+/*【节目界面】媒体类型样式调整并添加外边框*/
+.mediaInfoItem a {
+    box-shadow: rgba(255, 255, 255, 0.4) 0 0 0 2px;
+    font-size: 100%;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-right: 8px;
+    padding: 2px 8px;
+    border-radius: 1em;
+}
+
+/*【节目界面】媒体类型添加底色背景样式*/
+@media all and (min-width: 50em) {
+    .darkContentContainer-item .mediaInfoItem a {
+        background: rgba(115, 115, 115, 0.5);
+        backdrop-filter: blur(1.5em) saturate(1.8);
+    }
+    .mediaInfoItem .emby-button-focusscale:focus {
+        background: rgba(255, 255, 255, 1);
+    }
+}
+
+/*【节目界面】播放器控件按钮添加底色背景样式*/
+@media all and (min-width: 50em) {
+    .darkContentContainer-item .detailTrackSelect,
+    .darkContentContainer-item .detailButton {
+        background: rgba(115, 115, 115, 0.5);
+        backdrop-filter: blur(1.5em) saturate(1.8);
+        border-radius: 5em !important;
+    }
+    .emby-button-focusscale:focus {
+        background: var(--theme-primary-color);
+    }
+    .detailButton {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/*【节目界面】隐藏主页面和导航栏预告片控件按钮*/
+.detailButtons.mainDetailButtons .btnPlayTrailer {
+    display: none;
+}
+.tabs-viewmenubar-slider.emby-tabs-slider.scrollSliderX .emby-tab-button[data-index="3"] {
+    display: none;
+}
+
+/*【节目界面】爱心控件按钮使用全局主题色调*/
+.detailButton-autotext-icon.ratingbutton-icon-withrating,
+.cardOverlayButton-hover.ratingbutton-icon-withrating,
+.dataGridItemCell.ratingbutton-icon-withrating,
+.listViewUserDataButton.ratingbutton-icon-withrating {
+    color: hsl(
+        var(--theme-primary-color-hue),
+        var(--theme-primary-color-saturation),
+        var(--theme-primary-color-lightness
+    ) !important;
+}
+
+/*【节目界面】数据库链接、标签、拆分版本按钮添加底色背景样式*/
+@media all and (min-width: 50em) {
+    .darkContentContainer-item .itemLinks .item-tag-button,
+    .darkContentContainer-item .itemTags .item-tag-button,
+    .darkContentContainer-item .splitVersionContainer .btnSplitVersions {
+        background: rgba(115, 115, 115, 0.3);
+        backdrop-filter: blur(1.5em) saturate(1.8) !important;
+        box-shadow: rgba(255, 255, 255, 0.4) 0 0 0 2.3px;
+        border-radius: 30px;
+        color: #fff;
+        font-size: 0.93em;
+        margin-right: 1em;
+    }
+}
+
+/*【节目界面】媒体源信息和演职人员添加底色背景样式*/
+@media all and (min-width: 50em) {
+    .darkContentContainer-item .defaultCardBackground.cardPadder-portrait,
+    div.mediaStreamPadder,
+    div.mediaStreamPadder-tv {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        background: rgba(115, 115, 115, 0);
+    }
+    .darkContentContainer-item.cardOverlayContainer .defaultCardBackground {
+        backdrop-filter: blur(0.9em);
+    }
+}
+
+/* 播放界面---------------------------------------------------------------------- */
+/*【播放界面】播放器使用网页端横屏风格并修复控件异常和调整控件大小*/
+@media not all and (pointer: fine) {
+    .videoOsdBottom-buttons,
+    .videoOsd-centerButtons-autolayout,
+    .videoOsd-btnPause-autolayout {
+        position: inherit !important;
+        margin-top: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        font-size: inherit !important;
+    }
+}
+
+/*【播放界面】播放器调整横屏竖屏时的控件按钮大小*/
+@media all and (min-width: 20em) and (max-width: 25em) {
+    .videoOsdBottom-buttons,
+    .videoosd-transportbuttons.videoOsdBottom-buttons-right {
+        font-size: 0.9em !important;
+        margin-bottom: 0.5em;
+    }
+}
+@media all and (min-width: 40em) and (max-width: 66em) {
+    .videoOsdBottom-buttons,
+    .videoosd-transportbuttons.videoOsdBottom-buttons-right {
+        font-size: 1.2em !important;
+        margin-bottom: 0.5em;
+    }
+}
+.videoOsdBottom-buttons-remotecontrol {
+    font-size: 1.5em !important;
+}
+
+/*【播放界面】播放器调整远程控制投屏播放控件样式*/
+@media all and (max-width: 50em) {
+    .videoOsdBottom-buttons.videoOsdBottom-buttons-remotecontrol .videoosd-transportbuttons {
+        font-size: 0.8em;
+    }
+    .videoosd-transportbuttons.videoOsdBottom-contentbuttons.videoOsd-customFont.videoOsd-customFont-remotecontrol {
+        font-size: 0.9em;
+    }
+    .noScrollY.accent-emby:not(.transparentDocument) .btnSkipIntro.raised-backdropfilter.videoOsd-customFont {
+        bottom: 4.7em;
+        font-size: 1em;
+    }
+}
+
+/*【播放界面】播放器顶部控件增加立体感阴影*/
+.videoOsdHeader.headerTop {
+    filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 1));
+}
+
+/*【播放界面】播放器顶部背景条透明度*/
+.skinHeader.semiTransparent.headroom-scrolling::before {
+    opacity: 0;
+}
+
+/*【播放界面】播放器底部控件增加立体感阴影*/
+.videoOsdBottom-maincontrols {
+    -webkit-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.75));
+    -moz-filter: drop-shadow(0px 0px 0px rgba(0, 0, 0, 0.75));
+}
+
+/*【播放界面】播放器底部背景条透明度*/
+.videoOsdBottom.videoOsdBottom-video {
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0));
+}
+
+/*【播放界面】播放器底部缓冲条透明度*/
+.emby-slider-background .emby-slider-background-inner {
+    background: rgb(255 255 255 / 0%);
+}
+
+/*【播放界面】播放器底部章节导航栏靠左对齐*/
+.videoosd-tabsContainer .videoOsdBottom-tabs {
+    justify-content: flex-start;
+}
+
+/*【播放界面】播放器底部章节导航栏文字样式和颜色*/
+.videoOsdBottom-tabs .videoosd-tabsslider .secondaryText {
+    color: white;
+    font-weight: 540;
+}
+
+/*【播放界面】播放器底部控件增加间距以防误触*/
+@media all and (max-height: 40em) and (min-width: 30em) and (hover: none) {
+    .videoOsdBottom-buttons .md-icon {
+        margin-left: 0.23em;
+        margin-right: 0.23em;
+    }
+}
+@media not all and (pointer: fine) {
+    .videoOsd-customFont {
+        margin-bottom: 0.7em;
+    }
+}
+
+/*【播放界面】播放器底部章节背景提高透明度*/
+.videoosd-padded-left.videoosd-padded-right .cardContent-bg-black {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+/*【播放界面】播放器底部信息栏背景提高透明度*/
+.videoosd-tabcontainers .videoosd-tabBackground {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/*【播放界面】播放器底部信息栏简介文字颜色*/
+.videoosd-info-overview.secondaryText {
+    color: white;
+}
+
+/*【播放界面】播放器底部过长的标题名和剧集名截断不换行*/
+.videoOsdText .videoOsdParentTitle:not(.videoOsdParentTitle-small) {
+    max-width: 30%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.videoOsdText .videoOsdTitle:not(.secondaryText) {
+    max-width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/*【播放界面】播放器底部标签页栏适当缩小*/
+@media not all and (min-height: 30rem) and (min-width: 60rem) {
+    .videoosd-tabcontainers {
+        font-size: 60%;
+    }
+    .videoosd-tab.videoosd-itemstab.videoosd-activetab[data-index="1"] {
+        font-size: 90%;
+    }
+    .videoosd-tab.videoosd-itemstab.videoosd-activetab[data-index="2"] {
+        font-size: 90%;
+    }
+    .videoosd-tab.videoosd-itemstab.videoosd-activetab[data-index="3"] {
+        font-size: 98%;
+    }
+    .videoosd-tab.videoosd-guidetab.videoosd-activetab[data-index="4"] {
+        font-size: 120%;
+    }
+    .videoosd-info {
+        line-height: 1.2;
+        font-size: 153%;
+    }
+    .videoosd-tab.videoosd-itemstab.videoosd-activetab[data-index="1"] .cardText.cardTextCentered,
+    .videoosd-tab.videoosd-itemstab.videoosd-activetab[data-index="2"] .cardText.cardTextCentered,
+    .videoosd-tab.videoosd-itemstab.videoosd-activetab[data-index="3"] .cardText.cardTextCentered,
+    .videoosd-tab.videoosd-guidetab.videoosd-activetab[data-index="4"] {
+        font-size: 160%;
+    }
+}
+
+/* 4.8集页面修改：样式2 */
+@media (min-width:94.125em){
+    .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy{
+        width: 19.3em !important;
+    }
+    .listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines{
+        width:17.5em;
+    }
+    .listItem-content.listItem-content-fb.listItem-content-marginx3.listItemContent-touchzoom.listItem-border-offset-backdrop.listItem-border-offset-large.listItem-border-offset-backdrop-large.listItem-content-withwrap > .listItem-innerwrapper {
+        display: flex;
+        flex-wrap: wrap; /* 其他元素换行显示 */
+        align-items: center; /* 垂直居中对齐 */
+    }
+    /* 三选项隐藏与显示 */
+    .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light,
+    .listViewUserDataButton.listItemButton.itemAction.md-icon.paper-icon-button-light.playstatebutton-icon.playstatebutton-icon-played.emby-button,
+    .listViewUserDataButton.listItemButton.itemAction.md-icon.emby-button {
+        opacity: 0; /* 隐藏 */
+        visibility: hidden;
+        transition: opacity .2s ease-in-out, visibility .2s ease-in-out;
+    }
+    .listItem-content:hover .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light,
+    .listItem-content:hover .listViewUserDataButton.listItemButton.itemAction.md-icon.paper-icon-button-light.playstatebutton-icon.playstatebutton-icon-played.emby-button,
+    .listItem-content:hover .listViewUserDataButton.listItemButton.itemAction.md-icon.emby-button {
+        opacity: 1; /* 显示 */
+        visibility: visible;
+    }
+    .listItemButton {
+        margin-right: auto; /* 按钮加右边距，避免按钮拥挤 */
+    }
+    /* 图片调整 */
+    .listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-backdrop {
+        display: flex !important;
+        justify-content: center !important; /* 水平 */
+        align-items: center !important; /* 垂直 */
+        aspect-ratio: 16 / 9 !important;
+        width: 18em !important;
+        height: auto !important;
+        left:0.6em !important;
+    }
+    /* 多选更改 */
+    .chkListItemSelectContainer.chkItemSelectContainer.itemAction.emby-checkbox-label{
+        position:absolute;
+        height:2em;
+        left:0.8em;
+        top:0.80em;
+    }
+}
+@media (min-width:89.875em) and (max-width:94.11875em){
+    .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy{
+        width: 46em !important;
+    }
+    .listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines{
+        width:26em;
+    }
+}
+@media (min-width:81.25em) and (max-width:89.86875em){
+    .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy{
+        width: 41em !important;
+    }
+    .listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines{
+        width:21em;
+    }
+}
+@media (min-width:68.5em) and (max-width:81.24375em){
+    .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy{
+        width: 35em !important;
+    }
+    .listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines{
+        width:15em;
+    }
+}
+@media (min-width:68.5em) and (max-width:94.11875em){
+    /*隐藏 标记播放与添加最爱 */
+    .listViewUserDataButton.listItemButton.itemAction.md-icon.paper-icon-button-light.playstatebutton-icon.playstatebutton-icon-played.emby-button,
+    .listViewUserDataButton.listItemButton.itemAction.md-icon.emby-button{
+        display:none;
+    }
+    /* 三选项隐藏与显示 */
+    .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light {
+        opacity: 0; /* 隐藏 */
+        visibility: hidden;
+        transition: opacity .2s ease-in-out, visibility .2s ease-in-out;
+    }
+    .listItem-content:hover .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light {
+        opacity: 1; /* 显示 */
+        visibility: visible;
+    }
+    .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light{
+        position:fixed;
+        left:7.7em;
+        top:3.7em;
+    }
+    .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light{
+        background:#00000040;
+    }
+}
+@media (min-width:800px) and (max-width:94.11875em){
+    /* 多选更改 */
+    .chkListItemSelectContainer.chkItemSelectContainer.itemAction.emby-checkbox-label{
+        position:absolute;
+        height:2em;
+        left:-0.2em;
+        top:0.80em;
+    }
+}
+
+/* 常驻 */
+/* 隐藏 右滑添加到播放列表 */
+div.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy.dragging-over.dragging-over-x-axis{
+    display:none !important;
+}
+
+/* 图片调整 */
+.listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-backdrop {
+    border-radius: 8px!important;
+}
+.listItemOverlayButton-imagehover {
+    background: rgb(0 0 0 / 0%)!important;
+}
+
+/* 集整体 悬停效果 */
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy {
+    transition: transform .2s ease, background-color .2s ease;
+}
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy:hover {
+    border-radius: 8px!important;
+    transform: scale(1.05);
+}
+
+/* 集封面悬停 阴影淡入淡出 */ 
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy 
+.listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-backdrop {
+    transition: box-shadow 0.2s ease;
+}
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy:hover 
+.listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-backdrop {
+    box-shadow: 0 0 1.8em rgb(212 212 212 / 0.7);
+    transition: box-shadow 0.2s ease;
+}
+
+/* 集简介悬停 半透明 */
+.listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines {
+    opacity: .4;
+    transition: opacity .4s ease-in-out;
+}
+
+/* 集简介悬停 不透明 */
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy:hover
+.listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines {
+    opacity: 1;
+}
+/* emby4.8 web端播放页修改 音量与右下控件位置 */
+@media (min-width:860px) {
+    .view-videoosd-videoosd.darkContentContainer.graphicContentContainer 
+    .videoOsdBottom-buttons-topright {
+        position: absolute;
+        right: 1em;
+        bottom: 2em;
+        z-index:114514 !important;
+    }
+    .view-videoosd-videoosd.darkContentContainer.graphicContentContainer 
+    .videoOsdVolumeControls-bottom {
+        display: inline-flex !important;
+        position: absolute !important;
+        right: 21em; /* 音量条位置 */
+        width:18em; /* 音量条长度 */
+        z-index:11451 !important;
+        user-select: none;
+    }
+    .view-videoosd-videoosd.darkContentContainer.graphicContentContainer 
+    .osdVolumeDisplayIcon {
+        color:#ffffffed;
+    }
+    /* 右上角隐藏音量条*/
+    .skinHeader.headroom-scrolling .videoOsdVolumeSliderWrapper-top.flex-grow {display:none}
+}
+/* 4.8集页面修改：样式2 */
+@media (min-width:94.125em){
+  .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy{
+    width: 19.3em !important;
+  }
+  .listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines{
+    width:17.5em;
+  }
+  .listItem-content.listItem-content-fb.listItem-content-marginx3.listItemContent-touchzoom.listItem-border-offset-backdrop.listItem-border-offset-large.listItem-border-offset-backdrop-large.listItem-content-withwrap 
+  .listItem-innerwrapper,
+  .listItem-content.listItem-content-fb.listItem-content-marginx3.listItemContent-touchzoom.listItem-border-offset-fourThree.listItem-border-offset-large.listItem-border-offset-fourThree-large.listItem-content-withwrap 
+  .listItem-innerwrapper {
+    display: flex;
+    flex-wrap: wrap; /* 其他元素换行显示 */
+    /*justify-content: space-between; /* 调整子元素之间空间 */
+    align-items: center; /* 垂直居中对齐 */
+  }
+  /* 三选项隐藏与显示 */
+  .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light,
+  .listViewUserDataButton.listItemButton.itemAction.md-icon.paper-icon-button-light.playstatebutton-icon.playstatebutton-icon-played.emby-button,
+  .listViewUserDataButton.listItemButton.itemAction.md-icon.emby-button {
+      opacity: 0; /* 隐藏 */
+      visibility: hidden;
+      transition: opacity .2s ease-in-out, visibility .2s ease-in-out;
+  }
+  .listItem-content:hover .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light,
+  .listItem-content:hover .listViewUserDataButton.listItemButton.itemAction.md-icon.paper-icon-button-light.playstatebutton-icon.playstatebutton-icon-played.emby-button,
+  .listItem-content:hover .listViewUserDataButton.listItemButton.itemAction.md-icon.emby-button {
+      opacity: 1; /* 显示 */
+      visibility: visible;
+  }
+  .listItemButton {
+    margin-right: auto;
+  }
+  /* 图片调整 */
+  .listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-backdrop {
+    display: flex !important;
+    justify-content: center !important; /* 水平 */
+    align-items: center !important; /* 垂直 */
+    aspect-ratio: 16 / 9 !important;
+    width: 18em !important;
+    height: auto !important;
+    left:0.6em !important;
+    border-radius: 8px!important;
+  }
+  .listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-fourThree{
+    display: flex !important;
+    justify-content: center !important; /* 水平 */
+    align-items: center !important; /* 垂直 */
+    aspect-ratio:16/9 !important;
+    width: 18em !important;
+    height: auto !important;
+    left:0.6em !important;
+    border-radius: 8px!important;
+  }
+  /* 多选更改 */
+  .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy 
+  .chkListItemSelectContainer.chkItemSelectContainer.itemAction.emby-checkbox-label{
+    position:absolute;
+    height:2em;
+    left:0.8em;
+    top:0.80em;
+  }
+}
+@media (min-width:89.875em) and (max-width:94.11875em){
+  .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy{
+        width: 46em !important;
+    }
+    .listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines{
+        width:26em;
+    }
+}
+@media (min-width:81.25em) and (max-width:89.86875em){
+  .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy{
+        width: 41em !important;
+    }
+    .listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines{
+        width:21em;
+    }
+}
+@media (min-width:68.5em) and (max-width:81.24375em){
+
+  .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy{
+        width: 35em !important;
+    }
+    .listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines{
+        width:15em;
+    }
+}
+@media (min-width:68.5em) and (max-width:94.11875em){
+  /*隐藏 标记播放与添加最爱 */
+  .listViewUserDataButton.listItemButton.itemAction.md-icon.paper-icon-button-light.playstatebutton-icon.playstatebutton-icon-played.emby-button,
+  .listViewUserDataButton.listItemButton.itemAction.md-icon.emby-button{
+      display:none;
+  }
+  /* 三选项隐藏与显示 */
+  .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light {
+      opacity: 0; /* 隐藏 */
+      visibility: hidden;
+      transition: opacity .2s ease-in-out, visibility .2s ease-in-out;
+  }
+  .listItem-content:hover .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light {
+      opacity: 1; /* 显示 */
+      visibility: visible;
+  }
+  .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light{
+      position:fixed;
+      left:7.7em;
+      top:3.7em;
+  }
+  .listItemButton.listItemContextMenuButton.itemAction.md-icon.paper-icon-button-light{
+      background:#00000040;
+  }
+}
+@media (min-width:800px) and (max-width:94.11875em){
+  /* 多选更改 */
+  .virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy 
+  .chkListItemSelectContainer.chkItemSelectContainer.itemAction.emby-checkbox-label{
+    position:absolute;
+    height:2em;
+    left:-0.2em;
+    top:0.80em;
+  }
+  /* 图片调整 */
+  .listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-fourThree{
+    display: flex !important;
+    justify-content: center !important; /* 水平 */
+    align-items: center !important; /* 垂直 */
+    aspect-ratio:16/9 !important;
+    width: 16em !important;
+    height: auto !important;
+    border-radius: 8px!important;
+  }
+}
+/* 常驻 */
+/* 隐藏 右滑添加到播放列表 */
+div.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy.dragging-over.dragging-over-x-axis{
+    display:none !important;
+}
+/* 图片调整 */
+.listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-backdrop {
+  border-radius: 8px!important;
+}
+.listItemOverlayButton-imagehover {
+  background: rgb(0 0 0 / 0%)!important;
+}
+/* 集整体 悬停效果 */
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy {
+  transition: transform .2s ease, background-color .2s ease;
+}
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy:hover {
+  border-radius: 8px!important;
+  transform: scale(1.05);
+}
+/* 集封面悬停 阴影淡入淡出 */ 
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy 
+.listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-backdrop,
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy 
+.listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-fourThree{
+  /*box-shadow: 0 0 0 rgba(255, 255, 255, 0);*/
+  transition: box-shadow 0.2s ease;
+}
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy:hover 
+.listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-backdrop,
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy:hover 
+.listItemImageContainer.listItemImageContainer-large.itemAction.listItemImageContainer-fourThree{
+  box-shadow: 0 0 1.8em rgb(212 212 212 / 0.7);
+  transition: box-shadow 0.2s ease;
+}
+/* 集简介悬停 半透明 */
+.listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines {
+  opacity: .4;
+  transition: opacity .4s ease-in-out;
+}
+/* 集简介悬停 不透明 */
+.virtualScrollItem.listItem.listItem-autoactive.itemAction.listItemCursor.listItem-hoverable.listItem-largeImage.draggable-x.draggable-xy:hover
+.listItem-overview.listItem-topoverview.listItemBodyText.listItemBodyText-secondary.secondaryText.listItemBodyText-secondary-of.listItem-overview-autohide.listItem-overview-3-lines {
+  opacity: 1;
+}
+/* ——————————到此为止—————————— */
