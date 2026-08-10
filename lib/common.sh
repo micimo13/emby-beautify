@@ -187,16 +187,26 @@ inject_to_index() {
 # 往容器拷贝资源并返回容器内路径
 push_assets() {
   # push_assets <本地资源目录> <容器目标目录>
+  # 特殊保护: config.js 若容器内已有非空 parentId 配置, 不覆盖(避免破坏用户轮播配置)
   local src_dir="$1" dst_dir="$2" f
   maybe "docker exec \"$CONTAINER\" sh -c 'mkdir -p $dst_dir'"
   if [ "${DRY_RUN:-0}" = "0" ]; then
     docker exec "$CONTAINER" sh -c "mkdir -p '$dst_dir'" 2>/dev/null || die "容器内创建目录失败: $dst_dir"
     for f in "$src_dir"/*; do
       [ -f "$f" ] || continue
-      if ! docker cp "$f" "$CONTAINER:$dst_dir/$(basename "$f")" 2>/dev/null; then
+      local fname
+      fname="$(basename "$f")"
+      # config.js 保护: 容器内已有且 parentId 非空 → 跳过覆盖
+      if [ "$fname" = "config.js" ]; then
+        if docker exec "$CONTAINER" sh -c "grep -q 'parentId.*[0-9a-zA-Z]' '$dst_dir/config.js'" 2>/dev/null; then
+          echo "    ⏭ 保留容器内 config.js (已配置媒体库, 避免覆盖破坏轮播)"
+          continue
+        fi
+      fi
+      if ! docker cp "$f" "$CONTAINER:$dst_dir/$fname" 2>/dev/null; then
         die "docker cp 失败: $f → $dst_dir/"
       fi
-      echo "    ✓ 复制 $(basename "$f")"
+      echo "    ✓ 复制 $fname"
     done
   fi
 }
