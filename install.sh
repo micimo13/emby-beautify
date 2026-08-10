@@ -148,9 +148,16 @@ install_manifest_entry() {
     style)
       dst_dir="/system/dashboard-ui/emby-crx"
       push_assets "$src_dir" "$dst_dir"
-      # emby-crx/fluent 装完后自动配置轮播媒体库
+      # emby-crx/fluent 官方版 main.js 自动匹配媒体库，无需 config.js 白名单
+      # (旧增强版依赖 config.js 的 parentId，官方版已废弃该机制)
       if [ "$id" = "emby_crx" ] || [ "$id" = "emby_fluent" ]; then
-        auto_config_crx
+        # 部署验证: 容器内 main.js 必须是官方版(不含 new Config() 依赖)
+        if docker exec "$CONTAINER" sh -c "grep -q 'new Config()' '$dst_dir/main.js'" 2>/dev/null; then
+          c_err "❌ 部署失败: 容器内 main.js 仍是旧增强版(依赖 config.js)！"
+          c_err "   请检查 $dst_dir/main.js 是否被其他工具/脚本覆盖，或手动重新安装。"
+        else
+          c_ok "✓ 官方版 main.js 已就位(自动匹配媒体库，无需 config.js)"
+        fi
       fi
       ;;
     theme)
@@ -184,7 +191,9 @@ install_manifest_entry() {
   c_ok "✓ [$name] 完成"
 }
 
-# ── emby-crx 轮播自动配置: config.js parentId 为空时, 自动检测媒体库 ID 填充 ──
+# ── (已废弃) 旧增强版 config.js 自动配置 ──
+# 官方版 main.js 已改为自动匹配媒体库（getItems 不带 ParentId 全库搜索），
+# 不再依赖 config.js 的 parentId 白名单。此函数仅保留供参考，不再被调用。
 auto_config_crx() {
   local cfg_file="/system/dashboard-ui/emby-crx/config.js"
   if ! docker exec "$CONTAINER" sh -c "[ -f '$cfg_file' ]" 2>/dev/null; then

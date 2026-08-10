@@ -213,18 +213,11 @@ bash uninstall.sh --only jav # 只卸载 JAV 组件
 ## ❓ 常见问题
 
 ### 装了 emby-crx 后首页轮播不显示？
-**一般不会发生**——本工具内置 **emby-crx 官方版**，自动匹配你的全部媒体库（Recursive 递归搜索），无需任何配置。
+**官方版 main.js 自动匹配全部媒体库**（`getItems` 不带 ParentId 递归搜索），无需任何配置、无需编辑 config.js。
 
-如果自动配置失败（账号不是默认的），手动配置：
-```bash
-# 1. 进容器编辑配置
-docker exec <容器名> sh -c "vi /system/dashboard-ui/emby-crx/config.js"
-# 2. 把 this.parentId = "" 改为你的媒体库 ID (逗号分隔)
-#    this.parentId = "12345,67890";
-# 3. 获取媒体库 ID: Emby 后台→媒体库→URL 中的 parentId
-#    或浏览器 F12 执行: ApiClient.getUserViews()
-```
-> 💡 本工具**不会覆盖**已配置好 parentId 的 config.js（安装时自动保护，避免破坏你的轮播配置）。
+> ⚠️ 旧版增强型 main.js（依赖 config.js 的 `parentId` 白名单）已废弃。若你容器内还是旧版：
+> 重新运行 `bash install.sh` 安装一次 emby-crx 即可覆盖为官方版；或手动检查容器内
+> `/system/dashboard-ui/emby-crx/main.js` 是否含 `this.config = new Config()`（含 = 旧版需更新）。
 
 ### CSS 主题会影响轮播吗？
 部分主题（如 Apple Glass，面向 4.10）的全局卡片规则可能影响 4.8 轮播。本工具已内置冲突检测与轮播保护 CSS，按提示选择即可。
