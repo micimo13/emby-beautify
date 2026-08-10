@@ -144,6 +144,34 @@ ask_version_manual() {
   esac
 }
 
+# 检查组件是否已安装 (按 marker 在 index.html 中匹配)
+is_installed() {
+  local marker="$1"
+  [ -n "$marker" ] || return 1
+  docker exec "$CONTAINER" sh -c "grep -qF '$marker' '$DASHBOARD_DIR/index.html'" 2>/dev/null
+}
+
+# 检查组件是否与已安装的其他组件冲突 (有冲突返回 0/true)
+has_conflict_installed() {
+  local entry="$1" conflicts cid ctype centry cmarker
+  conflicts="$(manifest_conflicts "$entry")"
+  [ -n "$conflicts" ] || return 1
+  for cid in $(echo "$conflicts" | tr ',' ' '); do
+    [ -z "$cid" ] && continue
+    ctype="feature"
+    case "$cid" in
+      *:style) ctype="style"; cid="${cid%:style}" ;;
+      *:theme) ctype="theme"; cid="${cid%:theme}" ;;
+    esac
+    centry="$(manifest_find "$ctype" "$cid" 2>/dev/null)" || continue
+    cmarker="$(manifest_marker "$centry")"
+    if is_installed "$cmarker"; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 # ─────────────────────────────── 注入引擎 ───────────────────────────────
 
 # 容器内 dashboard 路径探测（官方镜像: /system/dashboard-ui 或 /app/emby/system/dashboard-ui 等）
