@@ -90,36 +90,42 @@ curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/o
 
 ## 📸 真实效果展示
 
-> 以下截图来自 **Vanvy 自研媒体库**（Emby 4.9 + emby-home-beautify 轮播 + 自定义主题）的真实运行效果。
+> 以下截图来自 **Vanvy 自研媒体库** 的真实运行效果，分为已上线成品与规划中效果。
 
-### 🏠 首页轮播
+### ✅ 成品效果（已上线）
+
 <p align="center">
-  <img src="docs/screenshots/real-home-01.jpg" width="85%" alt="首页轮播 - 完美世界剧场版"/>
+  <b>首页轮播 · Emby 4.8（emby-crx）</b><br/>
+  <img src="docs/screenshots/real-home-01.jpg" width="85%" alt="首页轮播 4.8 emby-crx"/>
 </p>
 
-### 📄 作品详情页
 <p align="center">
-  <img src="docs/screenshots/real-detail-01.jpg" width="85%" alt="作品详情页 - 完美世界剧场版"/>
+  <b>首页轮播 · Emby 4.9（emby-home-beautify）</b><br/>
+  <img src="docs/screenshots/real-detail-01.jpg" width="85%" alt="首页轮播 4.9 home-beautify"/>
 </p>
 
-### 🎬 动漫分类列表页
 <p align="center">
-  <img src="docs/screenshots/real-list-01.jpg" width="85%" alt="动漫分类列表页"/>
+  <b>电影详情页 · 当前效果</b><br/>
+  <img src="docs/screenshots/real-detail-02.jpg" width="85%" alt="电影详情页 当前效果"/>
 </p>
 
-### 📺 剧集列表页
 <p align="center">
-  <img src="docs/screenshots/real-detail-02.jpg" width="85%" alt="剧集列表页"/>
+  <b>剧集详情页 · Emby 4.8 当前效果</b><br/>
+  <img src="docs/screenshots/real-list-02.jpg" width="85%" alt="剧集详情页 4.8 当前效果"/>
 </p>
 
-### 🎞️ 动漫作品详情页
+### 🔧 待开发效果（规划中）
+
+> 以下为设计中的增强效果预览，后续版本将集成到项目中。
+
 <p align="center">
-  <img src="docs/screenshots/real-detail-03.jpg" width="85%" alt="动漫作品详情页"/>
+  <b>电影详情页 · 隐藏媒体封面 CSS 效果</b><br/>
+  <img src="docs/screenshots/real-list-01.jpg" width="85%" alt="电影详情页 待开发CSS效果"/>
 </p>
 
-### 🗂️ 动漫作品列表页
 <p align="center">
-  <img src="docs/screenshots/real-list-02.jpg" width="85%" alt="动漫作品列表页"/>
+  <b>剧集详情页 · CSS 增强效果</b><br/>
+  <img src="docs/screenshots/real-detail-03.jpg" width="85%" alt="剧集详情页 待开发CSS效果"/>
 </p>
 
 ---
