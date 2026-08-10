@@ -30,7 +30,7 @@ MANIFEST_THEMES=(
   "dark-purple|theme|🟣 Dark PURPLE|all|暗紫深色|themes/dark/PURPLE.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-PURPLE.css\" type=\"text/css\" media=\"all\" />|theme-dark-PURPLE.css"
   "dark-green|theme|🟢 Dark GREEN|all|暗绿深色|themes/dark/GREEN.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-GREEN.css\" type=\"text/css\" media=\"all\" />|theme-dark-GREEN.css"
   "dark-gray|theme|⚪ Dark GRAY|all|暗灰深色|themes/dark/GRAY.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-GRAY.css\" type=\"text/css\" media=\"all\" />|theme-dark-GRAY.css"
-  "apple-glass|theme|🍎 Apple Glass|all|苹果毛玻璃 (实验)|themes/AppleGlass.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-AppleGlass.css\" type=\"text/css\" media=\"all\" />|theme-AppleGlass.css"
+  "apple-glass|theme|🍎 Apple Glass|all|苹果毛玻璃 (实验, 4.10主题, 与4.8轮播有冲突)|themes/AppleGlass.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-AppleGlass.css\" type=\"text/css\" media=\"all\" />|theme-AppleGlass.css|emby_crx:style,emby_fluent:style"
   "vanvy-dark|theme|🏴 Vanvy Dark|all|Vanvy 深色主题|themes/SynoDark.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-SynoDark.css\" type=\"text/css\" media=\"all\" />|theme-SynoDark.css"
   "vanvy-detail|theme|📄 Vanvy Detail|all|Vanvy 详情页主题|themes/SynoDetail.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-SynoDetail.css\" type=\"text/css\" media=\"all\" />|theme-SynoDetail.css"
 )
@@ -65,27 +65,38 @@ manifest_field() {
 # 注入行: feature 从字段8到NF-1(排除末尾conflicts), 其他从7到NF-1
 manifest_inject_lines() {
   local entry="$1"
+  local nf
+  nf=$(echo "$entry" | awk -F'|' '{print NF}')
   if [ "$(manifest_field "$entry" 2)" = "feature" ]; then
     echo "$entry" | awk -F'|' '{ for(i=8;i<NF-1;i++) print $i }'
+  elif [ "$nf" -ge 9 ]; then
+    echo "$entry" | awk -F'|' '{ for(i=7;i<NF-1;i++) print $i }'
   else
     echo "$entry" | awk -F'|' '{ for(i=7;i<NF;i++) print $i }'
   fi
 }
 
-# marker: feature 为倒数第二字段(末尾是conflicts), 其他为最后字段
+# marker: feature/带conflicts的theme 为倒数第二字段(末尾是conflicts), 其他为最后字段
 manifest_marker() {
   local entry="$1"
-  if [ "$(manifest_field "$entry" 2)" = "feature" ]; then
+  local nf
+  nf=$(echo "$entry" | awk -F'|' '{print NF}')
+  if [ "$(manifest_field "$entry" 2)" = "feature" ] || [ "$nf" -gt 8 ]; then
     echo "$entry" | awk -F'|' '{print $(NF-1)}'
   else
     echo "$entry" | awk -F'|' '{print $NF}'
   fi
 }
 
-# conflicts: feature 最后字段 (逗号分隔; 可带 :type)
+# conflicts: 最后字段 (任何类型都可带)
 manifest_conflicts() {
   local entry="$1"
-  [ "$(manifest_field "$entry" 2)" = "feature" ] && echo "$entry" | awk -F'|' '{print $NF}'
+  local nf
+  nf=$(echo "$entry" | awk -F'|' '{print NF}')
+  # feature 固定9字段以上, theme 带conflicts 时 9字段
+  if [ "$(manifest_field "$entry" 2)" = "feature" ] || [ "$nf" -ge 9 ]; then
+    echo "$entry" | awk -F'|' '{print $NF}'
+  fi
 }
 
 # 容器目录 (feature 用): 字段7
