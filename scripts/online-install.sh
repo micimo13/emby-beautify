@@ -37,10 +37,12 @@ command -v docker >/dev/null 2>&1 || { echo "❌ 未检测到 docker"; exit 1; }
 TMPDIR=$(mktemp -d)
 # 源码包永远最新 (codeload 或镜像), 静态包仅兜底
 PKG_URLS=(
-  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 1. codeload 源码包 (永远最新)
-  "${GH_PROXY}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 2. gh-proxy 加速
-  "${GH_PROXY2}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 3. mirror.ghproxy 加速
-  "${REPO_BASE}/emby-kit.tar.gz"                                  # 4. 静态包兜底
+  "https://fastly.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"  # 1. jsDelivr CDN (国内秒通)
+  "https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"  # 2. jsDelivr 备选节点
+  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 3. codeload 源码包 (永远最新)
+  "${GH_PROXY}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 4. gh-proxy 加速
+  "${GH_PROXY2}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 5. mirror.ghproxy 加速
+  "${REPO_BASE}/emby-kit.tar.gz"                                  # 6. raw 兜底
 )
 
 echo "⬇  下载 Emby Beautify ..."
