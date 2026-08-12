@@ -58,8 +58,9 @@ parse_multi() {
   raw="${raw//　/ }"
   # 按空白分割 (IFS 默认含空格/tab/换行)
   for token in $raw; do
-    # 去残留空白字符
-    token=$(printf '%s' "$token" | tr -d ' \t\r')
+    # 关键: 只保留数字字符! 过滤一切干扰 (不可见字符/退格/控制符/输入法残留)
+    # 例: 输入法或退格产生的 "\x7f1" → "1"
+    token=$(printf '%s' "$token" | tr -dc '0-9')
     [ -z "$token" ] && continue
     echo "$token"
   done
