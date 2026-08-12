@@ -34,7 +34,9 @@ command -v docker >/dev/null 2>&1 || { echo "❌ 未检测到 docker"; exit 1; }
 TMPDIR=$(mktemp -d)
 # 无缓存源优先: codeload 源码包 (永远最新) / api.github.com raw / GitHub raw
 # 下载源: GitHub 官方源优先, CDN 镜像兜底 (全部公网可访问)
+# 本地开发版: 官方分发域名优先 (上传 GitHub 时由 sync 脚本自动替换)
 PKG_URLS=(
+  "https://api.github.com/repos/micimo13/emby-beautify/emby-kit.tar.gz"  # 1. 官方分发域名
   "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 1. GitHub codeload 源码包
   "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/emby-kit.tar.gz"  # 2. api.github.com (无缓存)
   "${REPO_BASE}/emby-kit.tar.gz"  # 3. GitHub raw
