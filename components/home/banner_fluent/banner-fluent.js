@@ -12,18 +12,28 @@
 	 * @param {string} [fallback] - 备用 CDN 地址 (国内镜像)
 	 */
 	const loadCSS = (primary, fallback) => {
+		// 非阻塞加载: media="print" 让浏览器不渲染阻塞, onload 切回 all
 		const link = document.createElement('link');
 		link.rel = 'stylesheet';
 		link.href = primary;
+		link.media = 'print';
+		link.onload = () => { link.media = 'all'; };
 		if (fallback) {
-			link.onerror = () => {
-				console.log(`[Emby-Fluent] CDN fallback: ${primary} → ${fallback}`);
-				link.remove();
-				const fb = document.createElement('link');
-				fb.rel = 'stylesheet';
-				fb.href = fallback;
-				document.head.appendChild(fb);
-			};
+			// 主源 8s 超时未加载 → 用备用源 (国内网络 Google Fonts 会挂起, 必须限时)
+			const to = setTimeout(() => {
+				if (link.sheet === null) {
+					console.log(`[Emby-Fluent] CDN fallback: ${primary} → ${fallback}`);
+					link.remove();
+					const fb = document.createElement('link');
+					fb.rel = 'stylesheet';
+					fb.href = fallback;
+					fb.media = 'print';
+					fb.onload = () => { fb.media = 'all'; };
+					document.head.appendChild(fb);
+				}
+			}, 8000);
+			link.onload = () => { clearTimeout(to); link.media = 'all'; };
+			link.onerror = () => { clearTimeout(to); console.log(`[Emby-Fluent] CDN fallback: ${primary} → ${fallback}`); link.remove(); const fb = document.createElement('link'); fb.rel = 'stylesheet'; fb.href = fallback; fb.media = 'print'; fb.onload = () => { fb.media = 'all'; }; document.head.appendChild(fb); };
 		}
 		document.head.appendChild(link);
 	};
@@ -105,6 +115,11 @@ class Home {
 		</div>
 		`;
 		$("body").append(load);
+		// 安全兜底: 10s 后强制移除遮罩, 防止轮播初始化失败导致永久黑屏转圈
+		setTimeout(() => {
+			$(".heicha-loading").remove();
+			document.documentElement.setAttribute('data-heicha-failed', '1');
+		}, 10000);
 	}
 
 	static injectCode(code) {
