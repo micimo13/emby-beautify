@@ -1,0 +1,22 @@
+/* Vanvy 播放页增强 */
+@media (min-width: 860px) {
+  .view-videoosd-videoosd.darkContentContainer.graphicContentContainer .videoOsdBottom-buttons-topright {
+    position: absolute;
+    right: 1em;
+    bottom: 2em;
+    z-index: 999 !important;
+  }
+  .view-videoosd-videoosd.darkContentContainer.graphicContentContainer .videoOsdVolumeControls-bottom {
+    display: inline-flex !important;
+    position: absolute !important;
+    right: 21em;
+    width: 18em;
+    z-index: 998 !important;
+  }
+}
+.videoOsdBottom .emby-dropdown-menu,
+.videoOsdBottom .emby-select-withcolor {
+  all: revert !important;
+  position: absolute !important;
+  z-index: 1000 !important;
+}

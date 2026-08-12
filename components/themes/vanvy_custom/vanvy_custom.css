@@ -1,0 +1,534 @@
+/**
+ * VANVY · Emby 界面定制美化样式
+ * 主要功能：
+ * 1. 替换 Emby 原生 LOGO 并修复重复显示问题
+ * 2. 优化界面透明度、背景遮罩视觉效果
+ * 3. 统一分类标签/媒体信息标签的半透明椭圆样式
+ * 4. 美化简介区域交互及弹框样式
+ * 5. 适配播放页、剧集列表布局
+ * 6. 隐藏冗余界面元素，精简视觉效果
+ */
+
+/* ============================================
+ * 1. LOGO 替换与原生 LOGO 隐藏
+ * ============================================ */
+.adminDrawerLogo img {
+ display: block !important;
+ width: 100% !important;
+ height: 100% !important;
+ content: url(https://img.vanvy.top/i/2026/07/s8zmm1.png) !important;
+ background: none !important;
+ border: none !important;
+}
+
+.imgLogoIcon {
+ display: inline-block !important;
+ width: 100% !important;
+ height: 100% !important;
+ content: url(https://img.vanvy.top/i/2026/07/s8zmm1.png) !important;
+ background: none !important;
+ background-image: none !important;
+}
+
+.pageTitleWithLogo {
+ background-image: url(https://img.vanvy.top/i/2026/07/s8zmm1.png) !important;
+ background-repeat: no-repeat !important;
+ background-size: contain !important;
+ background-position: left center !important;
+ padding-left: 0 !important;
+}
+
+/* 隐藏包含 Emby 标识的原生 LOGO 元素 */
+.adminDrawerLogo [src*="emby"],
+.imgLogoIcon [src*="emby"],
+.pageTitleWithLogo [style*="emby"] {
+ display: none !important;
+ opacity: 0 !important;
+}
+
+/* ============================================
+ * 3. 分类标签样式统一（椭圆半透按钮）
+ * ============================================ */
+.genresSection .itemGenres a.emby-button,
+.tagsSection .itemTags a.emby-button,
+.studiosSection .itemStudios a.emby-button,
+.linksSection .itemLinks a.emby-button {
+ display: inline-block !important;
+ padding: 0.25em 0.8em !important;
+ margin-right: 0.5em !important;
+ margin-bottom: 0.3em !important;
+ border-radius: 999px !important;
+ border: 1px solid rgba(255, 255, 255, 0.3) !important;
+ background-color: rgba(0, 0, 0, 0.4) !important;
+ color: #ffffffed !important;
+ text-decoration: none !important;
+ font-size: 0.9em !important;
+ transition: all 0.2s ease !important;
+ box-sizing: border-box !important;
+}
+
+.genresSection .itemGenres a.emby-button:hover,
+.tagsSection .itemTags a.emby-button:hover,
+.studiosSection .itemStudios a.emby-button:hover,
+.linksSection .itemLinks a.emby-button:hover {
+ background-color: rgba(255, 255, 255, 0.2) !important;
+ border-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ============================================
+ * 4. 简介区域交互与样式优化
+ * ============================================ */
+.verticalFieldItem.overview-container {
+ width: 100% !important;
+ box-sizing: border-box !important;
+ padding: 1em 1.2em !important;
+ border-radius: 12px !important;
+ border: 1px solid rgba(255, 255, 255, 0.3) !important;
+ background-color: rgba(0, 0, 0, 0.4) !important;
+ margin: 0.5em 0 !important;
+ cursor: pointer !important;
+ position: relative !important;
+}
+
+.verticalFieldItem.overview-container .btnReadMore {
+ position: absolute !important;
+ top: 0 !important;
+ left: 0 !important;
+ width: 100% !important;
+ height: 100% !important;
+ opacity: 0 !important;
+ z-index: 1 !important;
+ cursor: pointer !important;
+}
+
+.verticalFieldItem.overview-container .btnOverviewText {
+ display: block !important;
+ width: 100% !important;
+ border: none !important;
+ background: transparent !important;
+ color: #ffffffed !important;
+ text-align: left !important;
+ line-height: 1.6 !important;
+ margin: 0 !important;
+ position: relative !important;
+ z-index: 0 !important;
+}
+
+.verticalFieldItem.overview-container::after {
+ content: "点击展开全文" !important;
+ position: absolute !important;
+ bottom: 12px !important;
+ right: 20px !important;
+ color: #ffffff80 !important;
+ font-size: 0.8em !important;
+ background-color: rgba(0, 0, 0, 0.6) !important;
+ padding: 3px 10px !important;
+ border-radius: 6px !important;
+ z-index: 0 !important;
+}
+
+.verticalFieldItem.overview-container.expanded::after {
+ content: "点击收起全文" !important;
+ color: #ffffffb3 !important;
+}
+
+/* ============================================
+ * 5. 冗余元素隐藏
+ * ============================================ */
+.verticalSection.verticalSection-cards.similarSection.emby-scrollbuttons-scroller,
+.detailImageContainer-main,
+.itemMainScrollSlider-nopaddingtop .topDetailsContainer .darkContentContainer-tv .listItem-autoactive.dragging-over-x-axis,
+.itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemOverlayButton-imagehover,
+.itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemOverlayButton-hover .listItemOverlayButtonIcon.autortl,
+.skinHeader.headroom-scrolling .videoOsdVolumeSliderWrapper-top.flex-grow {
+ display: none !important;
+}
+
+.detailNameContainer {
+ margin-top: 0 !important;
+}
+
+/* ============================================
+ * 6. 播放页布局适配（≥860px）
+ * ============================================ */
+@media (min-width: 860px) {
+ .view-videoosd-videoosd.darkContentContainer.graphicContentContainer .videoOsdBottom-buttons-topright {
+ position: absolute;
+ right: 1em;
+ bottom: 2em;
+ z-index: 999 !important;
+ }
+
+ .view-videoosd-videoosd.darkContentContainer.graphicContentContainer .videoOsdVolumeControls-bottom {
+ display: inline-flex !important;
+ position: absolute !important;
+ right: 21em;
+ width: 18em;
+ z-index: 998 !important;
+ user-select: none;
+ }
+
+ .view-videoosd-videoosd.darkContentContainer.graphicContentContainer .osdVolumeDisplayIcon {
+ color: #ffffffed;
+ }
+}
+
+/* ============================================
+ * 7. 剧集列表布局适配（≥800px）
+ * ============================================ */
+@media (min-width: 800px) {
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemImageContainer {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ aspect-ratio: 16/9 !important;
+ border-radius: 8px !important;
+ transition: box-shadow 0.2s ease;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem {
+ transition: transform 0.2s ease, background-color 0.2s ease;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem:hover {
+ transform: scale(1.05);
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem:hover .listItemImageContainer {
+ box-shadow: 0 0 1.8em rgb(212 212 212 / 0.7);
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem:hover .listItem-overview.listItemBodyText.secondaryText.listItem-overview-3-lines {
+ opacity: 1;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem:hover .listItemButton.itemAction.paper-icon-button-light {
+ opacity: 1;
+ visibility: visible;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItem-overview.listItemBodyText.secondaryText.listItem-overview-3-lines {
+ opacity: 0.4;
+ transition: opacity 0.4s ease-in-out;
+ height: 40px;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemButton.itemAction.paper-icon-button-light {
+ position: relative;
+ background: #0000002b;
+ backdrop-filter: blur(8px);
+ opacity: 0;
+ visibility: hidden;
+ transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+ }
+
+ @media (min-width: 1516px) {
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem.draggable-x.draggable-xy {
+ width: 19.3em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItem-overview.listItemBodyText.secondaryText {
+ width: 17.5em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItem-content,
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItem-content .listItem-innerwrapper {
+ display: flex;
+ flex-wrap: wrap;
+ align-items: center;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem .chkItemSelectContainer.emby-checkbox-label {
+ position: absolute;
+ height: 2em;
+ left: 0.8em;
+ top: 0.8em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemImageContainer {
+ width: 18em !important;
+ height: 10.125em !important;
+ left: 0.6em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemBodyText.listItemBodyText-lf {
+ width: 14.8em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemButton.itemAction.paper-icon-button-light {
+ left: 136px;
+ margin-left: 1px;
+ margin-top: -264px;
+ }
+ }
+
+ @media (min-width: 1218px) and (max-width: 1515px) {
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem.draggable-x.draggable-xy {
+ width: 19.3em;
+ height: 19.8em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemImageContainer {
+ bottom: 3.8em;
+ left: 0.6em;
+ width: 18em !important;
+ height: 10.125em !important;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemBodyText.listItemBodyText-lf {
+ width: 14.8em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItem-overview.listItemBodyText.secondaryText {
+ width: 17.0em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemBody.listItemBody-5-lines {
+ position: fixed;
+ top: 6.3em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem .chkItemSelectContainer.emby-checkbox-label {
+ position: absolute;
+ height: 0;
+ left: 0.8em;
+ top: -3.8em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemButton.itemAction.paper-icon-button-light {
+ left: -125px;
+ margin-left: 1px;
+ bottom: 5px;
+ }
+ }
+
+ @media (min-width: 800px) and (max-width: 1217px) {
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem.draggable-x.draggable-xy {
+ width: 16.7em;
+ height: 17em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemImageContainer {
+ bottom: 3.7em;
+ left: 0.6em;
+ width: 15.5em !important;
+ height: 8.71875em !important;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemBodyText.listItemBodyText-lf {
+ width: 13.4em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItem-overview.listItemBodyText.secondaryText {
+ width: 15.7em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemBody.listItemBody-5-lines {
+ position: fixed;
+ left: -0.4em;
+ top: 4.7em;
+ transform: scale(0.95);
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .virtualScrollItem.listItem .chkItemSelectContainer.emby-checkbox-label {
+ position: absolute;
+ height: 0;
+ left: 0.8em;
+ top: -3.6em;
+ }
+
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemButton.itemAction.paper-icon-button-light {
+ left: -116px;
+ margin-left: -2px;
+ bottom: 12px;
+ transform: scale(0.9);
+ }
+
+ @media (max-width: 1186px) {
+ .itemMainScrollSlider-nopaddingtop .topDetailsContainer .listItemButton.itemAction.paper-icon-button-light {
+ left: -32px;
+ }
+ }
+ }
+}
+
+/* ============================================
+ * 8. 简介弹框样式美化（精准限定，避免全局污染）
+ * ============================================ */
+.alertDialog.formDialog.dialog-largefont.focuscontainer.dialog {
+ background: transparent !important;
+ backdrop-filter: blur(18px) !important;
+ -webkit-backdrop-filter: blur(18px) !important;
+ border-radius: 24px !important;
+ border: 1px solid rgba(255, 255, 255, 0.25) !important;
+ box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35) !important;
+ max-width: 85% !important;
+ margin: 2.5em auto !important;
+ overflow: hidden !important;
+ position: relative !important;
+}
+
+.alertDialog.formDialog.dialog-largefont .formDialogHeader {
+ background-color: rgba(0, 0, 0, 0.5) !important;
+ backdrop-filter: blur(15px) !important;
+ -webkit-backdrop-filter: blur(15px) !important;
+ border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+ padding: 1.2em 1.8em !important;
+ display: flex !important;
+ align-items: center !important;
+ width: 100% !important;
+}
+
+.alertDialog.formDialog.dialog-largefont .dialogItemPreview {
+ display: flex !important;
+ flex-direction: row !important;
+ align-items: center !important;
+ gap: 1.8em !important;
+}
+
+.alertDialog.formDialog.dialog-largefont .dialogItemPreviewImage-bg {
+ width: 100px !important;
+ height: auto !important;
+ aspect-ratio: 2/3 !important;
+ border-radius: 10px !important;
+ box-shadow: 0 5px 20px rgba(0, 0, 0, 0.45) !important;
+ overflow: hidden !important;
+ border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.alertDialog.formDialog.dialog-largefont .dialogItemPreviewText {
+ color: #ffffff !important;
+ font-size: 1.5em !important;
+ font-weight: 700 !important;
+ line-height: 1.3 !important;
+}
+
+.alertDialog.formDialog.dialog-largefont .dialogItemPreviewText.secondaryText {
+ color: #ffffff90 !important;
+ font-size: 1.1em !important;
+ font-weight: 400 !important;
+ margin-top: 0.4em !important;
+}
+
+.alertDialog.formDialog.dialog-largefont .formDialogHeader button.dialog-dialog-close.dialogCloseButton.dialogHeaderButton {
+ display: none !important;
+}
+
+.alertDialog.formDialog.dialog-largefont button[is="emby-dialogclosebutton"][closetype="done"] {
+ display: none !important;
+}
+
+.alertDialog.formDialog.dialog-largefont .dialog-dialog-close .md-icon,
+.alertDialog.formDialog.dialog-largefont .dialog-dialog-close .dialogCloseButton-text {
+ display: none !important;
+}
+
+/* ============================================
+ * 9. 媒体信息标签样式统一（年份/时长/分级/类型）
+ * ============================================ */
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(4),
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(5),
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(6),
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(7) {
+ display: inline-block !important;
+ padding: 0.25em 0.8em !important;
+ margin-right: 0.6em !important;
+ margin-bottom: 0.3em !important;
+ border-radius: 999px !important;
+ border: 1px solid rgba(255, 255, 255, 0.3) !important;
+ background-color: rgba(0, 0, 0, 0.4) !important;
+ color: #ffffffed !important;
+ font-size: 0.9em !important;
+ box-sizing: border-box !important;
+ line-height: 1.2 !important;
+}
+
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(6) > span {
+ display: inline !important;
+ padding: 0 !important;
+ margin: 0 !important;
+ border: none !important;
+ background: transparent !important;
+ color: inherit !important;
+ font-size: inherit !important;
+}
+
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(7) > a {
+ display: inline !important;
+ padding: 0 !important;
+ margin: 0 !important;
+ border: none !important;
+ background: transparent !important;
+ color: inherit !important;
+ font-size: inherit !important;
+ text-decoration: none !important;
+}
+
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(4):hover,
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(5):hover,
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(6):hover,
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(7):hover {
+ background-color: rgba(255, 255, 255, 0.2) !important;
+ border-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(1),
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(2),
+.detail-mediaInfoPrimary > .mediaInfoItem:nth-child(3) {
+ border: none !important;
+ background: transparent !important;
+ padding: 0 !important;
+ margin-right: 0.8em !important;
+}
+
+.detail-mediaInfoPrimary > .mediaInfoItem.endsAt {
+ border: none !important;
+ background: transparent !important;
+ padding: 0 !important;
+ margin-left: 0.3em !important;
+ color: inherit !important;
+}
+
+/* ============================================
+ * 10. 简介弹框内容区域样式
+ * ============================================ */
+.alertDialog.formDialog.dialog-largefont .formDialogContent {
+ background-color: rgba(0, 0, 0, 0.25) !important;
+ padding: 1.8em !important;
+}
+
+.alertDialog.formDialog.dialog-largefont .scrollSlider.dialogContentInner {
+ color: #ffffffef !important;
+ line-height: 1.9 !important;
+ font-size: 1.15em !important;
+ text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* ============================================
+ * 11. 下拉菜单样式重置（恢复原生定位）
+ * ============================================ */
+.videoOsdBottom .emby-dropdown-menu,
+.videoOsdBottom .emby-select-withcolor,
+.videoOsdBottom .selectContainer,
+.videoOsdBottom .dropdownMenuScrollFrame,
+.videoOsdBottom .focuscontainer.dialog:not(.alertDialog) {
+ all: revert !important;
+ position: absolute !important;
+ margin: 0 !important;
+ padding: 0 !important;
+ border: none !important;
+ border-radius: 0 !important;
+ background: inherit !important;
+ backdrop-filter: none !important;
+ -webkit-backdrop-filter: none !important;
+ box-shadow: none !important;
+ max-width: none !important;
+ overflow: visible !important;
+ z-index: 1000 !important;
+}
+
+.videoOsdBottom .dropdownMenuItem {
+ all: revert !important;
+ position: relative !important;
+ display: block !important;
+}
