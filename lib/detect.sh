@@ -23,10 +23,16 @@ detect_container() {
       CONTAINER="$list"
     else
       c_info "检测到多个 Emby 容器:"
-      echo "$list" | while read -r c; do echo "  [$((i++))] $c"; done
-      c_ask "选择容器: "
+      echo "$list" | nl -w2 -s'] '
+      c_ask "选择容器 [1-$count, 默认 1]: "
       safe_read sel "1"
+      # 校验输入: 无效(空/非数字/越界)一律回退第 1 个
+      sel=$(echo "$sel" | tr -dc '0-9')
+      [ -z "$sel" ] && sel="1"
+      [ "$sel" -lt 1 ] && sel="1"
+      [ "$sel" -gt "$count" ] && sel="1"
       CONTAINER=$(echo "$list" | sed -n "${sel}p")
+      c_ok "已选择: $CONTAINER"
     fi
   fi
   docker inspect "$CONTAINER" >/dev/null 2>&1 || { c_err "容器 $CONTAINER 不存在"; return 1; }
