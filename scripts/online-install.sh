@@ -53,7 +53,8 @@ echo "⬇  下载 Vanvy Emby Kit ..."
 DL_OK=0
 for url in "${PKG_URLS[@]}"; do
   echo "  · 尝试: $(echo "$url" | sed 's|https://||' | cut -c1-60)..."
-  if curl -fsSL --connect-timeout 8 --max-time 45 "$url" -o "$TMPDIR/kit.tar.gz" 2>/dev/null; then
+  # timeout 硬性限时: 任何卡死(含DNS)最多 15s, 自动换下一个源
+  if timeout 15 curl -fsSL --connect-timeout 6 --max-time 12 "$url" -o "$TMPDIR/kit.tar.gz" 2>/dev/null; then
     # 校验 tar 完整性
     if tar tzf "$TMPDIR/kit.tar.gz" >/dev/null 2>&1; then
       echo "  ✅ 下载成功: $(du -h "$TMPDIR/kit.tar.gz" | cut -f1)"
@@ -63,7 +64,7 @@ for url in "${PKG_URLS[@]}"; do
       echo "  ⚠️  文件不完整, 换下一个源..."
     fi
   else
-    echo "  ⚠️  下载失败, 换下一个源..."
+    echo "  ⚠️  下载失败/超时, 换下一个源..."
   fi
 done
 
