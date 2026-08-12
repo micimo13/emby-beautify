@@ -39,10 +39,11 @@ TMPDIR=$(mktemp -d)
 PKG_URLS=(
   "https://fastly.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"  # 1. jsDelivr CDN (国内秒通)
   "https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"  # 2. jsDelivr 备选节点
-  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 3. codeload 源码包 (永远最新)
-  "${GH_PROXY}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 4. gh-proxy 加速
-  "${GH_PROXY2}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 5. mirror.ghproxy 加速
-  "${REPO_BASE}/emby-kit.tar.gz"                                  # 6. raw 兜底
+  "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/emby-kit.tar.gz"  # 3. api.github.com (无缓存永远最新, 可靠兜底)
+  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 4. codeload 源码包
+  "${GH_PROXY}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 5. gh-proxy 加速
+  "${GH_PROXY2}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 6. mirror.ghproxy 加速
+  "${REPO_BASE}/emby-kit.tar.gz"                                  # 7. raw 兜底
 )
 
 echo "⬇  下载 Emby Beautify ..."
@@ -50,7 +51,7 @@ DL_OK=0
 for url in "${PKG_URLS[@]}"; do
   echo "  · 尝试: $(echo "$url" | sed 's|https://||' | cut -c1-60)..."
   # timeout 硬性限时: 任何卡死(含DNS)最多 15s, 自动换下一个源
-  if timeout 15 curl -fsSL --dns-timeout 5 --connect-timeout 5 --max-time 12 "$url" -o "$TMPDIR/kit.tar.gz" 2>/dev/null; then
+  if timeout 15 curl -fsSL --dns-timeout 5 --connect-timeout 5 --max-time 15 -H "Accept: application/vnd.github.raw" "$url" -o "$TMPDIR/kit.tar.gz" 2>/dev/null; then
     # 校验 tar 完整性
     if tar tzf "$TMPDIR/kit.tar.gz" >/dev/null 2>&1; then
       echo "  ✅ 下载成功: $(du -h "$TMPDIR/kit.tar.gz" | cut -f1)"
