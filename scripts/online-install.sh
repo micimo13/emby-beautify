@@ -1,23 +1,17 @@
 #!/usr/bin/env bash
 # =============================================================================
 #  Emby Beautify · 在线安装入口
-#  直接从 GitHub 拉取最新代码构建美化
 #  用法:
-#    curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash
+#    curl -sL -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/micimo13/emby-beautify/contents/scripts/online-install.sh" | bash
 #
-#  设计原则: 任何一步都不允许卡死, 每步都有输出反馈。
-#    - banner 最先打印 (用户立刻看到反馈)
-#    - 下载多源切换 + timeout 硬性限时 (含 DNS 卡死)
-#    - 不依赖 /dev/tty (UNRAID Web 终端等环境可能阻塞)
+#  核心设计:
+#    1. 下载源全部走"无缓存"通道 (codeload / api.github.com / raw)
+#       CDN (jsDelivr) 仅作最后兜底, 且会被内容校验拦截旧包
+#    2. 下载后校验包内关键修复特征, 旧包直接拒绝换源
+#    3. 任何一步 timeout 限时, 绝不卡死
 # =============================================================================
 
-# ── 解决 curl|bash 管道模式下 read 读不到输入的问题 ──
-# 管道模式: bash 从管道读脚本, stdin 被占用, 所有 read 读不到用户键盘输入。
-# 解法: 把 stdin 切换到 /dev/tty (真实终端)。
-# 安全性: 只有探测到 /dev/tty 可用才切换, 无 tty 环境(面板/自动化)不阻塞。
-if [ ! -t 0 ] && ( exec 3<> /dev/tty ) 2>/dev/null; then
-  exec < /dev/tty
-fi
+# 立即打印 banner
 echo ""
 echo "  ╔══════════════════════════════════════════════════════════╗"
 echo "  ║   🎨 Emby Beautify · 在线安装器                          ║"
@@ -32,37 +26,39 @@ REPO_OWNER="micimo13"
 REPO_NAME="emby-beautify"
 REPO_BRANCH="main"
 REPO_BASE="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}"
-# 加速镜像 (国内可直连)
-GH_PROXY="https://gh-proxy.com"
-GH_PROXY2="https://mirror.ghproxy.com"
 
 # 需要 docker
 command -v docker >/dev/null 2>&1 || { echo "❌ 未检测到 docker"; exit 1; }
 
-# ── 多源下载 + 完整性校验 ──
+# ── 下载源码包 (无缓存优先 + 内容校验) ──
 TMPDIR=$(mktemp -d)
-# 源码包永远最新 (codeload 或镜像), 静态包仅兜底
+# 无缓存源优先: codeload 源码包 (永远最新) / api.github.com raw / GitHub raw
 PKG_URLS=(
-  "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/emby-kit.tar.gz"  # 1. api.github.com (无缓存永远最新)
-  "https://fastly.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"  # 2. jsDelivr CDN (国内秒通)
-  "https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"  # 3. jsDelivr 备选节点
-  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 4. codeload 源码包
-  "${GH_PROXY}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 5. gh-proxy 加速
-  "${GH_PROXY2}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 6. mirror.ghproxy 加速
-  "${REPO_BASE}/emby-kit.tar.gz"                                  # 7. raw 兜底
+  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"
+  "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/emby-kit.tar.gz"
+  "${REPO_BASE}/emby-kit.tar.gz"
+  # CDN 仅兜底 (会被内容校验拒绝旧包)
+  "https://fastly.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"
+  "https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"
 )
 
 echo "⬇  下载 Emby Beautify ..."
 DL_OK=0
 for url in "${PKG_URLS[@]}"; do
   echo "  · 尝试: $(echo "$url" | sed 's|https://||' | cut -c1-60)..."
-  # timeout 硬性限时: 任何卡死(含DNS)最多 15s, 自动换下一个源
-  if timeout 15 curl -fsSL --connect-timeout 5 --max-time 15 -H "Accept: application/vnd.github.raw" "$url" -o "$TMPDIR/kit.tar.gz" 2>/dev/null; then
-    # 校验 tar 完整性
+  if timeout 30 curl -fsSL --connect-timeout 5 --max-time 25 -H "Accept: application/vnd.github.raw" "$url" -o "$TMPDIR/kit.tar.gz" 2>/dev/null; then
     if tar tzf "$TMPDIR/kit.tar.gz" >/dev/null 2>&1; then
-      echo "  ✅ 下载成功: $(du -h "$TMPDIR/kit.tar.gz" | cut -f1)"
-      DL_OK=1
-      break
+      # 内容校验: 解压检查关键修复特征 (detect.sh 含容器回退 tr -dc)
+      tar xzf "$TMPDIR/kit.tar.gz" -C "$TMPDIR" 2>/dev/null
+      SRC=$(find "$TMPDIR" -maxdepth 2 -name install.sh | head -1 | xargs dirname 2>/dev/null)
+      [ -z "$SRC" ] && SRC="$TMPDIR"
+      if grep -q "tr -dc" "$SRC/lib/detect.sh" 2>/dev/null; then
+        echo "  ✅ 下载成功: $(du -h "$TMPDIR/kit.tar.gz" | cut -f1) (含最新修复)"
+        DL_OK=1
+        break
+      else
+        echo "  ⚠️  包内容过旧 (CDN缓存?), 换下一个源..."
+      fi
     else
       echo "  ⚠️  文件不完整, 换下一个源..."
     fi
@@ -74,15 +70,9 @@ done
 if [ "$DL_OK" = "0" ]; then
   echo ""
   echo "❌ 所有下载源均失败, 请检查网络后重试"
-  echo "   或手动下载后执行:"
-  echo "   bash install.sh"
   rm -rf "$TMPDIR"
   exit 1
 fi
-
-tar xzf "$TMPDIR/kit.tar.gz" -C "$TMPDIR" 2>/dev/null
-SRC=$(find "$TMPDIR" -maxdepth 1 -type d -name "${REPO_NAME}*" | head -1)
-[ -z "$SRC" ] && SRC="$TMPDIR"
 
 echo ""
 echo "✅ 下载完成, 启动安装向导..."
