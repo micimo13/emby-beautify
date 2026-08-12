@@ -79,16 +79,16 @@
 
 ```bash
 # 交互式完整向导（推荐，自动多源下载，国内可直连）
+curl -sL https://fastly.jsdelivr.net/gh/micimo13/emby-beautify@main/scripts/online-install.sh | bash
+
+# GitHub 官方源（网络可直连时）
 curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash
 
-# 若直连卡住（DNS/网络问题），可用镜像前缀
-curl -sL https://gh-proxy.com/https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash
-
 # 零交互快速安装（全家桶）
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash -s -- --package full --yes
+curl -sL https://fastly.jsdelivr.net/gh/micimo13/emby-beautify@main/scripts/online-install.sh | bash -s -- --package full --yes
 
 # 指定容器 + 指定组件
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash -s -- --container emby --feature danmaku
+curl -sL https://fastly.jsdelivr.net/gh/micimo13/emby-beautify@main/scripts/online-install.sh | bash -s -- --container emby --feature danmaku
 ```
 
 安装完成后，浏览器 **Ctrl+F5 / Cmd+Shift+R** 强制刷新即可看到效果 ✨
