@@ -3,7 +3,7 @@
 #  Vanvy Emby Kit · 在线安装入口
 #  直接从 GitHub 拉取最新代码构建美化
 #  用法:
-#    curl -sL https://raw.githubusercontent.com/micimo13/vanvy-emby-kit/main/scripts/online-install.sh | bash
+#    curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash
 #
 #  网络策略: 国内访问 GitHub 大文件常被限速/卡死, 因此采用多源下载:
 #    1. GitHub 官方 raw (小文件秒下)
@@ -21,7 +21,7 @@ fi
 
 # GitHub 仓库地址
 REPO_OWNER="micimo13"
-REPO_NAME="vanvy-emby-kit"
+REPO_NAME="emby-beautify"
 REPO_BRANCH="main"
 REPO_BASE="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}"
 # 加速镜像 (国内可直连)
