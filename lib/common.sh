@@ -14,21 +14,19 @@ c_ask()   { printf "${C_ASK}[询问]${C_OFF} %s" "$*"; }
 
 die() { c_err "$*"; exit 1; }
 
-# 从用户读取输入 (终端/管道/无tty 全兼容, 静默无报错)
-# 优先级: 终端 stdin → /dev/tty (curl|bash 管道时用户终端仍可交互) → stdin 回退
+# 从用户读取输入 (终端/管道/无tty 全兼容, 永不死等, 静默无报错)
+# 优先级: 终端 stdin → /dev/tty 秒级超时尝试 (curl|bash 管道时用户终端仍可交互) → stdin 回退
 read_from_user() {
   local var="$1" default="${2:-}" val=""
   if [ -t 0 ]; then
     read -r val
-  elif tty_available; then
-    # 尝试从 /dev/tty 读; 失败则回退 stdin
-    if read -r val < /dev/tty 2>/dev/null; then
+  else
+    # 非终端: 尝试从 /dev/tty 读, 1秒超时 (避免 UNRAID Web终端等环境阻塞); 失败回退 stdin
+    if read -r -t 1 val < /dev/tty 2>/dev/null; then
       :
     else
       read -r val
     fi
-  else
-    read -r val
   fi
   # 防脚本残留: curl|bash 管道模式下 stdin 可能是脚本代码 (如 'rm -rf "$TMPDIR"'),
   # 读到含脚本特征的内容时视为无效输入, 用默认值
@@ -39,9 +37,9 @@ read_from_user() {
   eval "$var=\"$val\""
 }
 
-# 检测是否存在可用的 /dev/tty (静默)
+# 检测是否存在可用的 /dev/tty (1秒超时, 永不死等)
 tty_available() {
-  ( exec 3<> /dev/tty ) 2>/dev/null
+  timeout 1 bash -c 'exec 3<> /dev/tty' 2>/dev/null
 }
 
 # 安全读取输入 (兼容旧调用, 内部走 read_from_user)
