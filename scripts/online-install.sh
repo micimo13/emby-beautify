@@ -40,11 +40,13 @@ command -v docker >/dev/null 2>&1 || { echo "❌ 未检测到 docker"; exit 1; }
 
 # ── 多源下载 + 完整性校验 ──
 TMPDIR=$(mktemp -d)
+# 下载项目: 源码包永远最新 (codeload 或镜像), 不再使用静态 emby-kit.tar.gz (易过期)
+TMPDIR=$(mktemp -d)
 PKG_URLS=(
-  "${REPO_BASE}/emby-kit.tar.gz"                                  # 1. GitHub raw
-  "${GH_PROXY}/${REPO_BASE}/emby-kit.tar.gz"                      # 2. gh-proxy 加速
-  "${GH_PROXY2}/${REPO_BASE}/emby-kit.tar.gz"                     # 3. mirror.ghproxy 加速
-  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 4. codeload 兜底
+  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 1. GitHub codeload 源码包 (永远最新)
+  "${GH_PROXY}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 2. gh-proxy 加速
+  "${GH_PROXY2}/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 3. mirror.ghproxy 加速
+  "${REPO_BASE}/emby-kit.tar.gz"                                  # 4. 静态包兜底
 )
 
 echo "⬇  下载 Vanvy Emby Kit ..."
