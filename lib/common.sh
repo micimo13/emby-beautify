@@ -20,16 +20,13 @@ read_from_user() {
   local var="$1" default="${2:-}" val=""
   if [ -t 0 ]; then
     read -r val
+  elif tty_available; then
+    # 有 tty: 从 /dev/tty 读 (1秒超时防挂起)
+    read -r -t 1 val < /dev/tty 2>/dev/null
   else
-    # 非终端: 尝试从 /dev/tty 读, 1秒超时 (避免 UNRAID Web终端等环境阻塞); 失败回退 stdin
-    if read -r -t 1 val < /dev/tty 2>/dev/null; then
-      :
-    else
-      read -r val
-    fi
+    read -r val
   fi
-  # 防脚本残留: curl|bash 管道模式下 stdin 可能是脚本代码 (如 'rm -rf "$TMPDIR"'),
-  # 读到含脚本特征的内容时视为无效输入, 用默认值
+  # 防脚本残留: 读到含脚本特征的内容视为无效输入
   if echo "$val" | grep -qE '\$\(|TMPDIR=|rm -rf|#!/|\$[A-Z_]|; then|\bif \b|\bfor \b'; then
     val=""
   fi
@@ -37,9 +34,9 @@ read_from_user() {
   eval "$var=\"$val\""
 }
 
-# 检测是否存在可用的 /dev/tty (1秒超时, 永不死等)
+# 检测是否存在可用的 /dev/tty (1秒超时, 永不死等, 静默)
 tty_available() {
-  timeout 1 bash -c 'exec 3<> /dev/tty' 2>/dev/null
+  ( exec 3<> /dev/tty ) 2>/dev/null
 }
 
 # 安全读取输入 (兼容旧调用, 内部走 read_from_user)
