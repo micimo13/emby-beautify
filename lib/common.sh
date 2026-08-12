@@ -19,22 +19,18 @@ die() { c_err "$*"; exit 1; }
 read_from_user() {
   local var="$1" default="${2:-}" val=""
   if [ -t 0 ]; then
+    # 终端: 无限等待用户输入
     read -r val
-  elif tty_available; then
-    # 有 tty: 从 /dev/tty 读 (1秒超时防挂起)
-    read -r -t 1 val < /dev/tty 2>/dev/null
   else
-    read -r val
-  fi
-  # 防脚本残留: 读到含脚本特征的内容视为无效输入
-  if echo "$val" | grep -qE '\$\(|TMPDIR=|rm -rf|#!/|\$[A-Z_]|; then|\bif \b|\bfor \b'; then
-    val=""
+    # 非终端: 尝试从 /dev/tty 读 (curl|bash 时 online-install 已把 stdin 切到终端)
+    # 无限等待, 绝不 1 秒超时 (那是之前把交互搞坏的元凶)
+    { read -r val < /dev/tty; } 2>/dev/null || read -r val
   fi
   [ -z "$val" ] && val="$default"
   eval "$var=\"$val\""
 }
 
-# 检测是否存在可用的 /dev/tty (1秒超时, 永不死等, 静默)
+# 检测是否存在可用的 /dev/tty (静默)
 tty_available() {
   ( exec 3<> /dev/tty ) 2>/dev/null
 }
