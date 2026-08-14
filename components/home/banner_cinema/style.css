@@ -64,7 +64,7 @@
   margin: 0;
   border-radius: 0;
   overflow: hidden;
-  background: #060607;
+  background: transparent;
   font-family: inherit;
   isolation: isolate;
   padding: 0;
@@ -96,24 +96,28 @@
   aspect-ratio: 21 / 9;
   max-height: 78vh;
   min-height: 300px;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 6px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 18px 60px rgba(0,0,0,.6);
-  background: #000;
+  background: transparent;
 }
 
 .cinema-screen {
   position: absolute;
   inset: 0;
+  background: transparent;
 }
 
 /* 宽幅背景 + 金色光影 + 暗角 */
 .cinema-bg {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-size: cover;
   background-position: center 40%;
   transition: background-image .6s ease;
+  z-index: 0;
 }
 .cinema-glow {
   position: absolute;
@@ -738,7 +742,7 @@ body.vanvy-loading-active .skinHeader.skinHeader-withBackground {
 
 /* 媒体库分类卡: 竖版 + 类型角标 */
 .vanvy-cinema .vml-card {
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 9;
   width: clamp(120px, 13vw, 168px);
 }
 .vanvy-cinema .vml-card-img {
