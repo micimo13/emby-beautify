@@ -743,7 +743,7 @@ body.vanvy-loading-active .skinHeader.skinHeader-withBackground {
 
 /* 媒体库分类卡: 竖版 + 类型角标 */
 .vanvy-split .vml-card {
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 9;
   width: clamp(120px, 13vw, 168px);
 }
 .vanvy-split .vml-card-img {
