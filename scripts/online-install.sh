@@ -36,14 +36,17 @@ TMPDIR=$(mktemp -d)
 # 下载源: GitHub 官方源优先, CDN 镜像兜底 (全部公网可访问)
 # 本地开发版: 官方分发域名优先 (上传 GitHub 时由 sync 脚本自动替换)
 PKG_URLS=(
-  "https://api.github.com/repos/micimo13/emby-beautify/emby-kit.tar.gz"  # 1. 官方分发域名
-  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 1. GitHub codeload 源码包
+  "https://emby-beautify.vanvy.top/emby-kit.tar.gz"  # 1. 官方分发域名
+  "https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"  # 2. GitHub codeload 源码包
   "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/emby-kit.tar.gz"  # 2. api.github.com (无缓存)
   "${REPO_BASE}/emby-kit.tar.gz"  # 3. GitHub raw
   # CDN 镜像兜底 (内容校验拒绝旧包)
   "https://fastly.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"
   "https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${REPO_BRANCH}/emby-kit.tar.gz"
   "https://gh-proxy.com/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"
+  # Cloudflare 加速节点 (主人自建 CDN, 用法: https://cdn.vanvy.cc/https://目标URL)
+  "https://cdn.vanvy.cc/https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/refs/heads/${REPO_BRANCH}"
+  "https://cdn.vanvy.cc/https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/refs/heads/${REPO_BRANCH}.tar.gz"
 )
 
 echo "⬇  下载 Emby Beautify ..."
@@ -56,12 +59,15 @@ for url in "${PKG_URLS[@]}"; do
       tar xzf "$TMPDIR/kit.tar.gz" -C "$TMPDIR" 2>/dev/null
       SRC=$(find "$TMPDIR" -maxdepth 2 -name install.sh | head -1 | xargs dirname 2>/dev/null)
       [ -z "$SRC" ] && SRC="$TMPDIR"
-      if grep -q "tr -dc" "$SRC/lib/detect.sh" 2>/dev/null; then
-        echo "  ✅ 下载成功: $(du -h "$TMPDIR/kit.tar.gz" | cut -f1) (含最新修复)"
+      if grep -q "tr -dc" "$SRC/lib/detect.sh" 2>/dev/null && \
+         grep -q "banner_cinema" "$SRC/scripts/online-install.sh" 2>/dev/null && \
+         grep -q "banner_aurora" "$SRC/lib/manifest.sh" 2>/dev/null && \
+         grep -q "banner_split" "$SRC/lib/manifest.sh" 2>/dev/null; then
+        echo "  ✅ 下载成功: $(du -h "$TMPDIR/kit.tar.gz" | cut -f1) (含最新修复+三套原创轮播)"
         DL_OK=1
         break
       else
-        echo "  ⚠️  包内容过旧 (CDN缓存?), 换下一个源..."
+        echo "  ⚠️  包内容过旧 (CDN缓存/旧版?), 换下一个源..."
       fi
     else
       echo "  ⚠️  文件不完整, 换下一个源..."
