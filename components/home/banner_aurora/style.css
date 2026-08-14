@@ -771,7 +771,7 @@ html body.vanvy-carousel-active .view:not(.hide) .scrollSlider.padded-top-page {
 
 /* 媒体库分类卡: 横版 16:9 (与 Emby 原始媒体库卡片一致, 背景图完整显示) + 类型角标 */
 .vanvy-aurora .vml-card {
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 9;
   width: clamp(120px, 13vw, 168px);
 }
 .vanvy-aurora .vml-card-img {
