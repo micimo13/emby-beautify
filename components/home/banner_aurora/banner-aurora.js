@@ -362,12 +362,20 @@
       }
 
       // 标题/简介/评分
-      titleEl.textContent = item.Name || '';
-      descEl.textContent = item.Overview ? (item.Overview.length > 160 ? item.Overview.slice(0, 160) + '…' : item.Overview) : '';
+      // 标题 = 简介 (与 Logo 徽标不重复, 更生动); 简介空时回退片名
+      let overview = item.Overview || '';
+      if (!overview) overview = item.Name || '';
+      titleEl.textContent = overview.length > 100 ? overview.slice(0, 100) + '…' : overview;
+      descEl.textContent = '';
       const year = item.ProductionYear || (item.PremiereDate || '').slice(0, 4);
       yearEl.textContent = year || '';
       yearEl.style.display = yearEl.textContent ? '' : 'none';
-      const rating = item.CommunityRating ? item.CommunityRating.toFixed(1) : '';
+      let rating = '';
+      if (item.CommunityRating) {
+        rating = item.CommunityRating.toFixed(1);
+      } else if (item.VoteAverage) {
+        rating = Number(item.VoteAverage).toFixed(1);
+      }
       ratingEl.innerHTML = rating ? `★ ${rating}` : '';
       ratingEl.style.display = rating ? '' : 'none';
       genreEl.textContent = (item.Genres && item.Genres[0]) || '';
