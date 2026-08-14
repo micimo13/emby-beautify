@@ -477,8 +477,9 @@
         logoFallback.style.display = 'block';
       }
 
-      // 标题 = 简介 (与 Logo 徽标不重复, 更生动); 年份旁加评分
-      const overview = item.Overview || '';
+      // 标题 = 简介 (与 Logo 徽标不重复, 更生动); 简介空时回退片名
+      let overview = item.Overview || '';
+      if (!overview) overview = item.Name || '';
       titleEl.textContent = overview.length > 100 ? overview.slice(0, 100) + '…' : overview;
       descEl.textContent = '';
       descEl.style.display = 'none';
