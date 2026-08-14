@@ -23,7 +23,8 @@
 
 - 🎬 换上**沉浸式首页轮播**（经典 / Fluent / Banner 三选一）
 - 🎨 一键应用 **7 款毛玻璃主题** + Vanvy 品牌定制
-- ⚡ 叠加 **8 个功能增强**（弹幕 / 豆瓣评分 / 倍速 / 剧照 / JAV 元数据…）
+- ⚡ 叠加 **10 个功能增强**（弹幕 / 豆瓣评分 / 倍速 / 剧照 / JAV 元数据 / Fluent布局 / 字体…）
+- 🎯 **轮播内容策展**（carousel-rules.json：每日推荐 / 近期上映 / 高分精选 / 优先置顶）
 - 🛡️ **自动识别镜像环境**，官方版 / LinuxServer / 社区版通吃
 - 💾 **持久化存储**，容器重建后一键恢复
 
@@ -142,18 +143,111 @@ bash uninstall.sh --container emby --reset        # 完全还原出厂
 | 🟢 翡翠绿 / 🩷 樱花粉 / 🟠 琥珀金 | 彩色系毛玻璃质感 |
 | 👑 **Vanvy 定制** | LOGO 替换 / 椭圆标签 / 简介弹框 / 剧集列表 / 播放页 |
 
-## ⚡ 功能增强（8 个）
+## ⚡ 功能增强（12 个）
 
 | 组件 | 功能 |
 |---|---|
+| 🎠 封面流轮播 | Swiper 封面流: 主图+缩略图联动 (可选, 与 3 款轮播互斥) |
 | 🔞 JAV 元数据 | Javdb 刮削 / 番号识别 / 演员作品 / 翻译 / 预告片 |
 | 💬 弹幕 | 多源弹幕（B站 / 抖音等） |
 | ⭐ 豆瓣评分 | 豆瓣 / Bangumi 评分展示 |
-| 🖼️ 剧照展示 | 详情页高清剧照 |
-| ⏩ 播放倍速 | 快捷键调节播放速度 |
+| ⏩ 播放倍速 | 快捷键调速 + **倍速记忆**（刷新/重启恢复） |
 | 🎬 外部播放器 | PotPlayer / VLC / MPV 等 |
-| 🎞️ 播放页增强 | OSD 布局 / 音量条适配 |
+| 🎞️ 播放页增强 | OSD 布局 + **音量记忆**（会话恢复） |
 | 🔗 远程路径 | 显示远程资源路径并可复制 |
+| 🪟 Fluent 布局 | 侧边栏浮层 / 透明顶栏 / 毛玻璃标签 / 细滚动条 |
+| 🔤 全局字体 | Plus Jakarta + HarmonyOS + 霞鹜文楷（双 CDN 回退） |
+| ✨ 悬停发光 | 卡片 hover 放大 + 蓝框发光（CSS-only） |
+| 🖼️ 详情增强 | 剧照轮播 + 预告片 + 相似影片 + 演员作品（JavDB 可选） |
+| 🖼️ 剧照展示 | 剧集列表 hover 剧照（与 JAV 剧照互补，排在最后避免覆盖） |
+
+## 🎯 轮播内容策展（吸收 EmbyCarouselGUI）
+
+首页轮播不再"随机抽卡"，而是可运营的内容位。编辑容器内 `vanvy/carousel_rules/carousel-rules.json`：
+
+```json
+{
+  "version": 1,
+  "rule": {
+    "name": "高分精选",
+    "types": ["Movie"],
+    "libraries": ["电影"],
+    "sort": "CommunityRating",
+    "order": "Descending",
+    "minPremiereDays": 90,
+    "maxCount": 5,
+    "pin": ["星际穿越", "流浪地球"]
+  }
+}
+```
+
+- `types`: Movie / Series / BoxSet（可组合）
+- `libraries`: 媒体库名称（空 = 全部，支持模糊匹配）
+- `sort`: PremiereDate / CommunityRating / DateCreated / ProductionYear / Random
+- `minPremiereDays`: 仅最近 N 天首映
+- `pin`: 优先置顶片名（按配置顺序）
+
+生成器脚本（可 cron 自动刷新）：
+
+```bash
+python3 scripts/gen_carousel_rules.py --container emby gen --template daily --keep 1 --deploy
+python3 scripts/gen_carousel_rules.py --container emby gen --template top-rated --keep 5 --deploy
+# cron: 每天 6 点刷新每日推荐
+0 6 * * * python3 scripts/gen_carousel_rules.py --container emby gen --template daily --keep 1 --deploy
+```
+
+模板：`daily`（每日推荐）/ `recent`（近期上映）/ `new-added`（最近入库）/ `top-rated`（高分精选）/ `collection`（随机合集）
+
+## 🎠 轮播选择（4 款互斥）
+
+| 风格 | 特点 | 版本 |
+|---|---|---|
+| 🎠 经典轮播 | 全宽大图 + Logo + 信息 | 4.8 |
+| 🎠 Fluent轮播 | Fluent 风格 + 自动播放 | 4.8, 4.9 |
+| 🎠 Banner图轮播 | 横幅图 + 随机 + 按钮 | 4.8, 4.9 |
+| 🎠 封面流轮播 | Swiper 封面流: 主图+缩略图联动 | 4.8, 4.9 |
+
+安装封面流轮播：
+```bash
+bash install.sh --container <名> --feature banner_homeswiper --yes
+```
+
+## 🛡️ 备份与冲突防护
+
+- 首次安装自动备份**出厂原始 index.html**（时间戳栈）：`bash uninstall.sh --list-backups` 查看，`--restore-backup <时间戳>` 恢复
+- 安装前自动**外部插件冲突预检**（emby-crx / dd-danmaku / embyExternalUrl / Home-Swiper / Emby-Fluent）
+- 轮播组件版本不兼容时自动 fallback 到兼容风格（4.8→经典，4.9→Fluent）
+
+## 🪟 双模部署
+
+同一套组件支持两种部署方式：
+
+### 1. 服务端注入版（默认，全端生效）
+```bash
+bash install.sh --package full --yes
+```
+
+### 2. Chrome 扩展版（免改服务端，单浏览器生效）
+```bash
+bash scripts/build_extension.sh   # 生成 extension/vanvy-emby-kit-extension.zip
+```
+Chrome → `chrome://extensions` → 开发者模式 → 加载已解压的扩展程序 → 选择 `extension/` 目录
+
+> 扩展版自动装配：轮播策展 + Fluent 布局 + 全局字体，规则文件仍从服务端读取（同源 fetch）
+
+## 🖥️ Windows 部署（非 Docker）
+
+Emby 跑在 Windows 上时，用 PowerShell 安装器（功能对等 bash 版）：
+```powershell
+# 管理员 PowerShell, 先停止 Emby Server 服务
+.\install_plugins.ps1 -Package full        # 全家桶
+.\install_plugins.ps1 -Style banner_fluent -Features danmaku,douban
+.\install_plugins.ps1 -Uninstall           # 卸载
+```
+
+## 🎬 第三方播放器 FAQ
+
+PotPlayer / MPV 调用问题（协议注册 / 乱码 / 多开 / 排查清单）：见 [docs/PLAYER_FAQ.md](docs/PLAYER_FAQ.md)
 
 ---
 
@@ -170,9 +264,17 @@ emby-beautify/
 │   └── persist.sh          # 持久化（钩子 / restore 双模式）
 ├── core/                   # 核心库（vanvy-core.js + jquery/md5）
 ├── components/
-│   ├── home/               # 轮播（三选一互斥）
+│   ├── home/               # 轮播（三选一互斥）+ carousel_rules 策展
 │   ├── themes/             # 毛玻璃主题 + Vanvy 定制
-│   └── features/           # 功能增强（8个）
+│   └── features/           # 功能增强（12个）
+├── extension/              # Chrome 扩展版 (MV3, 双模部署)
+├── install_plugins.ps1     # Windows PowerShell 安装器
+├── scripts/
+│   ├── gen_carousel_rules.py  # 轮播策展规则生成器（可 cron）
+│   └── build_extension.sh     # 打包 Chrome 扩展
+└── docs/
+    ├── RESEARCH_4PROJECTS.md  # 4 项目调研报告
+    └── PLAYER_FAQ.md          # 第三方播放器 FAQ
 └── scripts/
     └── online-install.sh   # 在线安装入口
 ```
