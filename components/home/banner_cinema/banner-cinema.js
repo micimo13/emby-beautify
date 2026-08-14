@@ -73,6 +73,7 @@
       window.addEventListener('popstate', cleanupAway);
 
       let lastUrl = window.location.href;
+      let lastMountTime = 0;  // 挂载冷却: 避免 Emby 视图重渲染导致的重复挂载 (loading 重复)
 
       // 轮询: 仅首页视图(!/home) + 容器就绪即挂载 (提前显示 loading)
       setInterval(() => {
@@ -97,11 +98,14 @@
             this.initStart = false;
             document.body.classList.remove('vanvy-carousel-active');
           }
-          // 首页容器出现 + 轮播不在 → 挂载
+          // 首页容器出现 + 轮播不在 + 冷却期已过 → 挂载
+          const now = Date.now();
           if (!this.initStart &&
               document.querySelector('.view:not(.hide) .homeSectionsContainer, .view:not(.hide) .sections') &&
-              !document.querySelector('.view:not(.hide) .vanvy-cinema')) {
+              !document.querySelector('.view:not(.hide) .vanvy-cinema') &&
+              (now - lastMountTime) > 2500) {
             this.initStart = true;
+            lastMountTime = now;
             this.init();
           }
         } else {
@@ -400,10 +404,10 @@
     /* 生成轮播结构 (不含 loading, loading 独立挂 body) */
     static buildHTML() {
       return `
+        <div class="cinema-bg"></div>
         <div class="cinema-top-bar"></div>
         <div class="cinema-frame">
           <div class="cinema-screen">
-            <div class="cinema-bg"></div>
             <div class="cinema-glow"></div>
             <div class="cinema-vignette"></div>
 
