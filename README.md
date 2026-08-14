@@ -21,12 +21,15 @@
 
 **Vanvy Emby Kit** 是一个面向自建媒体库爱好者的 **Emby 前端美化工具箱**。无论你的 Emby 跑在群晖、威联通、飞牛、UNRAID 还是任何 Linux 服务器上，只需一行命令，就能：
 
-- 🎬 换上**沉浸式首页轮播**（经典 / Fluent / Banner 三选一）
+- 🎠 换上**沉浸式首页轮播**（**7 款可选**，含 3 款原创设计：AURORA 极光 / CINEMA 影院黑金 / SPLIT 分屏新视界）
+- 🌌 **品牌加载动画**：进入首页先有全屏专属过渡动画（极光 / 放映机 / 分屏呼吸），轮播就绪后平滑淡出
+- 🎬 **轮播内媒体库**：底部卡片流浏览真实媒体库分类，可拖拽 / 滚轮 / 左右箭头滚动，hover 有扫光 + 发光 + 进入提示
+- 🎯 **影片备选列表**：右侧 / 底部缩略图流，全量渲染可滚动，点击即切换轮播
+- 📺 **一键直达**：详情按钮跳官方详情页，播放按钮调官方播放器（全屏直播）
 - 🎨 一键应用 **7 款毛玻璃主题** + Vanvy 品牌定制
-- ⚡ 叠加 **10 个功能增强**（弹幕 / 豆瓣评分 / 倍速 / 剧照 / JAV 元数据 / Fluent布局 / 字体…）
-- 🎯 **轮播内容策展**（carousel-rules.json：每日推荐 / 近期上映 / 高分精选 / 优先置顶）
+- ⚡ 叠加 **13 个功能增强**（弹幕 / 豆瓣评分 / 倍速记忆 / 剧照 / JAV 元数据 / Fluent布局 / 字体…）
 - 🛡️ **自动识别镜像环境**，官方版 / LinuxServer / 社区版通吃
-- 💾 **持久化存储**，容器重建后一键恢复
+- 💾 **持久化存储**，容器重建后一键恢复（社区版自动注入启动钩子）
 
 > 💡 自动探测容器内的 Web 目录与 Emby 版本，适配所有主流镜像布局，无需关心镜像差异。
 
@@ -127,13 +130,25 @@ bash uninstall.sh --container emby --reset        # 完全还原出厂
 
 ---
 
-## 🎠 首页轮播（三选一）
+## 🎠 首页轮播（7 款可选，三款原创）
+
+### 🌌 原创轮播（自研，6 色主题可选）
+
+| 风格 | 效果 | 专属加载动画 | 布局亮点 |
+|---|---|---|---|
+| 🌌 **AURORA 极光** | 极光光晕 + 封面流 + 毛玻璃 | 极光流动 + LOGO 呼吸 + 流光进度 | 左侧信息卡 + 右侧竖排影片备选（5行可滚）+ 底部媒体库卡片流 |
+| 🎬 **CINEMA 影院黑金** | 21:9 超宽画幅 + 上下黑边 + 胶片帧条 | 放映机光束 + 胶片帧条滚动 | 右下角毛玻璃信息卡 + 底部胶片缩略图 + 媒体库卡片流 |
+| 📐 **SPLIT 分屏新视界** | 左竖版海报 + 右毛玻璃面板 + 网格光效 | 左右分屏呼吸 | 全屏背景 + 悬浮海报卡 + 底部横图缩略流 + 媒体库卡片流 |
+
+> 原创轮播统一支持：**6 色主题**（蓝紫极光 / 青绿 / 粉紫 / 暖金 / 深海 / 黑金）、**品牌加载动画**、**媒体库卡片流**（拖拽 + 滚轮 + 箭头滚动）、**影片备选列表**（全量渲染可滚）、**详情/播放按钮**（官方路由直跳）、**顶栏悬浮透明**（轮播真满屏）、**手机响应式**。
+
+### 🎠 经典轮播（三选一 + 封面流）
 
 | 风格 | 效果 | 适配版本 |
 |---|---|---|
 | 🎠 经典轮播 | Backdrop 大图 + 信息 + LOGO，8 秒自动滚动 | 4.8 |
 | 🎠 Fluent 轮播 | 无缝循环 + 左右导航 + 失败自动清理 | 4.8 / 4.9 |
-| 🎠 Banner 轮播 | Banner 横幅图 + 随机排序 + 按钮控制 | 4.8 / 4.9 |
+| 🎠 封面流轮播 | Swiper 封面流: 主图+缩略图联动 (emby-crx 原版) | 4.8 / 4.9 |
 
 ## 🎨 主题美化（毛玻璃互斥，可叠加品牌主题）
 
@@ -143,11 +158,10 @@ bash uninstall.sh --container emby --reset        # 完全还原出厂
 | 🟢 翡翠绿 / 🩷 樱花粉 / 🟠 琥珀金 | 彩色系毛玻璃质感 |
 | 👑 **Vanvy 定制** | LOGO 替换 / 椭圆标签 / 简介弹框 / 剧集列表 / 播放页 |
 
-## ⚡ 功能增强（12 个）
+## ⚡ 功能增强（13 个）
 
 | 组件 | 功能 |
 |---|---|
-| 🎠 封面流轮播 | Swiper 封面流: 主图+缩略图联动 (可选, 与 3 款轮播互斥) |
 | 🔞 JAV 元数据 | Javdb 刮削 / 番号识别 / 演员作品 / 翻译 / 预告片 |
 | 💬 弹幕 | 多源弹幕（B站 / 抖音等） |
 | ⭐ 豆瓣评分 | 豆瓣 / Bangumi 评分展示 |
@@ -160,6 +174,7 @@ bash uninstall.sh --container emby --reset        # 完全还原出厂
 | ✨ 悬停发光 | 卡片 hover 放大 + 蓝框发光（CSS-only） |
 | 🖼️ 详情增强 | 剧照轮播 + 预告片 + 相似影片 + 演员作品（JavDB 可选） |
 | 🖼️ 剧照展示 | 剧集列表 hover 剧照（与 JAV 剧照互补，排在最后避免覆盖） |
+| 📚 媒体库卡片流 | 原创轮播底部媒体库分类卡片（拖拽/滚轮/箭头滚动 + hover 特效） |
 
 ## 🎯 轮播内容策展（吸收 EmbyCarouselGUI）
 
@@ -198,130 +213,19 @@ python3 scripts/gen_carousel_rules.py --container emby gen --template top-rated 
 
 模板：`daily`（每日推荐）/ `recent`（近期上映）/ `new-added`（最近入库）/ `top-rated`（高分精选）/ `collection`（随机合集）
 
-## 🎠 轮播选择（4 款互斥）
-
-| 风格 | 特点 | 版本 |
-|---|---|---|
-| 🎠 经典轮播 | 全宽大图 + Logo + 信息 | 4.8 |
-| 🎠 Fluent轮播 | Fluent 风格 + 自动播放 | 4.8, 4.9 |
-| 🎠 Banner图轮播 | 横幅图 + 随机 + 按钮 | 4.8, 4.9 |
-| 🎠 封面流轮播 | Swiper 封面流: 主图+缩略图联动 | 4.8, 4.9 |
-
-安装封面流轮播：
-```bash
-bash install.sh --container <名> --feature banner_homeswiper --yes
-```
-
-## 🛡️ 备份与冲突防护
-
-- 首次安装自动备份**出厂原始 index.html**（时间戳栈）：`bash uninstall.sh --list-backups` 查看，`--restore-backup <时间戳>` 恢复
-- 安装前自动**外部插件冲突预检**（emby-crx / dd-danmaku / embyExternalUrl / Home-Swiper / Emby-Fluent）
-- 轮播组件版本不兼容时自动 fallback 到兼容风格（4.8→经典，4.9→Fluent）
-
-## 🪟 双模部署
-
-同一套组件支持两种部署方式：
-
-### 1. 服务端注入版（默认，全端生效）
-```bash
-bash install.sh --package full --yes
-```
-
-### 2. Chrome 扩展版（免改服务端，单浏览器生效）
-```bash
-bash scripts/build_extension.sh   # 生成 extension/vanvy-emby-kit-extension.zip
-```
-Chrome → `chrome://extensions` → 开发者模式 → 加载已解压的扩展程序 → 选择 `extension/` 目录
-
-> 扩展版自动装配：轮播策展 + Fluent 布局 + 全局字体，规则文件仍从服务端读取（同源 fetch）
-
-## 🖥️ Windows 部署（非 Docker）
-
-Emby 跑在 Windows 上时，用 PowerShell 安装器（功能对等 bash 版）：
-```powershell
-# 管理员 PowerShell, 先停止 Emby Server 服务
-.\install_plugins.ps1 -Package full        # 全家桶
-.\install_plugins.ps1 -Style banner_fluent -Features danmaku,douban
-.\install_plugins.ps1 -Uninstall           # 卸载
-```
-
-## 🎬 第三方播放器 FAQ
-
-PotPlayer / MPV 调用问题（协议注册 / 乱码 / 多开 / 排查清单）：见 [docs/PLAYER_FAQ.md](docs/PLAYER_FAQ.md)
-
 ---
 
-## 🏗️ 架构设计
+## 🧠 技术亮点
 
-```
-emby-beautify/
-├── install.sh              # 主安装器（交互 + CLI）
-├── uninstall.sh            # 卸载/还原（--all/--only/--reset）
-├── lib/
-│   ├── detect.sh           # 环境识别（镜像类型/Web目录/版本/内置美化）
-│   ├── manifest.sh         # 组件注册表（声明式）
-│   ├── common.sh           # 注入/去重/备份工具
-│   └── persist.sh          # 持久化（钩子 / restore 双模式）
-├── core/                   # 核心库（vanvy-core.js + jquery/md5）
-├── components/
-│   ├── home/               # 轮播（三选一互斥）+ carousel_rules 策展
-│   ├── themes/             # 毛玻璃主题 + Vanvy 定制
-│   └── features/           # 功能增强（12个）
-├── extension/              # Chrome 扩展版 (MV3, 双模部署)
-├── install_plugins.ps1     # Windows PowerShell 安装器
-├── scripts/
-│   ├── gen_carousel_rules.py  # 轮播策展规则生成器（可 cron）
-│   └── build_extension.sh     # 打包 Chrome 扩展
-└── docs/
-    ├── RESEARCH_4PROJECTS.md  # 4 项目调研报告
-    └── PLAYER_FAQ.md          # 第三方播放器 FAQ
-└── scripts/
-    └── online-install.sh   # 在线安装入口
-```
-
-### 设计原则
-
-- **精准注入**：只注入你选择的组件，绝不误装
-- **幂等安装**：重复运行不会重复注入
-- **自动识别**：镜像类型 / Web 目录 / 版本自动探测
-- **安全备份**：每次注入前自动备份 index.html
-
----
-
-## 🧪 兼容性
-
-| 镜像 | Web 目录 | 持久化方式 |
-|---|---|---|
-| 官方版 `emby/embyserver` | `/system/dashboard-ui` | `--restore` |
-| LinuxServer `linuxserver/emby` | `/app/emby/system/dashboard-ui` | `--restore` |
-| 社区版 `amilys/embyserver` | `/system/dashboard-ui` | 自动钩子 |
-
-Emby 版本：**4.8 / 4.9**（自动识别）
-
----
-
-## 🙏 致谢
-
-本项目的美化设计参考了以下优秀的开源项目，在此表示衷心感谢：
-
-| 项目 | 贡献 |
-|---|---|
-| [emby-crx](https://github.com/Nolovenodie/emby-crx) | 经典轮播设计 |
-| [Emby-Fluent](https://github.com/heichaowo/Emby-Fluent) | Fluent 轮播与毛玻璃设计 |
-| [dd-danmaku](https://github.com/chen3861229/dd-danmaku) | 弹幕组件 |
-| [embyToLocalPlayer](https://github.com/kjtsune/embyToLocalPlayer) | 豆瓣评分与外部播放器方案 |
-| [Emby-Javascript-Details](https://github.com/XingyiHua2024/Emby-Javascript-Details) | JAV 详情页 |
-
-其余组件均为本项目自研。
+- **加载动画全屏化**：`position:fixed` 挂载到 `document.body` 顶层，避开容器 `mask-image` 的包含块陷阱，真正占满视口（100vw×100vh），顶栏 `display:none` 彻底移除
+- **返回首页自动恢复**：URL 变化检测（Emby 的 `Emby.Page.show` 用 History API，不触发 hashchange），离开首页清理轮播，返回自动重挂载，无需刷新
+- **媒体库路由映射**：按 CollectionType 映射官方路由（movies/homevideos → `/videos`，tvshows → `/tv`，boxsets → `/list`），跳转带 `serverId`，点击即达
+- **播放器接入**：`Emby.importModule` 加载官方 playbackManager，`play({fullscreen, ids, serverId})` 全屏直播
+- **选择器提权**：顶栏透明规则用 `body.vanvy-carousel-active .skinHeader.skinHeader-withBackground`，避开主题 CSS 特异性冲突
+- **防冲突设计**：轮播内置媒体库为独立渲染（不 detach 原 section0，不破坏原布局），与右侧影片备选分工明确
 
 ---
 
 ## 📄 License
 
-[MIT](LICENSE)
-
----
-
-<p align="center">
-  <b>Vanvy Emby Kit</b> · Make your Emby beautiful 🎨
-</p>
+MIT
