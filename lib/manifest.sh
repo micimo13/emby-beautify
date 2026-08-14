@@ -16,6 +16,10 @@ MANIFEST_STYLES=(
   "banner_classic|style|🎠 经典轮播|4.8|Backdrop 大图 + 信息 + LOGO，8 秒自动滚动|components/home/banner_classic|home|<link rel=\"stylesheet\" id=\"theme-css\" href=\"vanvy/banner_classic/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/core/common-utils.js\"></script>|<script src=\"vanvy/core/jquery-3.6.0.min.js\"></script>|<script src=\"vanvy/core/md5.min.js\"></script>|<script src=\"vanvy/banner_classic/banner-classic.js\"></script>|vanvy/banner_classic/banner-classic.js|"
   "banner_fluent|style|🎠 Fluent轮播|4.8,4.9|无缝循环 + 左右导航 + 失败自动清理|components/home/banner_fluent|home|<link rel=\"stylesheet\" id=\"theme-css\" href=\"vanvy/banner_fluent/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/core/common-utils.js\"></script>|<script src=\"vanvy/core/jquery-3.6.0.min.js\"></script>|<script src=\"vanvy/core/md5.min.js\"></script>|<script src=\"vanvy/banner_fluent/banner-fluent.js\"></script>|vanvy/banner_fluent/banner-fluent.js|"
   "banner_carousel|style|🎠 Banner图轮播|4.8,4.9|Banner 横幅图 + 随机排序 + 按钮控制|components/home/banner_carousel|home|<script src=\"vanvy/core/common-utils.js\"></script>|<script src=\"vanvy/core/jquery-3.6.0.min.js\"></script>|<script src=\"vanvy/core/md5.min.js\"></script>|<script src=\"vanvy/banner_carousel/banner-carousel.js\"></script>|vanvy/banner_carousel/banner-carousel.js|"
+  "banner_homeswiper|style|🎠 封面流轮播|4.8,4.9|Swiper 封面流: 主图+缩略图联动 (emby-crx 原版)|components/home/banner_homeswiper|home|<link rel=\"stylesheet\" id=\"theme-css\" href=\"vanvy/banner_homeswiper/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/core/common-utils.js\"></script>|<script src=\"vanvy/core/jquery-3.6.0.min.js\"></script>|<script src=\"vanvy/core/md5.min.js\"></script>|<script src=\"vanvy/banner_homeswiper/HomeSwiper.js\"></script>|vanvy/banner_homeswiper/HomeSwiper.js|"
+  "banner_aurora|style|🌌 AURORA 极光轮播|4.8,4.9|原创: 极光光晕+封面流+毛玻璃 (6色可选)|components/home/banner_aurora|home|<link rel=\"stylesheet\" href=\"vanvy/banner_aurora/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/banner_aurora/banner-aurora.js\"></script>|vanvy/banner_aurora/banner-aurora.js|"
+  "banner_cinema|style|🎬 CINEMA 影院黑金|4.8,4.9|原创: 21:9超宽画幅+上下黑边+胶片帧条+放映按钮 (6色可选)|components/home/banner_cinema|home|<link rel=\"stylesheet\" href=\"vanvy/banner_cinema/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/banner_cinema/banner-cinema.js\"></script>|vanvy/banner_cinema/banner-cinema.js|"
+  "banner_split|style|📐 SPLIT 分屏新视界|4.8,4.9|原创: 左竖版海报+右毛玻璃信息面板+网格光效 (6色可选)|components/home/banner_split|home|<link rel=\"stylesheet\" href=\"vanvy/banner_split/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/banner_split/banner-split.js\"></script>|vanvy/banner_split/banner-split.js|"
 )
 
 # ─────────── CSS 主题 themes (可叠加, 变量驱动) ───────────
@@ -35,11 +39,14 @@ MANIFEST_FEATURES=(
   "jav_details|feature|🔞 JAV元数据美化|all|Javdb 刮削 / 番号识别 / 演员作品 / 翻译 / 预告片|components/features/jav_details|detail|<script src=\"vanvy/features/jav_details/cn2t.js\"></script>|<script src=\"vanvy/features/jav_details/trailer_more_button.js\"></script>|<script src=\"vanvy/features/jav_details/emby_detail_page.js\"></script>|<script src=\"vanvy/features/jav_details/list_page_trailer.js\"></script>|<script src=\"vanvy/features/jav_details/actor_page.js\"></script>|vanvy/features/jav_details/emby_detail_page.js|"
   "danmaku|feature|💬 弹幕|all|多源弹幕（B站 / 抖音等）|components/features/danmaku|global|<script src=\"vanvy/features/danmaku/ede.js\" charset=\"utf-8\"></script>|vanvy/features/danmaku/ede.js|"
   "douban|feature|⭐ 豆瓣/Bangumi评分|all|详情页豆瓣评分|components/features/douban|detail|<script src=\"vanvy/features/douban/douban-score.js\"></script>|vanvy/features/douban/douban-score.js|"
-  "extrafanart|feature|🖼️ 剧照展示|all|详情页高清剧照|components/features/extrafanart|detail|<script src=\"vanvy/features/extrafanart/stills.js\"></script>|vanvy/features/extrafanart/stills.js|"
   "playbackrate|feature|⏩ 播放倍速|all|快捷键调节倍速|components/features/playbackrate|global|<script src=\"vanvy/features/playbackrate/playback-speed.js\"></script>|vanvy/features/playbackrate/playback-speed.js|"
   "localplayer|feature|🎬 第三方播放器|all|调用 PotPlayer/mpv|components/features/localplayer|global|<script src=\"vanvy/features/localplayer/external-player.js\"></script>|vanvy/features/localplayer/external-player.js|"
   "player_enhance|feature|🎞️ 播放页增强|all|OSD 布局 / 音量条适配|components/features/player_enhance|global|<link rel=\"stylesheet\" href=\"vanvy/features/player_enhance/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/features/player_enhance/player-enhance.js\"></script>|vanvy/features/player_enhance/player-enhance.js|"
-  "embytool|feature|🔗 远程路径助手|all|显示远程资源路径并支持复制|components/features/embytool|global|<script src=\"vanvy/features/embytool/remote-path.js\"></script>|vanvy/features/embytool/remote-path.js|"
+  "fluent_layout|feature|🪟 Fluent布局|all|侧边栏浮层 / 透明顶栏 / 毛玻璃标签 / 细滚动条|components/features/fluent_layout|global|<script src=\"vanvy/features/fluent_layout/fluent-layout.js\"></script>|vanvy/features/fluent_layout/fluent-layout.js|"
+  "global_fonts|feature|🔤 全局字体|all|Plus Jakarta + HarmonyOS + 霞鹜文楷 (双CDN回退)|components/features/global_fonts|global|<link rel=\"stylesheet\" href=\"vanvy/features/global_fonts/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/features/global_fonts/global-fonts.js\"></script>|vanvy/features/global_fonts/global-fonts.js|"
+  "hover_glow|feature|✨ 悬停发光|all|卡片 hover 放大+蓝框 (CSS-only)|components/features/hover_glow|global|<link rel=\"stylesheet\" href=\"vanvy/features/hover_glow/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"vanvy/features/hover_glow/hover-glow.js\"></script>|vanvy/features/hover_glow/hover-glow.js|"
+  "detail_extra|feature|🖼️ 详情增强|all|剧照+预告片+相似影片+演员作品 (JavDB可选)|components/features/detail_extra|global|<script src=\"vanvy/features/detail_extra/extrafanart-trailers.js\"></script>|vanvy/features/detail_extra/extrafanart-trailers.js|"
+  "embytool|feature|🔗 远程路径助手|all|显示远程资源路径并支持复制|components/features/embytool|global|<script src=\"vanvy/features/embytool/remote-path.js\"></script>|vanvy/features/embytool/remote-path.js|"  "extrafanart|feature|🖼️ 剧照展示|all|详情页高清剧照|components/features/extrafanart|detail|<script src=\"vanvy/features/extrafanart/stills.js\"></script>|vanvy/features/extrafanart/stills.js|"
 )
 
 # ─────────── 品牌 branding ───────────
@@ -50,9 +57,9 @@ MANIFEST_BRANDING=(
 # ─────────── 组件包 packages ───────────
 MANIFEST_PACKAGES=(
   "minimal|📦 极简包|banner_classic,vanvy_custom"
-  "movie|📦 观影包|banner_classic,vanvy_custom,danmaku,douban,extrafanart,playbackrate,localplayer,embytool"
+  "movie|📦 观影包|banner_classic,vanvy_custom,danmaku,douban,playbackrate,localplayer,embytool,fluent_layout,global_fonts,extrafanart"
   "detail|📦 详情包|banner_classic,vanvy_custom,jav_details"
-  "full|📦 全家桶|banner_classic,vanvy_custom,danmaku,douban,extrafanart,playbackrate,localplayer,embytool,jav_details,player_enhance"
+  "full|📦 全家桶|banner_classic,vanvy_custom,danmaku,douban,playbackrate,localplayer,embytool,jav_details,player_enhance,fluent_layout,global_fonts,hover_glow,detail_extra,extrafanart"
 )
 
 # ─────────── 解析工具 ───────────
