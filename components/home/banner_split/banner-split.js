@@ -345,22 +345,21 @@
 
     /* loading 控制 */
     static showLoading() {
-      // loading 挂到 body 顶层 (脱离轮播容器的 mask 包含块, 真正全屏 fixed)
+      // loading 独立创建并挂到 body 顶层 (彻底脱离轮播容器, 不残留)
       let l = document.getElementById('vanvy-global-loading');
-      if (!l && this.root) {
-        l = this.root.querySelector('.vanvy-loading');
-        if (l) {
-          l.id = 'vanvy-global-loading';
-          document.body.appendChild(l);
-        }
+      if (!l) {
+        l = document.createElement('div');
+        l.id = 'vanvy-global-loading';
+        l.className = 'vanvy-loading';
+        l.innerHTML = this.buildLoadingHTML();
+        document.body.appendChild(l);
       }
-      if (l) l.classList.remove('vl-hide');
-      // 主题变量复制到 body (loading 已挂 body 顶层, 需继承主题色)
+      l.classList.remove('vl-hide');
+      // 主题变量复制到 body
       if (this.root) {
         const themeCls = this.root.className.match(/vanvy-aurora-theme-[a-z]+/);
         if (themeCls) document.body.classList.add(themeCls[0]);
       }
-      // 全屏 loading 期间移除 Emby 顶栏容器 (不占布局空间)
       document.body.classList.add('vanvy-loading-active');
     }
     static hideLoading() {
@@ -373,9 +372,9 @@
       }
     }
 
-    static buildHTML() {
-      return `
-        <div class="vanvy-loading">
+    /* 生成全屏加载动画 HTML (独立挂 body, 不残留轮播容器) */
+    static buildLoadingHTML() {
+      return `        <div class="vanvy-loading">
           <div class="vl-bg"></div>
           <div class="vl-split-l"></div>
           <div class="vl-split-r"></div>
@@ -396,6 +395,12 @@
           </div>
         </div>
 
+`;
+    }
+
+    /* 生成轮播结构 (不含 loading, loading 独立挂 body) */
+    static buildHTML() {
+      return `
         <div class="split-stage">
           <div class="split-bg"></div>
           <div class="split-bg-vignette"></div>
