@@ -72,8 +72,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 10px);
-  mask-image: linear-gradient(to top, transparent 0%, black 10px);
+  /* 只底部渐隐融入页面, 顶部保持不透明 → 顶部无黑边 */
+  -webkit-mask-image: linear-gradient(to top, black calc(100% - 10px), transparent 100%);
+  mask-image: linear-gradient(to top, black calc(100% - 10px), transparent 100%);
 }
 
 /* 顶部影院氛围条 */
