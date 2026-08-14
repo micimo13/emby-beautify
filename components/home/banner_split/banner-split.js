@@ -477,10 +477,18 @@
       const year = item.ProductionYear || (item.PremiereDate || '').slice(0, 4);
       const genre = (item.Genres && item.Genres[0]) || '';
       kicker.textContent = [genre, year].filter(Boolean).join(' · ') || item.Type || '';
-      titleEl.textContent = item.Name || '';
-      descEl.textContent = item.Overview ? (item.Overview.length > 150 ? item.Overview.slice(0, 150) + '…' : item.Overview) : '';
+      // 标题 = 简介 (与海报不重复, 更生动); 简介空时回退片名
+      let overview = item.Overview || '';
+      if (!overview) overview = item.Name || '';
+      titleEl.textContent = overview.length > 100 ? overview.slice(0, 100) + '…' : overview;
+      descEl.textContent = '';
 
-      const rating = item.CommunityRating ? item.CommunityRating.toFixed(1) : '';
+      let rating = '';
+      if (item.CommunityRating) {
+        rating = item.CommunityRating.toFixed(1);
+      } else if (item.VoteAverage) {
+        rating = Number(item.VoteAverage).toFixed(1);
+      }
       ratingEl.innerHTML = rating ? `★ ${rating}` : '';
       ratingEl.style.display = rating ? '' : 'none';
       yearEl.textContent = year || '';
