@@ -80,6 +80,7 @@
       window.addEventListener('popstate', cleanupAway);
 
       let lastUrl = window.location.href;
+      let lastMountTime = 0;  // 挂载冷却: 避免 Emby 视图重渲染导致的重复挂载 (loading 重复)
 
       // 轮询: 仅首页视图(!/home) + 容器就绪即挂载
       // 关键: 离开首页(进媒体库/详情)时 Emby 销毁视图, 轮播 DOM 被移除
@@ -107,11 +108,14 @@
             this.initStart = false;
             document.body.classList.remove('vanvy-carousel-active');
           }
-          // 首页容器出现 + 轮播不在 → 挂载
+          // 首页容器出现 + 轮播不在 + 冷却期已过 → 挂载
+          const now = Date.now();
           if (!this.initStart &&
               document.querySelector('.view:not(.hide) .homeSectionsContainer, .view:not(.hide) .sections') &&
-              !document.querySelector('.view:not(.hide) .vanvy-aurora')) {
+              !document.querySelector('.view:not(.hide) .vanvy-aurora') &&
+              (now - lastMountTime) > 2500) {
             this.initStart = true;
+            lastMountTime = now;
             this.init();
           }
         } else {
