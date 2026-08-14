@@ -477,13 +477,21 @@
         logoFallback.style.display = 'block';
       }
 
-      // 标题/简介/评分
-      titleEl.textContent = item.Name || '';
-      descEl.textContent = item.Overview ? (item.Overview.length > 130 ? item.Overview.slice(0, 130) + '…' : item.Overview) : '';
+      // 标题 = 简介 (与 Logo 徽标不重复, 更生动); 年份旁加评分
+      const overview = item.Overview || '';
+      titleEl.textContent = overview.length > 100 ? overview.slice(0, 100) + '…' : overview;
+      descEl.textContent = '';
+      descEl.style.display = 'none';
       const year = item.ProductionYear || (item.PremiereDate || '').slice(0, 4);
       yearEl.textContent = year || '';
       yearEl.style.display = yearEl.textContent ? '' : 'none';
-      const rating = item.CommunityRating ? item.CommunityRating.toFixed(1) : '';
+      // 评分: 优先 CommunityRating, 无则尝试其他字段
+      let rating = '';
+      if (item.CommunityRating) {
+        rating = item.CommunityRating.toFixed(1);
+      } else if (item.VoteAverage) {
+        rating = Number(item.VoteAverage).toFixed(1);
+      }
       ratingEl.innerHTML = rating ? `★ ${rating}` : '';
       ratingEl.style.display = rating ? '' : 'none';
       genreEl.textContent = (item.Genres && item.Genres[0]) || '';
