@@ -242,7 +242,7 @@
             const card = document.createElement('div');
             card.className = 'vml-card';
             card.innerHTML =
-              '<div class="vml-card-img"><div class="vml-card-shine"></div></div>' +
+              '<div class="vml-card-blur"></div><div class="vml-card-img"><div class="vml-card-shine"></div></div>' +
               '<div class="vml-card-meta"><span class="vml-card-name"></span><span class="vml-card-type"></span></div>';
             card.querySelector('.vml-card-name').textContent = v.Name || '';
             card.querySelector('.vml-card-type').textContent = (v.CollectionType || 'folder').toUpperCase();
@@ -276,7 +276,11 @@
             frag.appendChild(card);
             if (v.ImageTags && v.ImageTags.Primary) {
               this.getImageUrl(v.Id, { type: 'Primary', maxWidth: 640, adjustForPixelRatio: false })
-                .then(u => { card.querySelector('.vml-card-img').style.backgroundImage = `url("${u}")`; })
+                .then(u => {
+                  card.querySelector('.vml-card-img').style.backgroundImage = `url("${u}")`;
+                  const blurEl = card.querySelector('.vml-card-blur');
+                  if (blurEl) blurEl.style.backgroundImage = `url("${u}")`;
+                })
                 .catch(() => {});
             } else {
               card.querySelector('.vml-card-img').style.background = 'linear-gradient(160deg, var(--vanvy-bg-1), var(--vanvy-bg-3))';
