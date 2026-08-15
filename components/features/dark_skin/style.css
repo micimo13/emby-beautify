@@ -61,9 +61,9 @@ html:not(.vanvy-admin) .cardBox {
 html:not(.vanvy-admin) .card:focus,
 html:not(.vanvy-admin) .card:hover {
   box-shadow:
-    0 0 0 1px var(--vanvy-accent, var(--vanvy-gold)),
+    0 0 0 1px var(--vanvy-accent-2, var(--vanvy-gold)),
     0 8px 26px rgba(0, 0, 0, 0.7) !important;
-  border-color: var(--vanvy-accent, var(--vanvy-gold)) !important;
+  border-color: var(--vanvy-accent-2, var(--vanvy-gold)) !important;
 }
 
 /* 卡片文字 */
@@ -75,6 +75,23 @@ html:not(.vanvy-admin) .card-image-text {
 }
 html:not(.vanvy-admin) .cardText-secondary {
   color: #9a9a9a !important;
+}
+
+/* ── 卡片聚焦: 完整四边主题色细框 (覆盖 Emby 默认伪元素边框, 解决右侧竖线被裁剪) ── */
+html:not(.vanvy-admin) .card:focus,
+html:not(.vanvy-admin) .card:focus-within {
+  box-shadow: 0 0 0 1.5px var(--vanvy-accent-2, var(--vanvy-gold)) !important;
+  outline: none !important;
+  z-index: 12 !important;
+}
+/* 禁用 Emby 默认的伪元素聚焦边框 (它导致右侧竖线显示不全) */
+html:not(.vanvy-admin) .card:focus .cardContent-bxsborder::before,
+html:not(.vanvy-admin) .card:focus-visible .cardContent-bxsborder-fv::before {
+  border-color: transparent !important;
+}
+html:not(.vanvy-admin) .cardContent-bxsborder,
+html:not(.vanvy-admin) .cardContent-bxsborder-fv {
+  overflow: visible !important;
 }
 
 /* 卡片图片轻微压暗 */
@@ -102,7 +119,7 @@ html:not(.vanvy-admin) .headerButton {
 }
 html:not(.vanvy-admin) .headerButton:focus,
 html:not(.vanvy-admin) .headerButton:hover {
-  color: var(--vanvy-accent, var(--vanvy-gold)) !important;
+  color: var(--vanvy-accent-2, var(--vanvy-gold)) !important;
 }
 
 /* ── 媒体库入口 tile / 侧边栏: 深黑玻璃 ── */
@@ -113,20 +130,20 @@ html:not(.vanvy-admin) .mainDrawer .navMenuOption {
 html:not(.vanvy-admin) .mainDrawer .navMenuOption:focus,
 html:not(.vanvy-admin) .mainDrawer .navMenuOption:hover {
   background: rgba(30, 30, 35, 0.95) !important;
-  color: var(--vanvy-accent, var(--vanvy-gold)) !important;
+  color: var(--vanvy-accent-2, var(--vanvy-gold)) !important;
 }
 
 /* ── 链接/强调文字: 主题色 ── */
 html:not(.vanvy-admin) a,
 html:not(.vanvy-admin) .emby-link .button-link,
 html:not(.vanvy-admin) .textlink {
-  color: var(--vanvy-accent, var(--vanvy-gold-soft)) !important;
+  color: var(--vanvy-accent-2, var(--vanvy-gold-soft)) !important;
 }
 
 /* ── 焦点描边: 主题色微光 ── */
 html:not(.vanvy-admin) .focuscontainer-x .emby-button:focus,
 html:not(.vanvy-admin) .focuscontainer-x :focus {
-  outline-color: var(--vanvy-accent, rgba(245, 197, 24, 0.4)) !important;
+  outline-color: var(--vanvy-accent-2, rgba(245, 197, 24, 0.4)) !important;
 }
 
 /* ── 按钮胶囊 ── */
