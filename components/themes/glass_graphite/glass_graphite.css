@@ -61,17 +61,17 @@ html.vanvy-theme-glass_graphite .vanvy-banner * {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   管理后台豁免 (html.vanvy-admin 由 dark-skin.js 维护)
-   Emby 设置/管理页还原默认观感
+   管理后台豁免 (Emby 4.8 根容器 .dashboardContainer)
+   纯后代选择器, 不依赖 JS class (视图缓存免疫)
    ═══════════════════════════════════════════════════════════ */
-html.vanvy-admin .mainDrawer.drawer-docked,
-html.vanvy-admin .mainDrawer:not(.drawer-open) {
+.dashboardContainer .mainDrawer.drawer-docked,
+.dashboardContainer .mainDrawer:not(.drawer-open) {
   background: unset !important;
   backdrop-filter: unset !important;
   -webkit-backdrop-filter: unset !important;
 }
 
-html.vanvy-admin .skinHeader-withBackground {
+.dashboardContainer .skinHeader-withBackground {
   background: unset !important;
   background-color: unset !important;
   backdrop-filter: unset !important;
@@ -79,12 +79,12 @@ html.vanvy-admin .skinHeader-withBackground {
   border: unset !important;
 }
 
-html.vanvy-admin .card {
+.dashboardContainer .card {
   border-radius: unset !important;
   overflow: unset !important;
 }
 
-html.vanvy-admin .dialog {
+.dashboardContainer .dialog {
   background: unset !important;
   backdrop-filter: unset !important;
   -webkit-backdrop-filter: unset !important;
@@ -92,11 +92,11 @@ html.vanvy-admin .dialog {
   border: unset !important;
 }
 
-html.vanvy-admin .emby-button {
+.dashboardContainer .emby-button {
   border-radius: unset !important;
 }
 
-html.vanvy-admin ::-webkit-scrollbar {
+.dashboardContainer ::-webkit-scrollbar {
   width: unset !important;
   height: unset !important;
 }
