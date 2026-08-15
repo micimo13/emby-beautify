@@ -9,8 +9,14 @@
   // CSS 已覆盖全部样式, JS 仅做防御性背景锁定 (路由重建时重钉)
   var BLACK = '#0a0a0c';
   var BLACK2 = '#070709';
+  function isDashboard() {
+    try {
+      return !!document.querySelector('.dashboardContainer');
+    } catch (e) { return false; }
+  }
   function apply() {
     try {
+      if (isDashboard()) return; // 管理后台豁免: 不钉黑
       var html = document.documentElement;
       var body = document.body;
       if (html) { html.style.backgroundColor = BLACK; }
