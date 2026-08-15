@@ -59,3 +59,44 @@ html.vanvy-theme-glass_graphite .vanvy-banner * {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   管理后台豁免 (html.vanvy-admin 由 dark-skin.js 维护)
+   Emby 设置/管理页还原默认观感
+   ═══════════════════════════════════════════════════════════ */
+html.vanvy-admin .mainDrawer.drawer-docked,
+html.vanvy-admin .mainDrawer:not(.drawer-open) {
+  background: unset !important;
+  backdrop-filter: unset !important;
+  -webkit-backdrop-filter: unset !important;
+}
+
+html.vanvy-admin .skinHeader-withBackground {
+  background: unset !important;
+  background-color: unset !important;
+  backdrop-filter: unset !important;
+  -webkit-backdrop-filter: unset !important;
+  border: unset !important;
+}
+
+html.vanvy-admin .card {
+  border-radius: unset !important;
+  overflow: unset !important;
+}
+
+html.vanvy-admin .dialog {
+  background: unset !important;
+  backdrop-filter: unset !important;
+  -webkit-backdrop-filter: unset !important;
+  border-radius: unset !important;
+  border: unset !important;
+}
+
+html.vanvy-admin .emby-button {
+  border-radius: unset !important;
+}
+
+html.vanvy-admin ::-webkit-scrollbar {
+  width: unset !important;
+  height: unset !important;
+}
