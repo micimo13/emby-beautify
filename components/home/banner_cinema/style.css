@@ -67,7 +67,11 @@
   background: transparent;
   font-family: inherit;
   isolation: isolate;
-  padding: 0;
+  box-sizing: border-box;
+  /* 媒体库层高度 (与 .vanvy-cinema-library 同步): 底部预留, 避免 cinema-strip 与其重叠
+     library 实际外框 = height(26%) + padding(上下≈26px), 故 +30px 余量 */
+  --vml-h: calc(clamp(110px, 26vh, 220px) + 30px);
+  padding: 0 0 var(--vml-h);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -94,11 +98,13 @@
   position: relative;
   width: min(100%, 100vh * 21 / 9);
   aspect-ratio: 21 / 9;
-  max-height: 78vh;
+  /* 预留底部媒体库层 + 胶片条空间, 防止 strip 与 vml-track 重叠 */
+  max-height: min(78vh, calc(100vh - var(--vml-h) - 130px));
   min-height: 300px;
   overflow: visible;
   border-radius: 6px;
   background: transparent;
+  box-sizing: border-box;
 }
 
 .cinema-screen {
@@ -200,21 +206,21 @@
   text-transform: uppercase;
 }
 .cinema-title {
-  font-size: clamp(12px, 1.2vw, 16px);
-  font-weight: 500;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, .82);
-  letter-spacing: .01em;
-  text-shadow: 0 1px 12px rgba(0,0,0,.6);
+  font-size: clamp(18px, 1.9vw, 32px);
+  font-weight: 900;
+  line-height: 1.12;
+  color: #fff;
+  letter-spacing: .02em;
+  text-shadow: 0 2px 26px rgba(0,0,0,.75);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 .cinema-desc {
-  font-size: clamp(10px, .9vw, 13px);
+  font-size: clamp(11px, 1vw, 14px);
   line-height: 1.5;
-  color: rgba(255,255,255,.75);
+  color: rgba(255,255,255,.8);
   max-width: 460px;
   text-shadow: 0 1px 12px rgba(0,0,0,.6);
   overflow: hidden;
@@ -255,9 +261,13 @@
 /* ── 底部胶片帧条 ── */
 .cinema-strip {
   position: relative;
+  width: 100%;
   margin-top: 10px;
   padding: 0 clamp(14px, 3vw, 44px);
   overflow: hidden;
+  box-sizing: border-box;
+  /* 遮罩(glow/vignette)已满屏(z2/z3), 胶片条需在其之上 */
+  z-index: 20;
 }
 .cinema-strip::before,
 .cinema-strip::after {
@@ -318,15 +328,15 @@
   transform: translateY(-3px);
 }
 
-/* 进度条 */
+/* 进度条 (位于媒体库层上方, 不被 vml-track 遮挡) */
 .cinema-progress {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: calc(var(--vml-h) + 2px);
   height: 3px;
   background: rgba(255,255,255,.07);
-  z-index: 20;
+  z-index: 41;
 }
 .cinema-progress i {
   display: block;
@@ -367,15 +377,15 @@
 
 /* ── 平板 (≤1024): 黑边减小 ── */
 @media (max-width: 1024px) {
-  .vanvy-cinema { padding: 10px 0 8px; }
-  .cinema-frame { aspect-ratio: 21 / 9.5; min-height: 280px; }
+  .vanvy-cinema { padding: 10px 0 calc(var(--vml-h) + 8px); }
+  .cinema-frame { aspect-ratio: 21 / 9.5; min-height: 280px; max-height: min(78vh, calc(100vh - var(--vml-h) - 130px)); }
   .cinema-content { bottom: 6%; width: min(52%, 540px); }
   .cinema-desc { -webkit-line-clamp: 1; }
 }
 
 /* ── 手机 (≤640): 黑边更细, 帧条3个 ── */
 @media (max-width: 640px) {
-  .vanvy-cinema { border-radius: 0; margin: 0 0 10px; padding: 6px 0 4px; }
+  .vanvy-cinema { border-radius: 0; margin: 0 0 10px; padding: 6px 0 calc(var(--vml-h) + 4px); }
   .cinema-frame { aspect-ratio: 16 / 9; min-height: 0; border-radius: 0; border: none; }
   .cinema-content {
     left: 10px;
@@ -729,9 +739,10 @@ html body.vanvy-carousel-active .view:not(.hide) .scrollSlider.padded-top-page {
 }
 
 @media (max-width: 48em) {
+  .vanvy-cinema { --vml-h: calc(clamp(84px, 24vh, 140px) + 30px); }
   .vanvy-cinema .vanvy-cinema-library { height: 24%; max-height: 140px; min-height: 84px; }
   .vanvy-cinema .vanvy-cinema-library .card { width: clamp(92px, 23vw, 124px); }
-  .vanvy-cinema .cinema-frame { max-height: 62vh; }
+  .vanvy-cinema .cinema-frame { max-height: min(62vh, calc(100vh - var(--vml-h) - 120px)); }
 }
 
 /* 全屏 loading 期间彻底移除 Emby 顶栏容器 (不占布局, 页面满屏) */
