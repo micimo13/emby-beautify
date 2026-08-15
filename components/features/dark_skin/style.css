@@ -2,41 +2,47 @@
    Vanvy Emby Kit · dark_skin 深色皮肤层 (全局可叠加)
    ───────────────────────────────────────────────────────────
    设计: 吸收社区优秀经验 (黑金强化版)
-   核心: 全局深黑统一 + 卡片质感 + 主题色强调 (跟随 --vanvy-accent)
+   核心: 用户浏览界面深黑统一 + 卡片质感 + 主题色强调
    用法: 与 themes/* 毛玻璃主题叠加, 强调色自动跟随主题
-   强调色优先级: 主题 --vanvy-accent > 金色 #f5c518 (默认黑金观感)
+   强调色优先级: 主题 --vanvy-accent > 金色 #f5c518
+
+   ⚠️ 管理后台豁免: Emby 设置/管理页 (body:has(.dashboardContainer))
+      完全还原 Emby 默认观感 — 管理界面要保持清晰可读, 不做沉浸黑
    ═══════════════════════════════════════════════════════════ */
 
-/* ── 全局深黑背景统一 ── */
-html,
-body,
-.skinBody {
+/* ═══════════════════════════════════════════════════════════
+   第一部分: 用户浏览界面深黑 (非管理后台)
+   判定: body 内无 .dashboardContainer
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 全局深黑背景 ── */
+html:has(body:not(:has(.dashboardContainer))),
+body:not(:has(.dashboardContainer)),
+body:not(:has(.dashboardContainer)) .skinBody {
   background: #0a0a0c !important;
   color: #e7e5e4 !important;
 }
 
-/* 背景容器真正铺黑 (替代 Emby 默认深灰) */
-.backgroundContainer,
-.backgroundContainer.backgroundContainer-withBackdrop {
+/* 背景容器铺黑 */
+body:not(:has(.dashboardContainer)) .backgroundContainer,
+body:not(:has(.dashboardContainer)) .backgroundContainer.backgroundContainer-withBackdrop {
   background: linear-gradient(180deg, #0a0a0c 0%, #070708 60%, #050506 100%) !important;
   background-color: #0a0a0c !important;
 }
 
-/* backdrop 背景图: 压暗 + 提饱和 (避免太亮抢戏) */
-.backdropContainer .backdrop,
-.backgroundContainer .backdropImage {
+/* backdrop 背景图: 压暗 + 提饱和 */
+body:not(:has(.dashboardContainer)) .backdropContainer .backdrop,
+body:not(:has(.dashboardContainer)) .backgroundContainer .backdropImage {
   filter: brightness(0.82) saturate(1.05) !important;
 }
 
 /* 页面主内容区透明 (露出纯黑底) */
-.pageWithAbsoluteTabs .pageTabContent,
-.pageTabContent,
-.homePageLibraryTile .section0,
-.homePageSections,
-.content-primary,
-.dashboardContentPage,
-.settingsPage,
-#homePage {
+body:not(:has(.dashboardContainer)) .pageWithAbsoluteTabs .pageTabContent,
+body:not(:has(.dashboardContainer)) .pageTabContent,
+body:not(:has(.dashboardContainer)) .homePageLibraryTile .section0,
+body:not(:has(.dashboardContainer)) .homePageSections,
+body:not(:has(.dashboardContainer)) .content-primary,
+body:not(:has(.dashboardContainer)) #homePage {
   background: transparent !important;
 }
 
@@ -48,15 +54,15 @@ html {
 }
 
 /* ── 卡片: 深黑底 + 圆角 + 悬浮主题色描边 ── */
-.card,
-.card.scalableCard,
-.cardBox {
+body:not(:has(.dashboardContainer)) .card,
+body:not(:has(.dashboardContainer)) .card.scalableCard,
+body:not(:has(.dashboardContainer)) .cardBox {
   background: #151518 !important;
   border-radius: 14px !important;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55) !important;
 }
-.card:focus,
-.card:hover {
+body:not(:has(.dashboardContainer)) .card:focus,
+body:not(:has(.dashboardContainer)) .card:hover {
   box-shadow:
     0 0 0 1px var(--vanvy-accent, var(--vanvy-gold)),
     0 8px 26px rgba(0, 0, 0, 0.7) !important;
@@ -64,27 +70,27 @@ html {
 }
 
 /* 卡片文字 */
-.cardText,
-.itemDetailText,
-.cardText-first,
-.card-image-text {
+body:not(:has(.dashboardContainer)) .cardText,
+body:not(:has(.dashboardContainer)) .itemDetailText,
+body:not(:has(.dashboardContainer)) .cardText-first,
+body:not(:has(.dashboardContainer)) .card-image-text {
   color: #d6d6d6 !important;
 }
-.cardText-secondary {
+body:not(:has(.dashboardContainer)) .cardText-secondary {
   color: #9a9a9a !important;
 }
 
-/* 卡片图片轻微压暗统一 */
-.cardImageContainer .cardImage,
-.innerCardImageContainer .cardImage {
+/* 卡片图片轻微压暗 */
+body:not(:has(.dashboardContainer)) .cardImageContainer .cardImage,
+body:not(:has(.dashboardContainer)) .innerCardImageContainer .cardImage {
   filter: brightness(0.96) !important;
 }
 
-/* ── 顶部导航: 深黑半透明渐变 (不遮挡轮播) ── */
-.skinHeader,
-.appHeader,
-.skinHeader.withBackground,
-.skinHeader-withBackground {
+/* ── 顶部导航: 深黑半透明渐变 ── */
+body:not(:has(.dashboardContainer)) .skinHeader,
+body:not(:has(.dashboardContainer)) .appHeader,
+body:not(:has(.dashboardContainer)) .skinHeader.withBackground,
+body:not(:has(.dashboardContainer)) .skinHeader-withBackground {
   background: linear-gradient(180deg, rgba(5, 5, 6, 0.92), rgba(5, 5, 6, 0.55) 70%, transparent) !important;
   background-color: transparent !important;
   color: #e5e5e5 !important;
@@ -92,59 +98,162 @@ html {
 }
 
 /* 头部标题/按钮: 悬浮主题色 */
-.skinHeader .sectionTitle,
-.skinHeader .headerButton,
-.headerButton {
+body:not(:has(.dashboardContainer)) .skinHeader .sectionTitle,
+body:not(:has(.dashboardContainer)) .skinHeader .headerButton,
+body:not(:has(.dashboardContainer)) .headerButton {
   color: #e0e0e0 !important;
 }
-.headerButton:focus,
-.headerButton:hover {
+body:not(:has(.dashboardContainer)) .headerButton:focus,
+body:not(:has(.dashboardContainer)) .headerButton:hover {
   color: var(--vanvy-accent, var(--vanvy-gold)) !important;
 }
 
 /* ── 媒体库入口 tile / 侧边栏: 深黑玻璃 ── */
-.homePageLibraryTile .card,
-.mainDrawer .navMenuOption {
+body:not(:has(.dashboardContainer)) .homePageLibraryTile .card,
+body:not(:has(.dashboardContainer)) .mainDrawer .navMenuOption {
   background: rgba(20, 20, 23, 0.85) !important;
 }
-.mainDrawer .navMenuOption:focus,
-.mainDrawer .navMenuOption:hover {
+body:not(:has(.dashboardContainer)) .mainDrawer .navMenuOption:focus,
+body:not(:has(.dashboardContainer)) .mainDrawer .navMenuOption:hover {
   background: rgba(30, 30, 35, 0.95) !important;
   color: var(--vanvy-accent, var(--vanvy-gold)) !important;
 }
 
 /* ── 链接/强调文字: 主题色 ── */
-a,
-.emby-link .button-link,
-.textlink {
+body:not(:has(.dashboardContainer)) a,
+body:not(:has(.dashboardContainer)) .emby-link .button-link,
+body:not(:has(.dashboardContainer)) .textlink {
   color: var(--vanvy-accent, var(--vanvy-gold-soft)) !important;
 }
 
 /* ── 焦点描边: 主题色微光 ── */
-.focuscontainer-x .emby-button:focus,
-.focuscontainer-x :focus {
+body:not(:has(.dashboardContainer)) .focuscontainer-x .emby-button:focus,
+body:not(:has(.dashboardContainer)) .focuscontainer-x :focus {
   outline-color: var(--vanvy-accent, rgba(245, 197, 24, 0.4)) !important;
 }
 
 /* ── 按钮胶囊 ── */
-.emby-button {
+body:not(:has(.dashboardContainer)) .emby-button {
   border-radius: 999px !important;
 }
 
 /* ── 滚动条细化 ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
+body:not(:has(.dashboardContainer))::-webkit-scrollbar,
+body:not(:has(.dashboardContainer)) ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+body:not(:has(.dashboardContainer))::-webkit-scrollbar-track,
+body:not(:has(.dashboardContainer)) ::-webkit-scrollbar-track {
+  background: transparent;
+}
+body:not(:has(.dashboardContainer))::-webkit-scrollbar-thumb,
+body:not(:has(.dashboardContainer)) ::-webkit-scrollbar-thumb {
   background: #2c2c30;
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover { background: #3a3a40; }
+body:not(:has(.dashboardContainer))::-webkit-scrollbar-thumb:hover,
+body:not(:has(.dashboardContainer)) ::-webkit-scrollbar-thumb:hover {
+  background: #3a3a40;
+}
 
 /* ── 底部栏 ── */
-.appfooter,
-#appFooter {
+body:not(:has(.dashboardContainer)) .appfooter,
+body:not(:has(.dashboardContainer)) #appFooter {
   background: rgba(10, 10, 12, 0.92) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   第二部分: 管理后台还原 (body:has(.dashboardContainer))
+   设置/管理页保持 Emby 默认观感, 全部 unset
+   ═══════════════════════════════════════════════════════════ */
+body:has(.dashboardContainer),
+body:has(.dashboardContainer) .skinBody {
+  background: unset !important;
+  background-color: unset !important;
+  color: unset !important;
+}
+
+body:has(.dashboardContainer) .backgroundContainer,
+body:has(.dashboardContainer) .backgroundContainer.backgroundContainer-withBackdrop {
+  background: unset !important;
+  background-color: unset !important;
+}
+
+body:has(.dashboardContainer) .backdropContainer .backdrop,
+body:has(.dashboardContainer) .backgroundContainer .backdropImage {
+  filter: unset !important;
+}
+
+/* 管理后台内容区透明化还原 */
+body:has(.dashboardContainer) .dashboardContainer,
+body:has(.dashboardContainer) .dashboardSections,
+body:has(.dashboardContainer) .dashboardSection,
+body:has(.dashboardContainer) .pageTabContent,
+body:has(.dashboardContainer) .content-primary {
+  background: unset !important;
+  background-color: unset !important;
+}
+
+/* 管理后台卡片还原 Emby 默认 */
+body:has(.dashboardContainer) .card,
+body:has(.dashboardContainer) .cardBox,
+body:has(.dashboardContainer) .paperList,
+body:has(.dashboardContainer) .listItem-border {
+  background: unset !important;
+  background-color: unset !important;
+  border-radius: unset !important;
+  box-shadow: unset !important;
+  border-color: unset !important;
+}
+body:has(.dashboardContainer) .card:focus,
+body:has(.dashboardContainer) .card:hover {
+  box-shadow: unset !important;
+  border-color: unset !important;
+}
+
+/* 管理后台文字/链接还原 */
+body:has(.dashboardContainer) .cardText,
+body:has(.dashboardContainer) .itemDetailText,
+body:has(.dashboardContainer) .cardText-first,
+body:has(.dashboardContainer) .card-image-text,
+body:has(.dashboardContainer) .cardText-secondary,
+body:has(.dashboardContainer) a,
+body:has(.dashboardContainer) .textlink,
+body:has(.dashboardContainer) .emby-link .button-link,
+body:has(.dashboardContainer) .emby-button,
+body:has(.dashboardContainer) .headerButton {
+  color: unset !important;
+  background-color: unset !important;
+}
+
+/* 管理后台按钮还原 (不胶囊) */
+body:has(.dashboardContainer) .emby-button {
+  border-radius: unset !important;
+}
+
+/* 管理后台顶部导航还原 */
+body:has(.dashboardContainer) .skinHeader,
+body:has(.dashboardContainer) .skinHeader-withBackground,
+body:has(.dashboardContainer) .appHeader {
+  background: unset !important;
+  background-color: unset !important;
+  border-bottom: unset !important;
+  color: unset !important;
+}
+
+/* 管理后台图片不压暗 */
+body:has(.dashboardContainer) .cardImageContainer .cardImage,
+body:has(.dashboardContainer) .innerCardImageContainer .cardImage {
+  filter: unset !important;
+}
+
+/* 管理后台滚动条还原 */
+body:has(.dashboardContainer)::-webkit-scrollbar,
+body:has(.dashboardContainer) ::-webkit-scrollbar {
+  width: unset !important;
+  height: unset !important;
 }
 
 /* ═══════════════════════════════════════════════════════════
