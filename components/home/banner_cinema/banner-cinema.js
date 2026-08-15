@@ -192,7 +192,12 @@
           console.warn('[VanvyCinema] 无数据');
           return;
         }
-        this.items = data.Items.slice(0, 12);
+        // 选图优化: 优先有 Backdrop(宽幅背景)的片, 不足再用有 Primary 的, 最后全量
+        const _all = data.Items || [];
+        const _withBackdrop = _all.filter(i => i.ImageTags && i.ImageTags.Backdrop);
+        const _withPrimary = _all.filter(i => i.ImageTags && i.ImageTags.Primary);
+        const _pool = _withBackdrop.length ? _withBackdrop : _withPrimary;
+        this.items = (_pool.length ? _pool : _all).slice(0, 12);
 
         // 3. 渲染首屏轮播 + 独立媒体库卡片流
         await this.loadSlide(0, true);
@@ -242,7 +247,7 @@
             const card = document.createElement('div');
             card.className = 'vml-card';
             card.innerHTML =
-              '<div class="vml-card-img"><div class="vml-card-shine"></div></div>' +
+              '<div class="vml-card-blur"></div><div class="vml-card-img"><div class="vml-card-shine"></div></div>' +
               '<div class="vml-card-meta"><span class="vml-card-name"></span><span class="vml-card-type"></span></div>';
             card.querySelector('.vml-card-name').textContent = v.Name || '';
             card.querySelector('.vml-card-type').textContent = (v.CollectionType || 'folder').toUpperCase();
@@ -276,7 +281,11 @@
             frag.appendChild(card);
             if (v.ImageTags && v.ImageTags.Primary) {
               this.getImageUrl(v.Id, { type: 'Primary', maxWidth: 640, adjustForPixelRatio: false })
-                .then(u => { card.querySelector('.vml-card-img').style.backgroundImage = `url("${u}")`; })
+                .then(u => {
+                  card.querySelector('.vml-card-img').style.backgroundImage = `url("${u}")`;
+                  const blurEl = card.querySelector('.vml-card-blur');
+                  if (blurEl) blurEl.style.backgroundImage = `url("${u}")`;
+                })
                 .catch(() => {});
             } else {
               card.querySelector('.vml-card-img').style.background = 'linear-gradient(160deg, var(--vanvy-bg-1, #0b0b0d), var(--vanvy-bg-3, #1c1c20))';
@@ -405,12 +414,11 @@
     static buildHTML() {
       return `
         <div class="cinema-bg"></div>
+        <div class="cinema-glow"></div>
+        <div class="cinema-vignette"></div>
         <div class="cinema-top-bar"></div>
         <div class="cinema-frame">
           <div class="cinema-screen">
-            <div class="cinema-glow"></div>
-            <div class="cinema-vignette"></div>
-
             <div class="cinema-content">
               <img class="cinema-logo" alt="logo" style="display:none">
               <div class="cinema-logo-fallback" style="display:none"></div>
@@ -481,12 +489,16 @@
         logoFallback.style.display = 'block';
       }
 
-      // 标题 = 简介 (与 Logo 徽标不重复, 更生动); 简介空时回退片名
-      let overview = item.Overview || '';
-      if (!overview) overview = item.Name || '';
-      titleEl.textContent = overview.length > 100 ? overview.slice(0, 100) + '…' : overview;
-      descEl.textContent = '';
-      descEl.style.display = 'none';
+      // 标题 = 片名 (大字醒目), 简介独立展示; 简介空时隐藏 desc
+      titleEl.textContent = item.Name || '';
+      const overview = item.Overview || '';
+      if (overview) {
+        descEl.textContent = overview.length > 130 ? overview.slice(0, 130) + '…' : overview;
+        descEl.style.display = '';
+      } else {
+        descEl.textContent = '';
+        descEl.style.display = 'none';
+      }
       const year = item.ProductionYear || (item.PremiereDate || '').slice(0, 4);
       yearEl.textContent = year || '';
       yearEl.style.display = yearEl.textContent ? '' : 'none';
