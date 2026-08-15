@@ -5,30 +5,31 @@
    核心: 用户浏览界面深黑统一 + 卡片质感 + 轮播主题色强调
    强调色: --vanvy-accent-2 (轮播主题主色) → 回退金色 #f5c518
 
-   ⚠️ 架构 (v3, 2026-08-15):
-   - 不依赖 JS 切换 class (Emby viewmanager 会缓存视图 DOM, class 机制
-     导致: 进设置页检测失败全黑 / 回首页 .dashboardContainer 残留不还原)
-   - 纯 CSS: 全局黑化用户界面 + `.dashboardContainer` 后代选择器
-     把管理后台内部全部还原默认 (Emby 管理页根容器是 .dashboardContainer)
-   - 管理后台天然豁免: 无 JS 状态同步, 无视图缓存问题
+   ⚠️ 架构 (v4, 2026-08-15):
+   - 深色皮肤激活由 dark-skin.js 基于用户媒体路由白名单 (location.hash) 完成,
+     在 <html> 维护 vanvy-admin 标记
+   - 所有用户界面规则加 html.vanvy-skin-active 前缀
+   - 管理后台还原段用 html.vanvy-skin-active 前缀 + 覆盖所有管理页公共容器
+     (.dashboardContainer / .settingsContainer / .pageWithAbsoluteTabs)
    ═══════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════
-   第一部分: 全局深黑 (作用于整个 document, 含管理后台背景)
-   管理后台的背景由 .backgroundContainer 控制, 但 dashboard 页面
-   没有 .backgroundContainer → 管理后台背景保持 Emby 默认
+   第一部分: 全局背景铺黑 (用户界面)
    ═══════════════════════════════════════════════════════════ */
+html.vanvy-skin-active body,
+html.vanvy-skin-active body .skinBody {
+  background: #0a0a0c !important;
+  color: #e7e5e4 !important;
+}
 
-/* ── 背景容器铺黑 (用户界面独有, dashboard 无此元素天然豁免) ── */
-.backgroundContainer,
-.backgroundContainer.backgroundContainer-withBackdrop {
+html.vanvy-skin-active body .backgroundContainer,
+html.vanvy-skin-active body .backgroundContainer.backgroundContainer-withBackdrop {
   background: linear-gradient(180deg, #0a0a0c 0%, #070708 60%, #050506 100%) !important;
   background-color: #0a0a0c !important;
 }
 
-/* backdrop 背景图: 压暗 + 提饱和 */
-.backdropContainer .backdrop,
-.backgroundContainer .backdropImage {
+html.vanvy-skin-active body .backdropContainer .backdrop,
+html.vanvy-skin-active body .backgroundContainer .backdropImage {
   filter: brightness(0.82) saturate(1.05) !important;
 }
 
@@ -40,30 +41,29 @@ html {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   第二部分: 用户界面组件黑化 (不含 .dashboardContainer 内部)
-   通过 .dashboardContainer 后代选择器在第三部分还原
+   第二部分: 用户界面组件黑化 (html.vanvy-skin-active)
    ═══════════════════════════════════════════════════════════ */
 
-/* 页面主内容区透明 (露出纯黑底) */
-.pageWithAbsoluteTabs .pageTabContent,
-.pageTabContent,
-.homePageLibraryTile .section0,
-.homePageSections,
-.content-primary,
-#homePage {
+/* 页面主内容区透明 */
+html.vanvy-skin-active .pageWithAbsoluteTabs .pageTabContent,
+html.vanvy-skin-active .pageTabContent,
+html.vanvy-skin-active .homePageLibraryTile .section0,
+html.vanvy-skin-active .homePageSections,
+html.vanvy-skin-active .content-primary,
+html.vanvy-skin-active #homePage {
   background: transparent !important;
 }
 
 /* ── 卡片: 深黑底 + 圆角 + 悬浮轮播主题色描边 ── */
-.card,
-.card.scalableCard,
-.cardBox {
+html.vanvy-skin-active .card,
+html.vanvy-skin-active .card.scalableCard,
+html.vanvy-skin-active .cardBox {
   background: #151518 !important;
   border-radius: 14px !important;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55) !important;
 }
-.card:focus,
-.card:hover {
+html.vanvy-skin-active .card:focus,
+html.vanvy-skin-active .card:hover {
   box-shadow:
     0 0 0 1px var(--vanvy-accent-2, var(--vanvy-gold)),
     0 8px 26px rgba(0, 0, 0, 0.7) !important;
@@ -71,43 +71,43 @@ html {
 }
 
 /* ── 卡片聚焦: 完整四边主题色细框 (覆盖 Emby 默认伪元素边框) ── */
-.card:focus,
-.card:focus-within {
+html.vanvy-skin-active .card:focus,
+html.vanvy-skin-active .card:focus-within {
   box-shadow: 0 0 0 1.5px var(--vanvy-accent-2, var(--vanvy-gold)) !important;
   outline: none !important;
   z-index: 12 !important;
 }
-.card:focus .cardContent-bxsborder::before,
-.card:focus-visible .cardContent-bxsborder-fv::before {
+html.vanvy-skin-active .card:focus .cardContent-bxsborder::before,
+html.vanvy-skin-active .card:focus-visible .cardContent-bxsborder-fv::before {
   border-color: transparent !important;
 }
-.cardContent-bxsborder,
-.cardContent-bxsborder-fv {
+html.vanvy-skin-active .cardContent-bxsborder,
+html.vanvy-skin-active .cardContent-bxsborder-fv {
   overflow: visible !important;
 }
 
 /* 卡片文字 */
-.cardText,
-.itemDetailText,
-.cardText-first,
-.card-image-text {
+html.vanvy-skin-active .cardText,
+html.vanvy-skin-active .itemDetailText,
+html.vanvy-skin-active .cardText-first,
+html.vanvy-skin-active .card-image-text {
   color: #d6d6d6 !important;
 }
-.cardText-secondary {
+html.vanvy-skin-active .cardText-secondary {
   color: #9a9a9a !important;
 }
 
 /* 卡片图片轻微压暗 */
-.cardImageContainer .cardImage,
-.innerCardImageContainer .cardImage {
+html.vanvy-skin-active .cardImageContainer .cardImage,
+html.vanvy-skin-active .innerCardImageContainer .cardImage {
   filter: brightness(0.96) !important;
 }
 
 /* ── 顶部导航: 深黑半透明渐变 ── */
-.skinHeader,
-.appHeader,
-.skinHeader.withBackground,
-.skinHeader-withBackground {
+html.vanvy-skin-active .skinHeader,
+html.vanvy-skin-active .appHeader,
+html.vanvy-skin-active .skinHeader.withBackground,
+html.vanvy-skin-active .skinHeader-withBackground {
   background: linear-gradient(180deg, rgba(5, 5, 6, 0.92), rgba(5, 5, 6, 0.55) 70%, transparent) !important;
   background-color: transparent !important;
   color: #e5e5e5 !important;
@@ -115,140 +115,164 @@ html {
 }
 
 /* 头部标题/按钮: 悬浮轮播主题色 */
-.skinHeader .sectionTitle,
-.skinHeader .headerButton,
-.headerButton {
+html.vanvy-skin-active .skinHeader .sectionTitle,
+html.vanvy-skin-active .skinHeader .headerButton,
+html.vanvy-skin-active .headerButton {
   color: #e0e0e0 !important;
 }
-.headerButton:focus,
-.headerButton:hover {
+html.vanvy-skin-active .headerButton:focus,
+html.vanvy-skin-active .headerButton:hover {
   color: var(--vanvy-accent-2, var(--vanvy-gold)) !important;
 }
 
 /* ── 媒体库入口 tile / 侧边栏: 深黑玻璃 ── */
-.homePageLibraryTile .card,
-.mainDrawer .navMenuOption {
+html.vanvy-skin-active .homePageLibraryTile .card,
+html.vanvy-skin-active .mainDrawer .navMenuOption {
   background: rgba(20, 20, 23, 0.85) !important;
 }
-.mainDrawer .navMenuOption:focus,
-.mainDrawer .navMenuOption:hover {
+html.vanvy-skin-active .mainDrawer .navMenuOption:focus,
+html.vanvy-skin-active .mainDrawer .navMenuOption:hover {
   background: rgba(30, 30, 35, 0.95) !important;
   color: var(--vanvy-accent-2, var(--vanvy-gold)) !important;
 }
 
 /* ── 链接/强调文字: 轮播主题色 ── */
-a,
-.emby-link .button-link,
-.textlink {
+html.vanvy-skin-active a,
+html.vanvy-skin-active .emby-link .button-link,
+html.vanvy-skin-active .textlink {
   color: var(--vanvy-accent-2, var(--vanvy-gold-soft)) !important;
 }
 
 /* ── 焦点描边: 轮播主题色微光 ── */
-.focuscontainer-x .emby-button:focus,
-.focuscontainer-x :focus {
+html.vanvy-skin-active .focuscontainer-x .emby-button:focus,
+html.vanvy-skin-active .focuscontainer-x :focus {
   outline-color: var(--vanvy-accent-2, rgba(245, 197, 24, 0.4)) !important;
 }
 
 /* ── 按钮胶囊 ── */
-.emby-button {
+html.vanvy-skin-active .emby-button {
   border-radius: 999px !important;
 }
 
 /* ── 滚动条细化 ── */
-::-webkit-scrollbar {
+html.vanvy-skin-active ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-::-webkit-scrollbar-track {
+html.vanvy-skin-active ::-webkit-scrollbar-track {
   background: transparent;
 }
-::-webkit-scrollbar-thumb {
+html.vanvy-skin-active ::-webkit-scrollbar-thumb {
   background: #2c2c30;
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover {
+html.vanvy-skin-active ::-webkit-scrollbar-thumb:hover {
   background: #3a3a40;
 }
 
 /* ── 底部栏 ── */
-.appfooter,
-#appFooter {
+html.vanvy-skin-active .appfooter,
+html.vanvy-skin-active #appFooter {
   background: rgba(10, 10, 12, 0.92) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   第三部分: 管理后台还原 (Emby 4.8 根容器 .dashboardContainer)
-   后代选择器, 把管理后台内部全部还原 Emby 默认观感
+   第三部分: 管理后台还原 (html.vanvy-skin-active)
+   覆盖所有管理页公共容器: dashboardContainer / settingsContainer
+   / pageWithAbsoluteTabs (媒体库/插件/用户等 tab 页)
    ═══════════════════════════════════════════════════════════ */
 
-/* 管理后台内容区: 还原默认背景 */
-.dashboardContainer,
-.dashboardContainer .dashboardSections,
-.dashboardContainer .dashboardSection,
-.dashboardContainer .pageTabContent,
-.dashboardContainer .content-primary {
+/* 管理后台 body/皮肤: 还原默认 */
+html.vanvy-skin-active body,
+html.vanvy-skin-active body .skinBody {
+  background: unset !important;
+  background-color: unset !important;
+  color: unset !important;
+}
+
+html.vanvy-skin-active body .backgroundContainer,
+html.vanvy-skin-active body .backgroundContainer.backgroundContainer-withBackdrop {
   background: unset !important;
   background-color: unset !important;
 }
 
-/* 管理后台卡片: 还原 Emby 默认 (不强制深黑底/圆角/描边) */
-.dashboardContainer .card,
-.dashboardContainer .cardBox,
-.dashboardContainer .paperList,
-.dashboardContainer .listItem-border {
+html.vanvy-skin-active body .backdropContainer .backdrop,
+html.vanvy-skin-active body .backgroundContainer .backdropImage {
+  filter: unset !important;
+}
+
+/* 管理后台内容区: 还原默认背景 (覆盖所有容器变体) */
+html.vanvy-skin-active .dashboardContainer,
+html.vanvy-skin-active .settingsContainer,
+html.vanvy-skin-active .pageWithAbsoluteTabs,
+html.vanvy-skin-active .pageWithAbsoluteTabs .pageTabContent,
+html.vanvy-skin-active .pageTabContent,
+html.vanvy-skin-active .content-primary,
+html.vanvy-skin-active .dashboardSections,
+html.vanvy-skin-active .dashboardSection {
+  background: unset !important;
+  background-color: unset !important;
+}
+
+/* 管理后台卡片: 还原 Emby 默认 */
+html.vanvy-skin-active .card,
+html.vanvy-skin-active .cardBox,
+html.vanvy-skin-active .paperList,
+html.vanvy-skin-active .listItem-border,
+html.vanvy-skin-active .visualCardBox {
   background: unset !important;
   background-color: unset !important;
   border-radius: unset !important;
   box-shadow: unset !important;
   border-color: unset !important;
 }
-.dashboardContainer .card:focus,
-.dashboardContainer .card:hover {
+html.vanvy-skin-active .card:focus,
+html.vanvy-skin-active .card:hover {
   box-shadow: unset !important;
   border-color: unset !important;
 }
 
-/* 管理后台聚焦框: 还原 Emby 默认 (不禁用伪元素边框) */
-.dashboardContainer .card:focus,
-.dashboardContainer .card:focus-within {
+/* 管理后台聚焦框: 还原 Emby 默认 */
+html.vanvy-skin-active .card:focus,
+html.vanvy-skin-active .card:focus-within {
   box-shadow: unset !important;
   outline: unset !important;
   z-index: unset !important;
 }
-.dashboardContainer .card:focus .cardContent-bxsborder::before,
-.dashboardContainer .card:focus-visible .cardContent-bxsborder-fv::before {
+html.vanvy-skin-active .card:focus .cardContent-bxsborder::before,
+html.vanvy-skin-active .card:focus-visible .cardContent-bxsborder-fv::before {
   border-color: unset !important;
 }
-.dashboardContainer .cardContent-bxsborder,
-.dashboardContainer .cardContent-bxsborder-fv {
+html.vanvy-skin-active .cardContent-bxsborder,
+html.vanvy-skin-active .cardContent-bxsborder-fv {
   overflow: unset !important;
 }
 
 /* 管理后台文字/链接: 还原默认色 */
-.dashboardContainer .cardText,
-.dashboardContainer .itemDetailText,
-.dashboardContainer .cardText-first,
-.dashboardContainer .card-image-text,
-.dashboardContainer .cardText-secondary,
-.dashboardContainer a,
-.dashboardContainer .textlink,
-.dashboardContainer .emby-link .button-link,
-.dashboardContainer .emby-button,
-.dashboardContainer .headerButton {
+html.vanvy-skin-active .cardText,
+html.vanvy-skin-active .itemDetailText,
+html.vanvy-skin-active .cardText-first,
+html.vanvy-skin-active .card-image-text,
+html.vanvy-skin-active .cardText-secondary,
+html.vanvy-skin-active a,
+html.vanvy-skin-active .textlink,
+html.vanvy-skin-active .emby-link .button-link,
+html.vanvy-skin-active .emby-button,
+html.vanvy-skin-active .headerButton {
   color: unset !important;
   background-color: unset !important;
 }
 
 /* 管理后台按钮: 还原 (不胶囊) */
-.dashboardContainer .emby-button {
+html.vanvy-skin-active .emby-button {
   border-radius: unset !important;
 }
 
 /* 管理后台顶部导航: 还原默认 */
-.dashboardContainer .skinHeader,
-.dashboardContainer .skinHeader-withBackground,
-.dashboardContainer .appHeader {
+html.vanvy-skin-active .skinHeader,
+html.vanvy-skin-active .skinHeader-withBackground,
+html.vanvy-skin-active .appHeader {
   background: unset !important;
   background-color: unset !important;
   border-bottom: unset !important;
@@ -256,32 +280,31 @@ a,
 }
 
 /* 管理后台侧边栏: 还原默认 */
-.dashboardContainer .mainDrawer .navMenuOption {
+html.vanvy-skin-active .mainDrawer .navMenuOption {
   background: unset !important;
   color: unset !important;
 }
-.dashboardContainer .mainDrawer .navMenuOption:focus,
-.dashboardContainer .mainDrawer .navMenuOption:hover {
+html.vanvy-skin-active .mainDrawer .navMenuOption:focus,
+html.vanvy-skin-active .mainDrawer .navMenuOption:hover {
   background: unset !important;
   color: unset !important;
 }
 
 /* 管理后台图片: 不压暗 */
-.dashboardContainer .cardImageContainer .cardImage,
-.dashboardContainer .innerCardImageContainer .cardImage {
+html.vanvy-skin-active .cardImageContainer .cardImage,
+html.vanvy-skin-active .innerCardImageContainer .cardImage {
   filter: unset !important;
 }
 
 /* 管理后台滚动条: 还原 */
-.dashboardContainer::-webkit-scrollbar,
-.dashboardContainer ::-webkit-scrollbar {
+html.vanvy-skin-active ::-webkit-scrollbar {
   width: unset !important;
   height: unset !important;
 }
 
 /* 管理后台底部栏: 还原 */
-.dashboardContainer .appfooter,
-.dashboardContainer #appFooter {
+html.vanvy-skin-active .appfooter,
+html.vanvy-skin-active #appFooter {
   background: unset !important;
   border-top: unset !important;
 }
