@@ -14,25 +14,25 @@
 
 # ─────────── 首页美化 styles (互斥, 三选一) ───────────
 MANIFEST_STYLES=(
-  "home_beautify|style|✨ emby-home-beautify|4.9|沉浸式首页轮播 (最近添加/Backdrop/Logo/简介)|styles/home_beautify|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"emby-crx/home.js\" defer></script>|emby-crx/home.js"
+  "home_beautify|style|✨ emby-home-beautify|4.9|沉浸式首页轮播 (最近添加/Backdrop/Logo/简介)|styles/home_beautify|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"emby-crx/jquery-3.6.0.min.js\"></script>|<script src=\"emby-crx/md5.min.js\"></script>|<script src=\"emby-crx/home.js\" defer></script>|emby-crx/home.js"
   "emby_crx|style|🎨 emby-crx|4.8|加载动画+Banner轮播+媒体库悬浮 (自动匹配媒体库)|styles/emby_crx|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"emby-crx/common-utils.js\"></script>|<script src=\"emby-crx/jquery-3.6.0.min.js\"></script>|<script src=\"emby-crx/md5.min.js\"></script>|<script src=\"emby-crx/main.js\"></script>|emby-crx/main.js"
   "emby_fluent|style|🪟 emby-fluent|4.8|Fluent 设计语言风格 (emby-crx 皮肤版)|styles/emby_fluent|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/style.css\" type=\"text/css\" media=\"all\" />|<script src=\"emby-crx/common-utils.js\"></script>|<script src=\"emby-crx/jquery-3.6.0.min.js\"></script>|<script src=\"emby-crx/md5.min.js\"></script>|<script src=\"emby-crx/main.js\"></script>|emby-crx/main.js"
 )
 
 # ─────────── CSS 主题 themes (可叠加, 不冲突) ───────────
 MANIFEST_THEMES=(
-  "embymalism|theme|🌿 Embymalism|all|极简风|themes/Embymalism.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-embymalism.css\" type=\"text/css\" media=\"all\" />|theme-embymalism.css"
-  "dark-red|theme|🔴 Dark RED|all|暗红深色|themes/dark/RED.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-RED.css\" type=\"text/css\" media=\"all\" />|theme-dark-RED.css"
-  "dark-pink|theme|🌸 Dark PINK|all|暗粉深色|themes/dark/PINK.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-PINK.css\" type=\"text/css\" media=\"all\" />|theme-dark-PINK.css"
-  "dark-orange|theme|🟠 Dark ORANGE|all|暗橙深色|themes/dark/ORANGE.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-ORANGE.css\" type=\"text/css\" media=\"all\" />|theme-dark-ORANGE.css"
-  "dark-plex|theme|🟠 Dark ORANGE-PLEX|all|Plex 橙|themes/dark/ORANGE-PLEX.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-ORANGE-PLEX.css\" type=\"text/css\" media=\"all\" />|theme-dark-ORANGE-PLEX.css"
-  "dark-blue|theme|🔵 Dark BLUE|all|暗蓝深色|themes/dark/BLUE-DARK.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-BLUE-DARK.css\" type=\"text/css\" media=\"all\" />|theme-dark-BLUE-DARK.css"
-  "dark-purple|theme|🟣 Dark PURPLE|all|暗紫深色|themes/dark/PURPLE.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-PURPLE.css\" type=\"text/css\" media=\"all\" />|theme-dark-PURPLE.css"
-  "dark-green|theme|🟢 Dark GREEN|all|暗绿深色|themes/dark/GREEN.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-GREEN.css\" type=\"text/css\" media=\"all\" />|theme-dark-GREEN.css"
-  "dark-gray|theme|⚪ Dark GRAY|all|暗灰深色|themes/dark/GRAY.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-GRAY.css\" type=\"text/css\" media=\"all\" />|theme-dark-GRAY.css"
-  "apple-glass|theme|🍎 Apple Glass|all|苹果毛玻璃 (实验, 4.10主题, 与4.8轮播有冲突)|themes/AppleGlass.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-AppleGlass.css\" type=\"text/css\" media=\"all\" />|theme-AppleGlass.css|emby_crx:style,emby_fluent:style"
-  "vanvy-dark|theme|🏴 Vanvy Dark|all|Vanvy 深色主题|themes/SynoDark.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-SynoDark.css\" type=\"text/css\" media=\"all\" />|theme-SynoDark.css"
-  "vanvy-detail|theme|📄 Vanvy Detail|all|Vanvy 详情页主题|themes/SynoDetail.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-SynoDetail.css\" type=\"text/css\" media=\"all\" />|theme-SynoDetail.css"
+  "embymalism|theme|🌿 Embymalism|all|极简风|themes/Embymalism.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-embymalism.css\" type=\"text/css\" media=\"all\" />|Embymalism.css"
+  "dark-red|theme|🔴 Dark RED|all|暗红深色|themes/dark/RED.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-RED.css\" type=\"text/css\" media=\"all\" />|RED.css"
+  "dark-pink|theme|🌸 Dark PINK|all|暗粉深色|themes/dark/PINK.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-PINK.css\" type=\"text/css\" media=\"all\" />|PINK.css"
+  "dark-orange|theme|🟠 Dark ORANGE|all|暗橙深色|themes/dark/ORANGE.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-ORANGE.css\" type=\"text/css\" media=\"all\" />|ORANGE.css"
+  "dark-plex|theme|🟠 Dark ORANGE-PLEX|all|Plex 橙|themes/dark/ORANGE-PLEX.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-ORANGE-PLEX.css\" type=\"text/css\" media=\"all\" />|ORANGE-PLEX.css"
+  "dark-blue|theme|🔵 Dark BLUE|all|暗蓝深色|themes/dark/BLUE-DARK.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-BLUE-DARK.css\" type=\"text/css\" media=\"all\" />|BLUE-DARK.css"
+  "dark-purple|theme|🟣 Dark PURPLE|all|暗紫深色|themes/dark/PURPLE.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-PURPLE.css\" type=\"text/css\" media=\"all\" />|PURPLE.css"
+  "dark-green|theme|🟢 Dark GREEN|all|暗绿深色|themes/dark/GREEN.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-GREEN.css\" type=\"text/css\" media=\"all\" />|GREEN.css"
+  "dark-gray|theme|⚪ Dark GRAY|all|暗灰深色|themes/dark/GRAY.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-dark-GRAY.css\" type=\"text/css\" media=\"all\" />|GRAY.css"
+  "apple-glass|theme|🍎 Apple Glass|all|苹果毛玻璃 (实验, 4.10主题, 与4.8轮播有冲突)|themes/AppleGlass.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-AppleGlass.css\" type=\"text/css\" media=\"all\" />|AppleGlass.css|emby_crx:style,emby_fluent:style"
+  "vanvy-dark|theme|🏴 Vanvy Dark|all|Vanvy 深色主题|themes/SynoDark.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-SynoDark.css\" type=\"text/css\" media=\"all\" />|SynoDark.css"
+  "vanvy-detail|theme|📄 Vanvy Detail|all|Vanvy 详情页主题|themes/SynoDetail.css|<link rel=\"stylesheet\" id=\"theme-css\" href=\"emby-crx/theme-SynoDetail.css\" type=\"text/css\" media=\"all\" />|SynoDetail.css"
 )
 
 # ─────────── 功能增强 features ───────────
