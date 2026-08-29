@@ -1,0 +1,22 @@
+{
+  "version": "v15_20260818_1635_fix30",
+  "banner": "banner_cinema",
+  "bannerThemeClass": "vanvy-aurora-theme-midnight",
+  "themes": [
+    "glass_graphite"
+  ],
+  "features": [
+    "jav_details",
+    "playbackrate",
+    "danmaku",
+    "douban",
+    "localplayer",
+    "player_enhance",
+    "fluent_layout",
+    "hover_glow",
+    "embytool",
+    "extrafanart"
+  ],
+  "baseBlack": false,
+  "blackGold": false
+}

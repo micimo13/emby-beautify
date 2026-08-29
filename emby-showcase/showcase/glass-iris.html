@@ -1,0 +1,91 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+:root {
+  --bg-h:265; --bg-s:40%; --bg-l:10%;
+  --ph:280; --ps:80%; --pl:65%;
+  --glass: rgba(255,255,255,.07); --glass2: rgba(255,255,255,.12);
+  --accent: hsl(var(--ph),var(--ps),var(--pl));
+  --txt: rgba(255,255,255,.94); --txt2: rgba(255,255,255,.6);
+}
+* {margin:0;padding:0;box-sizing:border-box}
+body {min-height:100vh;background:linear-gradient(180deg,hsl(var(--bg-h),var(--bg-s),calc(var(--bg-l)+2%)),hsl(var(--bg-h),var(--bg-s),calc(var(--bg-l)-2%)));color:var(--txt);font-family:'HarmonyOS Sans SC',sans-serif}
+body::before {content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(700px 500px at 80% 10%,hsla(var(--ph),var(--ps),var(--pl),.08),transparent 60%),radial-gradient(600px 400px at 15% 80%,hsla(var(--ph),var(--ps),calc(var(--pl)+10%),.06),transparent 60%)}
+.topbar {position:fixed;top:0;left:0;right:0;height:60px;display:flex;align-items:center;gap:14px;padding:0 30px;background:rgba(0,0,0,.25);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,.06);z-index:50}
+.brand {font-size:16px;font-weight:900;letter-spacing:2px}
+.brand i {color:var(--accent);font-style:normal}
+.search {flex:1;max-width:380px}
+.search input {width:100%;padding:9px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:var(--txt);font-size:13px;outline:none;backdrop-filter:blur(10px)}
+.search input:focus {border-color:var(--accent);background:rgba(255,255,255,.1)}
+.hbtn {width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.06);color:var(--txt2);font-size:15px;cursor:pointer;backdrop-filter:blur(10px)}
+.hbtn:hover {background:var(--glass2);color:var(--txt)}
+.dock {position:fixed;left:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:40}
+.dock-it {width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--txt2);cursor:pointer;transition:.2s}
+.dock-it:hover {background:rgba(255,255,255,.14);color:var(--txt);transform:translateX(3px)}
+.dock-it.sel {background:hsla(var(--ph),var(--ps),var(--pl),.18);color:var(--accent);border-color:hsla(var(--ph),var(--ps),var(--pl),.4)}
+.main {padding:84px 40px 40px 84px}
+.hero {position:relative;height:440px;border-radius:24px;overflow:hidden;margin-bottom:30px}
+.hero .bg {position:absolute;inset:0;background-size:cover;background-position:center}
+.hero .bg::after {content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.55) 100%)}
+.hero .c {position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:48px;max-width:640px}
+.hero h1 {font-size:46px;font-weight:900;margin-bottom:8px;text-shadow:0 4px 30px rgba(0,0,0,.6)}
+.hero .sub {font-size:14px;letter-spacing:3px;color:var(--txt2);margin-bottom:12px}
+.hero .meta {display:flex;gap:8px;margin-bottom:14px}
+.chip {padding:4px 13px;font-size:11.5px;border-radius:999px;background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12)}
+.chip.gold {background:hsla(var(--ph),var(--ps),var(--pl),.2);border-color:var(--accent);color:var(--accent)}
+.hero .desc {font-size:13.5px;line-height:1.7;color:var(--txt2);max-width:460px;margin-bottom:20px}
+.hero .btns {display:flex;gap:12px}
+.pbtn {padding:13px 34px;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;background:var(--accent);color:#111;box-shadow:0 8px 30px hsla(var(--ph),var(--ps),var(--pl),.4)}
+.dbtn {padding:13px 28px;border-radius:14px;font-size:14px;cursor:pointer;background:rgba(255,255,255,.08);backdrop-filter:blur(12px);color:var(--txt);border:1px solid rgba(255,255,255,.14)}
+.hero .arrows {position:absolute;right:28px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:3}
+.hero .arr {width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.3);backdrop-filter:blur(10px);color:#fff;font-size:15px;cursor:pointer}
+.hero .dots {position:absolute;left:48px;bottom:26px;display:flex;gap:6px;z-index:3}
+.hero .dot {width:22px;height:3px;border-radius:2px;background:rgba(255,255,255,.3);cursor:pointer}
+.hero .dot.on {background:var(--accent);width:34px}
+.sec {margin-bottom:32px}
+.sec-h {display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-h h2 {font-size:16px;font-weight:700}
+.sec-h .more {font-size:12px;color:var(--accent);cursor:pointer}
+.scroll {display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
+.gcard {flex-shrink:0;width:150px;border-radius:16px;overflow:hidden;cursor:pointer;position:relative;background:var(--glass);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);transition:.22s}
+.gcard:hover {transform:translateY(-5px) scale(1.02);border-color:hsla(var(--ph),var(--ps),var(--pl),.5);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.gcard .p {aspect-ratio:2/3;background-size:cover;background-position:center;position:relative}
+.gcard .p::after {content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.75))}
+.gcard .nm {position:absolute;bottom:7px;left:11px;right:11px;font-size:12.5px;font-weight:600;z-index:2}
+.gcard .rt {position:absolute;top:9px;left:9px;font-size:11px;color:var(--accent);font-weight:800;z-index:2;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.gcard .ic {position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.45);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;z-index:2;opacity:0;transition:.2s}
+.gcard:hover .ic {opacity:1}
+.hcard {flex-shrink:0;width:320px;display:flex;align-items:center;gap:13px;padding:11px;border-radius:16px;background:var(--glass);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);cursor:pointer;transition:.2s}
+.hcard:hover {border-color:var(--accent)}
+.hcard .t {width:110px;height:62px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0}
+.hcard .i {flex:1;min-width:0}
+.hcard .i .n {font-size:13px;font-weight:600}
+.hcard .i .s {font-size:11px;color:var(--txt2);margin-top:4px}
+.hcard .pb {width:34px;height:34px;border-radius:50%;border:none;background:hsla(var(--ph),var(--ps),var(--pl),.2);color:var(--accent);font-size:12px;cursor:pointer}
+::-webkit-scrollbar {height:6px} ::-webkit-scrollbar-thumb {background:rgba(255,255,255,.15);border-radius:3px}
+</style></head><body>
+<div class="topbar">
+  <div class="brand">VANVY<i>·STREAM</i></div>
+  <div class="search"><input placeholder="搜索..."></div>
+  <div style="flex:1"></div><button class="hbtn">🔔</button><button class="hbtn">⚙</button>
+</div>
+<div class="dock">NAV_HTML['glass']</div>
+<div class="main">
+  <div class="hero">
+    <div class="bg" style="background-image:url('https://image.tmdb.org/t/p/w1280/kb4T9mU5pVYbVhFz3Kj0J8sYqW0.jpg')"></div>
+    <div class="c">
+      <h1>星际穿越</h1>
+      <div class="sub">INTERSTELLAR · 2014</div>
+      <div class="meta"><span class="chip gold">★ 9.4</span><span class="chip">科幻</span><span class="chip">冒险</span></div>
+      <div class="desc">地球濒临毁灭，一群探险家穿越虫洞寻找人类的新家园。诺兰的太空史诗，关于爱与时间的终极叩问。</div>
+      <div class="btns"><button class="pbtn">▶ 播放</button><button class="dbtn">详情</button></div>
+    </div>
+    <div class="arrows"><button class="arr">‹</button><button class="arr">›</button></div>
+    <div class="dots"><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+  </div>
+  <div class="sec"><div class="sec-h"><h2>继续观看</h2><span class="more">更多 →</span></div>
+    <div class="scroll">RCARD_HTML</div>
+  </div>
+  <div class="sec"><div class="sec-h"><h2>为你推荐</h2><span class="more">更多 →</span></div>
+    <div class="scroll">GCARD_HTML</div>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Vanvy Emby Kit · 全新轮播设计稿 (V2 概念)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0d0f14; font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif; color:#e8ecf3; padding:24px; }
+  .page-title { text-align:center; padding:20px 0 8px; font-size:28px; font-weight:700; letter-spacing:2px;
+    background:linear-gradient(90deg,#7dd3fc,#a78bfa,#f0abfc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .page-sub { text-align:center; color:#8a94a6; font-size:13px; margin-bottom:28px; }
+  .design { background:#14171f; border-radius:16px; padding:20px 20px 28px; margin-bottom:36px; border:1px solid #232838; }
+  .design-head { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .design-num { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-size:20px; font-weight:800; color:#0d0f14; }
+  .design-name { font-size:20px; font-weight:700; }
+  .design-tag { font-size:11px; padding:3px 10px; border-radius:20px; background:#232838; color:#9fb0c8; }
+  .design-desc { color:#8a94a6; font-size:12.5px; margin-top:2px; }
+  .row { display:flex; gap:14px; flex-wrap:wrap; }
+  .col { flex:1; min-width:280px; background:#0d0f14; border-radius:12px; padding:10px; }
+  .col-label { text-align:center; font-size:11px; color:#6b7688; padding:4px 0 8px; letter-spacing:1px; }
+  .col-label b { color:#9fb0c8; }
+
+  /* ══════════ 模拟浏览器窗口 ══════════ */
+  .mock-browser { border-radius:10px; overflow:hidden; border:1px solid #232838; background:#000; }
+  .mock-bar { height:22px; background:#1c212c; display:flex; align-items:center; gap:6px; padding:0 10px; }
+  .mock-dot { width:8px; height:8px; border-radius:50%; }
+  .mock-url { flex:1; height:13px; border-radius:6px; background:#2a3040; margin-left:8px; }
+  .mock-view { position:relative; width:100%; overflow:hidden; background:#000; }
+
+  /* ══════════ 通用海报模拟 ══════════ */
+  .poster-bg { position:absolute; inset:0; }
+  .poster-fallback { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:42px; font-weight:800; color:rgba(255,255,255,.25); letter-spacing:4px; }
+
+  /* ══════════ 设计A: AURORA 极光沉浸式 ══════════ */
+  .mock-a .poster-bg { background:
+    radial-gradient(120% 90% at 15% 10%, rgba(80,120,255,.55) 0%, transparent 45%),
+    radial-gradient(100% 80% at 85% 90%, rgba(255,90,160,.4) 0%, transparent 50%),
+    linear-gradient(160deg,#0b1230 0%, #101c3f 45%, #1a1440 100%); }
+  .mock-a .aurora-glow { position:absolute; width:70%; height:60%; left:15%; top:20%;
+    background:conic-gradient(from 180deg, rgba(125,211,252,.35), rgba(167,139,250,.3), rgba(240,171,252,.25), rgba(125,211,252,.35));
+    filter:blur(60px); border-radius:50%; animation:aurora 8s ease-in-out infinite alternate; }
+  @keyframes aurora { from{transform:rotate(0deg) scale(1);} to{transform:rotate(20deg) scale(1.15);} }
+  .mock-a .a-logo { position:absolute; left:5%; top:18%; max-width:45%; filter:drop-shadow(0 4px 18px rgba(0,0,0,.6)); }
+  .mock-a .a-logo-fallback { position:absolute; left:5%; top:20%; font-size:26px; font-weight:800; color:#fff;
+    text-shadow:0 2px 20px rgba(125,211,252,.8); letter-spacing:1px; }
+  .mock-a .a-meta { position:absolute; left:5%; top:44%; display:flex; gap:8px; align-items:center; font-size:10px; color:#c7d2e4; }
+  .mock-a .a-rating { background:rgba(255,255,255,.14); backdrop-filter:blur(8px); padding:2px 9px; border-radius:6px;
+    font-weight:700; color:#ffd76a; border:1px solid rgba(255,215,106,.35); }
+  .mock-a .a-rating small { color:#ffd76a; font-size:9px; }
+  .mock-a .a-tag { background:rgba(125,211,252,.16); padding:2px 8px; border-radius:6px; border:1px solid rgba(125,211,252,.3); }
+  .mock-a .a-title { position:absolute; left:5%; top:52%; font-size:clamp(16px, 2.6vw, 30px); font-weight:800; color:#fff;
+    text-shadow:0 2px 24px rgba(0,0,0,.7); letter-spacing:.5px; line-height:1.15; }
+  .mock-a .a-desc { position:absolute; left:5%; top:63%; width:52%; font-size:clamp(8px, 1.05vw, 12px); color:rgba(220,228,242,.85);
+    line-height:1.6; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .mock-a .a-btns { position:absolute; left:5%; top:78%; display:flex; gap:8px; }
+  .mock-a .a-btn { padding:6px 18px; border-radius:24px; font-size:11px; font-weight:700; }
+  .mock-a .a-btn-play { background:linear-gradient(135deg,#7dd3fc,#a78bfa); color:#0d0f14; box-shadow:0 4px 20px rgba(125,211,252,.4); }
+  .mock-a .a-btn-info { background:rgba(255,255,255,.12); backdrop-filter:blur(8px); color:#e8ecf3; border:1px solid rgba(255,255,255,.2); }
+  .mock-a .a-side { position:absolute; right:4%; top:50%; transform:translateY(-50%); width:24%; display:flex; flex-direction:column; gap:10px; }
+  .mock-a .a-side-card { height:clamp(42px, 6vw, 64px); border-radius:10px; overflow:hidden; position:relative;
+    border:1.5px solid rgba(255,255,255,.14); background:#1a2030; transition:all .25s; }
+  .mock-a .a-side-card.active { border-color:#7dd3fc; box-shadow:0 0 18px rgba(125,211,252,.35); transform:scale(1.04); }
+  .mock-a .a-side-card .thumb { position:absolute; inset:0; background:linear-gradient(135deg,#24304e,#1a2030); }
+  .mock-a .a-side-card .thumb i { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-style:normal; font-size:16px; color:rgba(255,255,255,.3); }
+  .mock-a .a-side-card.active .thumb i { color:rgba(255,255,255,.7); }
+  .mock-a .a-progress { position:absolute; bottom:0; left:0; height:3px; width:100%; background:rgba(255,255,255,.15); }
+  .mock-a .a-progress i { display:block; height:100%; width:42%; background:linear-gradient(90deg,#7dd3fc,#a78bfa); border-radius:2px; }
+
+  /* ══════════ 设计B: SPLIT 分屏新视界 ══════════ */
+  .mock-b .poster-bg { background:linear-gradient(115deg,#0f172a 0%, #16213e 50%, #0f172a 100%); }
+  .mock-b .b-grid { position:absolute; inset:0; background-image:
+    linear-gradient(rgba(125,211,252,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125,211,252,.05) 1px, transparent 1px);
+    background-size: 34px 34px; }
+  .mock-b .b-left { position:absolute; left:0; top:0; bottom:0; width:58%;
+    background:linear-gradient(135deg,#1b2a4a 0%, #0f172a 70%); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .mock-b .b-poster { width:58%; height:88%; border-radius:14px; overflow:hidden; position:relative;
+    border:1px solid rgba(125,211,252,.3); box-shadow:0 20px 60px rgba(0,0,0,.6); }
+  .mock-b .b-poster-bg { position:absolute; inset:0; background:linear-gradient(160deg,#2a3a66,#182344 60%,#10182e); }
+  .mock-b .b-poster-title { position:absolute; bottom:12%; left:50%; transform:translateX(-50%); font-size:13px; font-weight:800;
+    color:#fff; text-shadow:0 2px 12px rgba(0,0,0,.8); white-space:nowrap; }
+  .mock-b .b-right { position:absolute; right:0; top:0; bottom:0; width:42%; display:flex; flex-direction:column; justify-content:center; padding:0 3.5%; gap:12px; }
+  .mock-b .b-kicker { font-size:9px; letter-spacing:3px; color:#7dd3fc; font-weight:700; text-transform:uppercase; }
+  .mock-b .b-title { font-size:clamp(14px, 2vw, 24px); font-weight:800; color:#fff; line-height:1.2; }
+  .mock-b .b-sub { font-size:10px; color:#9fb0c8; }
+  .mock-b .b-chip { display:inline-block; font-size:9px; padding:2px 8px; border-radius:4px; background:rgba(125,211,252,.14); color:#a5d8f5; border:1px solid rgba(125,211,252,.25); }
+  .mock-b .b-desc { font-size:9.5px; color:#8a94a6; line-height:1.6; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .mock-b .b-meta { display:flex; gap:10px; font-size:10px; color:#c7d2e4; align-items:center; }
+  .mock-b .b-star { color:#ffd76a; font-weight:700; }
+  .mock-b .b-btn { padding:6px 20px; border-radius:8px; font-size:11px; font-weight:700; background:linear-gradient(135deg,#38bdf8,#818cf8); color:#0d0f14; display:inline-block; width:fit-content; box-shadow:0 4px 18px rgba(56,189,248,.35); }
+  .mock-b .b-nav { position:absolute; bottom:14px; right:4%; display:flex; gap:6px; }
+  .mock-b .b-dot { width:18px; height:4px; border-radius:2px; background:rgba(255,255,255,.2); }
+  .mock-b .b-dot.active { background:#38bdf8; }
+
+  /* ══════════ 设计C: CINEMA 影院黑金 ══════════ */
+  .mock-c .poster-bg { background:#0a0a0c; }
+  .mock-c .c-bars { position:absolute; top:0; bottom:0; left:0; right:0; display:flex; flex-direction:column; justify-content:space-between; }
+  .mock-c .c-bar { height:9%; background:#0d0d10; border-top:1px solid #1e1e24; border-bottom:1px solid #1e1e24; }
+  .mock-c .c-frame { position:absolute; top:9%; bottom:9%; left:0; right:0; overflow:hidden; }
+  .mock-c .c-frame-bg { position:absolute; inset:-8%; background:
+    radial-gradient(90% 70% at 20% 30%, rgba(180,140,60,.22) 0%, transparent 50%),
+    linear-gradient(160deg,#14131a 0%, #1d1a24 55%, #100f14 100%); }
+  .mock-c .c-logo { position:absolute; left:5%; top:14%; filter:drop-shadow(0 0 24px rgba(230,195,120,.5)); }
+  .mock-c .c-logo-fallback { position:absolute; left:5%; top:15%; font-size:clamp(16px,2.2vw,26px); font-weight:800; color:#e6c378;
+    text-shadow:0 0 30px rgba(230,195,120,.5), 0 2px 8px rgba(0,0,0,.8); letter-spacing:2px; }
+  .mock-c .c-title { position:absolute; left:5%; top:47%; font-size:clamp(18px, 2.8vw, 32px); font-weight:800; color:#f4ead2; letter-spacing:1px; text-shadow:0 2px 20px rgba(0,0,0,.8); }
+  .mock-c .c-meta { position:absolute; left:5%; top:61%; display:flex; gap:10px; align-items:center; font-size:10px; color:#b8a878; }
+  .mock-c .c-star { color:#e6c378; font-weight:700; letter-spacing:1px; }
+  .mock-c .c-desc { position:absolute; left:5%; top:68%; width:50%; font-size:clamp(8px,1vw,11px); color:rgba(210,200,175,.75); line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .mock-c .c-btn { position:absolute; left:5%; top:80%; padding:6px 22px; border-radius:4px; font-size:11px; font-weight:700;
+    background:linear-gradient(135deg,#d4af5e,#a8833a); color:#0d0f10; letter-spacing:2px; box-shadow:0 4px 20px rgba(212,175,94,.35); }
+  .mock-c .c-filmstrip { position:absolute; bottom:10.5%; left:0; right:0; height:clamp(34px,4vw,52px); display:flex; gap:8px; padding:0 3%; overflow:hidden; }
+  .mock-c .c-frame-thumb { flex:0 0 auto; width:clamp(56px,8vw,96px); border-radius:3px; overflow:hidden; position:relative; border:1px solid rgba(230,195,120,.3); }
+  .mock-c .c-frame-thumb i { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-style:normal; font-size:14px; color:rgba(230,195,120,.4); background:linear-gradient(135deg,#241f2e,#18141e); }
+  .mock-c .c-frame-thumb.active { border-color:#e6c378; box-shadow:0 0 14px rgba(230,195,120,.4); }
+  .mock-c .c-progress { position:absolute; bottom:9.3%; left:0; right:0; height:2px; background:rgba(230,195,120,.12); }
+  .mock-c .c-progress i { display:block; height:100%; width:38%; background:linear-gradient(90deg,#e6c378,#a8833a); }
+
+  /* ══════════ 响应式断点高度 ══════════ */
+  .mock-view { aspect-ratio:16/9; }
+  .desktop .mock-view { aspect-ratio:16/9; }
+  .tablet .mock-view { aspect-ratio:4/3; }
+  .mobile .mock-view { aspect-ratio:9/16; }
+
+  /* 手机端简化 (设计A) */
+  .mobile .a-side { display:none; }
+  .mobile .a-desc { width:90%; }
+  /* 手机端简化 (设计B) */
+  .mobile .b-left { width:100%; height:62%; top:0; bottom:auto; }
+  .mobile .b-right { top:auto; bottom:0; width:100%; height:38%; padding:8px 6% 14px; gap:6px; }
+  .mobile .b-poster { width:70%; height:82%; }
+  .mobile .b-desc { display:none; }
+  .mobile .b-btn { font-size:9px; padding:4px 14px; }
+  /* 手机端简化 (设计C) */
+  .mobile .c-desc { width:90%; }
+  .mobile .c-filmstrip { height:30px; }
+  .mobile .c-logo-fallback, .mobile .c-logo { top:10%; }
+  .mobile .c-title { top:42%; }
+
+  /* 平板 (设计B) */
+  .tablet .b-left { width:100%; height:58%; }
+  .tablet .b-right { width:100%; height:42%; }
+  .tablet .b-poster { width:52%; height:80%; }
+
+  .footer { text-align:center; color:#5b6474; font-size:11px; padding:10px 0 30px; }
+</style>
+</head>
+<body>
+
+<div class="page-title">✦ Vanvy Vision · 新一代轮播设计概念 ✦</div>
+<div class="page-sub">3 款原创设计 · 全响应式 (桌面 16:9 / 平板 4:3 / 手机 9:16)</div>
+
+<!-- ═══════════ 设计A: AURORA ═══════════ -->
+<div class="design">
+  <div class="design-head">
+    <div class="design-num" style="background:linear-gradient(135deg,#7dd3fc,#a78bfa)">A</div>
+    <div>
+      <div class="design-name">AURORA · 极光沉浸式</div>
+      <div class="design-desc">全屏氛围背景 + 极光光晕动态呼吸 + 左侧 Logo/评分/简介/双按钮 + 右侧封面流缩略图 + 顶部渐变进度条。主打「光」的情绪渲染，影院级沉浸。</div>
+    </div>
+    <span class="design-tag">大屏首选</span><span class="design-tag">动态光晕</span><span class="design-tag">封面流融合</span>
+  </div>
+  <div class="row">
+    <div class="col desktop"><div class="col-label">🖥️ <b>桌面 2560×1440</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-a">
+        <div class="poster-bg"></div><div class="aurora-glow"></div>
+        <div class="a-logo-fallback">◤ DUNE: PART TWO</div>
+        <div class="a-meta"><span class="a-rating">★ 8.7</span><span class="a-tag">2024</span><span class="a-tag">科幻 · 冒险</span><span class="a-tag">4K HDR</span></div>
+        <div class="a-title">沙丘 2</div>
+        <div class="a-desc">保罗·厄崔迪与契妮和弗雷曼人联手，踏上复仇之路，追查让他家族覆灭的阴谋者。沙丘之上的史诗再启…</div>
+        <div class="a-btns"><span class="a-btn a-btn-play">▶ 立即播放</span><span class="a-btn a-btn-info">ⓘ 详情</span></div>
+        <div class="a-side">
+          <div class="a-side-card active"><div class="thumb"><i>▣ 01</i></div></div>
+          <div class="a-side-card"><div class="thumb"><i>▣ 02</i></div></div>
+          <div class="a-side-card"><div class="thumb"><i>▣ 03</i></div></div>
+          <div class="a-side-card"><div class="thumb"><i>▣ 04</i></div></div>
+        </div>
+        <div class="a-progress"><i></i></div>
+      </div></div>
+    </div>
+    <div class="col tablet"><div class="col-label">📱 <b>平板 1024×768</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-a">
+        <div class="poster-bg"></div><div class="aurora-glow"></div>
+        <div class="a-logo-fallback" style="top:14%;font-size:20px">◤ DUNE</div>
+        <div class="a-meta" style="top:40%;font-size:9px"><span class="a-rating">★ 8.7</span><span class="a-tag">2024</span></div>
+        <div class="a-title" style="top:48%;font-size:20px">沙丘 2</div>
+        <div class="a-desc" style="top:58%;width:58%;font-size:8px">保罗·厄崔迪与契妮和弗雷曼人联手，踏上复仇之路…</div>
+        <div class="a-btns" style="top:72%"><span class="a-btn a-btn-play" style="padding:5px 14px;font-size:10px">▶ 播放</span></div>
+        <div class="a-side" style="width:22%"><div class="a-side-card active"><div class="thumb"><i>▣</i></div></div><div class="a-side-card"><div class="thumb"><i>▣</i></div></div></div>
+        <div class="a-progress"><i></i></div>
+      </div></div>
+    </div>
+    <div class="col mobile"><div class="col-label">📲 <b>手机 390×844</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-a">
+        <div class="poster-bg"></div><div class="aurora-glow"></div>
+        <div class="a-logo-fallback" style="top:12%;font-size:18px">◤ DUNE</div>
+        <div class="a-meta" style="top:36%;font-size:8px"><span class="a-rating">★ 8.7</span><span class="a-tag">2024</span></div>
+        <div class="a-title" style="top:44%;font-size:19px">沙丘 2</div>
+        <div class="a-desc" style="top:54%;width:88%;font-size:7.5px; -webkit-line-clamp:2">保罗·厄崔迪与契妮联手复仇…</div>
+        <div class="a-btns" style="top:66%"><span class="a-btn a-btn-play" style="padding:4px 12px;font-size:9px">▶ 播放</span><span class="a-btn a-btn-info" style="padding:4px 12px;font-size:9px">详情</span></div>
+        <div class="a-progress"><i></i></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 设计B: SPLIT ═══════════ -->
+<div class="design">
+  <div class="design-head">
+    <div class="design-num" style="background:linear-gradient(135deg,#38bdf8,#818cf8)">B</div>
+    <div>
+      <div class="design-name">SPLIT · 分屏新视界</div>
+      <div class="design-desc">左 58% 大图竖版海报 + 右 42% 毛玻璃信息面板（评分/简介/年份/按钮），中间网格光效分割。移动端上下堆叠，信息面板变底部抽屉。主打「现代信息架构」。</div>
+    </div>
+    <span class="design-tag">信息密度高</span><span class="design-tag">杂志排版</span><span class="design-tag">网格光效</span>
+  </div>
+  <div class="row">
+    <div class="col desktop"><div class="col-label">🖥️ <b>桌面 2560×1440</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-b">
+        <div class="poster-bg"></div><div class="b-grid"></div>
+        <div class="b-left"><div class="b-poster"><div class="b-poster-bg"></div><div class="b-poster-title">沙丘 2</div></div></div>
+        <div class="b-right">
+          <div class="b-kicker">Now Showing</div>
+          <div class="b-title">沙丘 2</div>
+          <div class="b-meta"><span class="b-star">★ 8.7</span><span>2024</span><span>166 分钟</span></div>
+          <div class="b-sub"><span class="b-chip">科幻</span> <span class="b-chip">冒险</span> <span class="b-chip">4K HDR</span></div>
+          <div class="b-desc">保罗·厄崔迪与契妮和弗雷曼人联手，踏上复仇之路，追查让他家族覆灭的阴谋者，在沙丘之上谱写史诗新章…</div>
+          <span class="b-btn">▶ 立即播放</span>
+        </div>
+        <div class="b-nav"><span class="b-dot active"></span><span class="b-dot"></span><span class="b-dot"></span></div>
+      </div></div>
+    </div>
+    <div class="col tablet"><div class="col-label">📱 <b>平板 1024×768</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-b">
+        <div class="poster-bg"></div><div class="b-grid"></div>
+        <div class="b-left"><div class="b-poster"><div class="b-poster-bg"></div><div class="b-poster-title" style="font-size:10px">沙丘 2</div></div></div>
+        <div class="b-right" style="gap:8px">
+          <div class="b-kicker" style="font-size:8px">Now Showing</div>
+          <div class="b-title" style="font-size:15px">沙丘 2</div>
+          <div class="b-meta" style="font-size:9px"><span class="b-star">★ 8.7</span><span>2024</span></div>
+          <div class="b-desc" style="font-size:8px; -webkit-line-clamp:2">保罗·厄崔迪与契妮联手复仇…</div>
+          <span class="b-btn" style="padding:4px 14px;font-size:9px">▶ 播放</span>
+        </div>
+        <div class="b-nav"><span class="b-dot active"></span><span class="b-dot"></span></div>
+      </div></div>
+    </div>
+    <div class="col mobile"><div class="col-label">📲 <b>手机 390×844</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-b">
+        <div class="poster-bg"></div><div class="b-grid"></div>
+        <div class="b-left"><div class="b-poster" style="width:64%;height:76%"><div class="b-poster-bg"></div><div class="b-poster-title" style="font-size:9px">沙丘 2</div></div></div>
+        <div class="b-right">
+          <div class="b-kicker" style="font-size:7px">Now Showing</div>
+          <div class="b-title" style="font-size:12px">沙丘 2</div>
+          <div class="b-meta" style="font-size:8px"><span class="b-star">★ 8.7</span><span>2024</span></div>
+          <span class="b-btn" style="padding:3px 12px;font-size:8px">▶ 播放</span>
+        </div>
+        <div class="b-nav" style="bottom:6px"><span class="b-dot active"></span><span class="b-dot"></span></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 设计C: CINEMA ═══════════ -->
+<div class="design">
+  <div class="design-head">
+    <div class="design-num" style="background:linear-gradient(135deg,#d4af5e,#a8833a)">C</div>
+    <div>
+      <div class="design-name">CINEMA · 影院黑金</div>
+      <div class="design-desc">21:9 超宽画幅 + 上下黑边 + 金色光影 + 底部胶片帧条 + 黄金分割排版。主打「电影幕布」仪式感，黑金配色高级克制。</div>
+    </div>
+    <span class="design-tag">仪式感</span><span class="design-tag">黑金奢华</span><span class="design-tag">胶片帧条</span>
+  </div>
+  <div class="row">
+    <div class="col desktop"><div class="col-label">🖥️ <b>桌面 2560×1440</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-c">
+        <div class="poster-bg"></div>
+        <div class="c-bars"><div class="c-bar"></div><div class="c-bar"></div></div>
+        <div class="c-frame"><div class="c-frame-bg"></div>
+          <div class="c-logo-fallback">◤ OPPENHEIMER</div>
+          <div class="c-title">奥本海默</div>
+          <div class="c-meta"><span class="c-star">★ 8.9 ★★★★★</span><span>2023</span><span>传记 · 剧情 · 历史</span><span>IMAX 70mm</span></div>
+          <div class="c-desc">美国理论物理学家罗伯特·奥本海默领导曼哈顿计划，研制出原子弹，随后陷入道德与良知的漩涡…</div>
+          <div class="c-btn">▶ 放映</div>
+        </div>
+        <div class="c-filmstrip">
+          <div class="c-frame-thumb active"><i>▣ 01</i></div><div class="c-frame-thumb"><i>▣ 02</i></div><div class="c-frame-thumb"><i>▣ 03</i></div><div class="c-frame-thumb"><i>▣ 04</i></div><div class="c-frame-thumb"><i>▣ 05</i></div><div class="c-frame-thumb"><i>▣ 06</i></div>
+        </div>
+        <div class="c-progress"><i></i></div>
+      </div></div>
+    </div>
+    <div class="col tablet"><div class="col-label">📱 <b>平板 1024×768</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-c">
+        <div class="poster-bg"></div>
+        <div class="c-bars"><div class="c-bar"></div><div class="c-bar"></div></div>
+        <div class="c-frame"><div class="c-frame-bg"></div>
+          <div class="c-logo-fallback" style="top:12%;font-size:16px">◤ OPPENHEIMER</div>
+          <div class="c-title" style="top:42%;font-size:20px">奥本海默</div>
+          <div class="c-meta" style="top:56%;font-size:9px"><span class="c-star">★ 8.9</span><span>2023</span></div>
+          <div class="c-desc" style="top:62%;font-size:8px; -webkit-line-clamp:2">美国物理学家领导曼哈顿计划…</div>
+          <div class="c-btn" style="top:74%;padding:4px 16px;font-size:9px">▶ 放映</div>
+        </div>
+        <div class="c-filmstrip" style="height:30px"><div class="c-frame-thumb active"><i>▣</i></div><div class="c-frame-thumb"><i>▣</i></div><div class="c-frame-thumb"><i>▣</i></div></div>
+        <div class="c-progress"><i></i></div>
+      </div></div>
+    </div>
+    <div class="col mobile"><div class="col-label">📲 <b>手机 390×844</b></div>
+      <div class="mock-browser"><div class="mock-bar"><span class="mock-dot" style="background:#ff5f57"></span><span class="mock-dot" style="background:#febc2e"></span><span class="mock-dot" style="background:#28c840"></span><div class="mock-url"></div></div>
+      <div class="mock-view mock-c">
+        <div class="poster-bg"></div>
+        <div class="c-bars"><div class="c-bar"></div><div class="c-bar"></div></div>
+        <div class="c-frame"><div class="c-frame-bg"></div>
+          <div class="c-logo-fallback" style="top:10%;font-size:13px">◤ OPPENHEIMER</div>
+          <div class="c-title" style="top:38%;font-size:18px">奥本海默</div>
+          <div class="c-meta" style="top:52%;font-size:8px"><span class="c-star">★ 8.9</span><span>2023</span></div>
+          <div class="c-desc" style="top:58%;width:88%;font-size:7px; -webkit-line-clamp:2">曼哈顿计划与良知漩涡…</div>
+          <div class="c-btn" style="top:70%;padding:3px 12px;font-size:8px">▶ 放映</div>
+        </div>
+        <div class="c-filmstrip" style="height:24px;gap:5px"><div class="c-frame-thumb active"><i>▣</i></div><div class="c-frame-thumb"><i>▣</i></div><div class="c-frame-thumb"><i>▣</i></div></div>
+        <div class="c-progress"><i></i></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Vanvy Emby Kit · Design Concept V2 · 2026-08-13 · 美术总监: 虾子🦐</div>
+</body>
+</html>

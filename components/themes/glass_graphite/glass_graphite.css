@@ -1,0 +1,61 @@
+/* Vanvy Emby Kit · 毛玻璃主题基座 + 石墨黑 (默认) */
+/* 用法: html 添加 class="vanvy-theme-glass_graphite" */
+html.vanvy-theme-glass_graphite {
+  --vanvy-glass-bg: rgba(28, 28, 30, 0.62);
+  --vanvy-glass-blur: blur(18px) saturate(160%);
+  --vanvy-accent: #00a4dc;
+  --vanvy-radius: 14px;
+  --vanvy-hairline: rgba(255, 255, 255, 0.10);
+  --vanvy-shadow: 0 10px 34px rgba(0, 0, 0, 0.38);
+}
+
+/* 侧边栏毛玻璃 */
+html.vanvy-theme-glass_graphite .mainDrawer.drawer-docked,
+html.vanvy-theme-glass_graphite .mainDrawer:not(.drawer-open) {
+  background: var(--vanvy-glass-bg) !important;
+  backdrop-filter: var(--vanvy-glass-blur) !important;
+  -webkit-backdrop-filter: var(--vanvy-glass-blur) !important;
+}
+
+/* 顶部导航: 透明渐变 (不遮挡轮播大屏) */
+html.vanvy-theme-glass_graphite .skinHeader-withBackground {
+  background: linear-gradient(rgba(0,0,0,0.45), transparent) !important;
+  background-color: unset !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+}
+
+/* 卡片圆角 */
+html.vanvy-theme-glass_graphite .card {
+  border-radius: var(--vanvy-radius) !important;
+  overflow: hidden;
+}
+
+/* 弹框毛玻璃 */
+html.vanvy-theme-glass_graphite .dialog {
+  background: var(--vanvy-glass-bg) !important;
+  backdrop-filter: var(--vanvy-glass-blur) !important;
+  -webkit-backdrop-filter: var(--vanvy-glass-blur) !important;
+  border-radius: calc(var(--vanvy-radius) * 1.6) !important;
+  border: 1px solid var(--vanvy-hairline) !important;
+}
+
+/* 按钮胶囊 */
+html.vanvy-theme-glass_graphite .emby-button {
+  border-radius: 999px !important;
+}
+
+/* 滚动条细化 */
+html.vanvy-theme-glass_graphite ::-webkit-scrollbar { width: 6px; height: 6px; }
+html.vanvy-theme-glass_graphite ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+}
+
+/* ===== 轮播豁免: 轮播内元素不受主题影响 ===== */
+html.vanvy-theme-glass_graphite .vanvy-banner,
+html.vanvy-theme-glass_graphite .vanvy-banner * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}

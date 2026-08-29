@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Vanvy Emby Kit - 美化增强",
+  "version": "1.0.0",
+  "description": "Vanvy Emby 美化增强：轮播策展 / Fluent 布局 / 毛玻璃标签 / 字体栈 (Chrome 扩展版, 免改服务端)",
+  "minimum_chrome_version": "88",
+  "icons": {
+    "128": "static/img/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*web/index.html*",
+        "https://*/*web/index.html*",
+        "http://*/*/web/index.html*",
+        "https://*/*/web/index.html*"
+      ],
+      "js": ["content/content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "permissions": [],
+  "host_permissions": ["http://*/*", "https://*/*"]
+}

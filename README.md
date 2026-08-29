@@ -1,262 +1,231 @@
 <p align="center">
-  <img src="docs/screenshots/banner.png" alt="Emby Beautify Banner" width="800"/>
+  <img src="docs/vek-banner.png" alt="Vanvy Emby Kit" width="1000"/>
 </p>
 
-# 🎨 Emby 美化全家桶 · emby-beautify
+# 🎨 Vanvy Emby Kit
 
 > **让每一台 Emby，都成为艺术品。**
-> 一个命令，27 个组件自由组合，自动适配 Emby 4.8 / 4.9。
+> 一行命令，自动识别你的 Emby 环境，自由组合美化组件。
 
 <p align="center">
   <a href="https://github.com/micimo13/emby-beautify/stargazers"><img src="https://img.shields.io/github/stars/micimo13/emby-beautify" alt="Stars"/></a>
-  <a href="https://github.com/micimo13/emby-beautify/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="License"/></a>
+  <a href="https://github.com/micimo13/emby-beautify/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"/></a>
   <img src="https://img.shields.io/badge/Emby-4.8%20%7C%204.9-green" alt="Emby 4.8|4.9"/>
   <img src="https://img.shields.io/badge/Platform-Docker%20%7C%20NAS-blueviolet" alt="Docker|NAS"/>
+  <img src="https://img.shields.io/badge/镜像-官方%20%7C%20LinuxServer%20%7C%20社区-orange" alt="镜像兼容"/>
 </p>
 
 ---
 
 ## ✨ 它是什么？
 
-**emby-beautify** 是一个面向自建媒体库爱好者的 **Emby 前端美化工具箱**。无论你的 Emby 跑在群晖、威联通、飞牛、UNRAID 还是任何 Linux 服务器上，只需一行命令，就能：
+**Vanvy Emby Kit** 是一个面向自建媒体库爱好者的 **Emby 前端美化工具箱**。无论你的 Emby 跑在群晖、威联通、飞牛、UNRAID 还是任何 Linux 服务器上，只需一行命令，就能：
 
-- 🎬 换上**沉浸式首页轮播**（4.8 / 4.9 自动适配）
-- 🎭 一键应用 **13 款 CSS 主题**（极简 / 暗黑 / 毛玻璃 / 自研风格）
-- ⚡ 叠加 **12 个功能增强**（弹幕 / 豆瓣评分 / 倍速 / 剧照 / JAV 元数据…）
-- 🛡️ **自动备份 + 幂等安装 + 精确卸载**，随时可还原
+- 🎠 换上**沉浸式首页轮播**（**7 款可选**，含 3 款原创设计：AURORA 极光 / CINEMA 影院黑金 / SPLIT 分屏新视界）
+- 🌌 **品牌加载动画**：进入首页先有全屏专属过渡动画（极光 / 放映机 / 分屏呼吸），轮播就绪后平滑淡出
+- 🎬 **轮播内媒体库**：底部卡片流浏览真实媒体库分类，可拖拽 / 滚轮 / 左右箭头滚动，hover 有扫光 + 发光 + 进入提示
+- 🎯 **影片备选列表**：右侧 / 底部缩略图流，全量渲染可滚动，点击即切换轮播
+- 📺 **一键直达**：详情按钮跳官方详情页，播放按钮调官方播放器（全屏直播）
+- 🎨 一键应用 **7 款毛玻璃主题** + Vanvy 品牌定制
+- ⚡ 叠加 **13 个功能增强**（弹幕 / 豆瓣评分 / 倍速记忆 / 剧照 / JAV 元数据 / Fluent布局 / 字体…）
+- 🛡️ **自动识别镜像环境**，官方版 / LinuxServer / 社区版通吃
+- 💾 **持久化存储**，容器重建后一键恢复（社区版自动注入启动钩子）
 
-> 💡 官方镜像（`emby/embyserver` 或 `linuxserver/emby`）与第三方镜像均可使用——脚本自动探测容器内的 Web 目录，无需关心镜像差异。
+> 💡 自动探测容器内的 Web 目录与 Emby 版本，适配所有主流镜像布局，无需关心镜像差异。
+
+---
+
+## 📸 效果预览
+
+> 以下截图来自真实媒体库运行环境（VANVY 定制 Emby）
+
+### 🏠 首页推荐位
+
+<p align="center">
+  <img src="docs/shot-home.jpg" alt="首页推荐位" width="880"/>
+  <br/>
+  <em>沉浸式大图推荐位 + 毛玻璃信息层</em>
+</p>
+
+### 🎬 详情页与剧集列表
+
+<p align="center">
+  <img src="docs/shot-detail-1.jpg" alt="详情页 1" width="430"/>
+  <img src="docs/shot-detail-2.jpg" alt="详情页 2" width="430"/>
+  <br/>
+  <em>详情页：高清海报 + 媒体信息 + 播放按钮</em>
+</p>
+
+<p align="center">
+  <img src="docs/shot-series-1.jpg" alt="剧集列表 1" width="430"/>
+  <img src="docs/shot-series-2.jpg" alt="剧集列表 2" width="430"/>
+  <br/>
+  <em>剧集列表：卡片式剧集 + 简介</em>
+</p>
+
+<p align="center">
+  <img src="docs/shot-series-3.jpg" alt="剧集列表 3" width="880"/>
+  <br/>
+  <em>剧集详情：分集信息 + 演职人员</em>
+</p>
+
+### 🖥️ 一键安装
+
+<p align="center">
+  <img src="docs/vek-terminal.png" alt="终端安装演示" width="820"/>
+  <br/>
+  <em>交互式向导：选容器 → 选轮播 → 选主题 → 完成</em>
+</p>
 
 ---
 
 ## 🚀 30 秒上手
 
 ```bash
-# 交互式完整向导（推荐）
+# 交互式完整向导（推荐：GitHub API 直取，无缓存永远最新，国内可访问）
+curl -sL https://emby-beautify.vanvy.top/scripts/online-install.sh | bash
+
+# 网络可直连 GitHub 时，也可用官方源
 curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash
 
-# 零交互快速安装（自动识别版本+推荐配置）
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash -s -- --quick
+# 零交互快速安装（全家桶）
+curl -sL https://emby-beautify.vanvy.top/scripts/online-install.sh | bash -s -- --package full --yes
 
 # 指定容器 + 指定组件
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash -s -- --container emby --feature danmaku
+curl -sL https://emby-beautify.vanvy.top/scripts/online-install.sh | bash -s -- --container emby --feature danmaku
 ```
 
 安装完成后，浏览器 **Ctrl+F5 / Cmd+Shift+R** 强制刷新即可看到效果 ✨
 
-<p align="center">
-  <img src="docs/screenshots/terminal-install.png" alt="终端安装演示" width="700"/>
-  <br/><em>↑ 真实安装过程演示</em>
-</p>
-
----
-
-## 🧩 组件全家桶（27 个）
-
-### 🎬 首页美化（按版本自动推荐，三选一）
-| 组件 | 适配 | 效果 | 来源 |
-|------|:---:|------|------|
-| ✨ emby-home-beautify | 4.9 | 沉浸式轮播（最近添加/Backdrop/Logo/简介） | [开源](https://github.com/rockyzhao3000/emby-home-beautify) |
-| 🎨 emby-crx | 4.8 | 加载动画 + Banner 轮播 + 媒体库悬浮 | [开源 ⭐1.2k](https://github.com/Nolovenodie/emby-crx) |
-| 🪟 emby-fluent | 4.8 | Fluent 设计语言风格 | [开源](https://github.com/heichaowo/Emby-Fluent) |
-
-### 🎭 CSS 主题（可叠加，全版本）
-| 组件 | 效果 | 来源 |
-|------|------|------|
-| 🌿 Embymalism | 极简风 | [开源](https://github.com/v1rusnl/Embymalism) |
-| 🔴🌸🟠🔵🟣🟢⚪ Dark×8 | 8 色暗黑主题 | [开源](https://github.com/BenZuser/Emby-Web-Dark-Themes-CSS) |
-| 🍎 Apple Glass | 苹果毛玻璃 | [开源](https://github.com/michaelfried-dev/emby-apple-glass) |
-| 🏴 Vanvy Dark / 📄 Vanvy Detail | 自研深色 / 详情页主题 | **Vanvy 自研** |
-
-### ⚡ 功能增强（可多选，全版本）
-| 组件 | 效果 | 来源 |
-|------|------|------|
-| 🔞 **JAV 元数据美化工程** | Javdb 刮削/番号识别/演员作品/翻译/预告片（独立大项，自动检测冲突） | [开源](https://github.com/XingyiHua2024/Emby-Javascript-Details) |
-| 💬 弹幕 | B站/抖音等多源弹幕 | [开源 ⭐456](https://github.com/chen3861229/dd-danmaku) |
-| ⭐ 豆瓣/Bangumi 评分 | 详情页评分展示 | [开源](https://github.com/kjtsune/embyToLocalPlayer) |
-| 🖼️ 剧照展示 | 详情页高清剧照 | **Vanvy 自研** |
-| ⏩ 播放倍速 | 快捷键倍速 | **Vanvy 自研** |
-| 🌀 加载动画 | 首页加载动画+服务器名 | **Vanvy 自研** |
-| 🔗 远程路径助手 | 显示远程资源路径可复制 | **Vanvy 自研** |
-| 🎬 第三方播放器 | 调用 PotPlayer/mpv | **Vanvy 自研** |
-| 📺 Banner 轮播 | 自定义 Banner 轮播 | **Vanvy 自研** |
-| 📑 详情页 Tabs | 自定义详情页栏目 | **Vanvy 自研** |
-| 🎞️ Trailer 增强 | 详情页预告片 | **Vanvy 自研** |
-| 🎨 自定义 CSS 加载 | 按服务器加载 CSS | **Vanvy 自研** |
-
-> 🏆 **Vanvy 自研** 组件：在真实 NAS 环境实战打磨的脚本，语义化命名、无广告、无追踪。
-
----
-
-## 📸 真实效果展示
-
-> 以下截图来自 **Vanvy 自研媒体库** 的真实运行效果，分为已上线成品与规划中效果。
-
-### ✅ 成品效果（已上线）
-
-<p align="center">
-  <b>首页轮播 · Emby 4.8（emby-crx）</b><br/>
-  <img src="docs/screenshots/real-home-01.jpg" width="85%" alt="首页轮播 4.8 emby-crx"/>
-</p>
-
-<p align="center">
-  <b>首页轮播 · Emby 4.9（emby-home-beautify）</b><br/>
-  <img src="docs/screenshots/real-detail-01.jpg" width="85%" alt="首页轮播 4.9 home-beautify"/>
-</p>
-
-<p align="center">
-  <b>电影详情页 · 当前效果</b><br/>
-  <img src="docs/screenshots/real-detail-02.jpg" width="85%" alt="电影详情页 当前效果"/>
-</p>
-
-<p align="center">
-  <b>剧集详情页 · Emby 4.8 当前效果</b><br/>
-  <img src="docs/screenshots/real-list-02.jpg" width="85%" alt="剧集详情页 4.8 当前效果"/>
-</p>
-
-### 🔧 待开发效果（规划中）
-
-> 以下为设计中的增强效果预览，后续版本将集成到项目中。
-
-<p align="center">
-  <b>电影详情页 · 隐藏媒体封面 CSS 效果</b><br/>
-  <img src="docs/screenshots/real-list-01.jpg" width="85%" alt="电影详情页 待开发CSS效果"/>
-</p>
-
-<p align="center">
-  <b>剧集详情页 · CSS 增强效果</b><br/>
-  <img src="docs/screenshots/real-detail-03.jpg" width="85%" alt="剧集详情页 待开发CSS效果"/>
-</p>
-
----
-
-### 🎨 整合开源项目效果（参考）
-
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/18238152/235510774-666d9006-cbad-4b97-9a73-ad5334cb7eee.png" width="48%" alt="emby-crx 效果1"/>
-  <img src="https://user-images.githubusercontent.com/18238152/235510867-4b71a870-6be6-46a5-b988-527d667b020d.png" width="48%" alt="emby-crx 效果2"/>
-</p>
-<p align="center"><em>emby-crx 首页轮播（<a href="https://github.com/Nolovenodie/emby-crx">来源</a>）</em></p>
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/af43eb32-2434-4fbd-83b5-33ac3d288cd8" width="48%" alt="Embymalism 效果1"/>
-  <img src="https://github.com/user-attachments/assets/39936f51-4549-466d-b7d0-01b88cec509e" width="48%" alt="Embymalism 效果2"/>
-</p>
-<p align="center"><em>Embymalism 极简主题（<a href="https://github.com/v1rusnl/Embymalism">来源</a>）</em></p>
-
-<p align="center">
-  <img src="https://cdn.rawgit.com/BenZuser/Emby-Dark-Themes-Resources/master/images/screenshots/Header%20Dark%20Themes.png" width="60%" alt="Dark Themes 效果"/>
-</p>
-<p align="center"><em>Dark Themes 暗黑系列（<a href="https://github.com/BenZuser/Emby-Web-Dark-Themes-CSS">来源</a>）</em></p>
-
----
-
-## 🏗️ 技术架构
-
-```mermaid
-graph TD
-    A[用户 SSH 到 NAS] --> B{online-install.sh}
-    B -->|curl pipe bash| C[下载解压项目]
-    C --> D[install.sh 向导]
-    D --> E[容器发现 & 4级版本识别]
-    E --> F[manifest 注册表驱动菜单]
-    F --> G[首页美化 3选1]
-    F --> H[CSS主题 13选多]
-    F --> I[功能增强 12选多]
-    G & H & I --> J[注入引擎]
-    J --> K[自动备份 index.html]
-    J --> L[awk 注入 + 幂等检测]
-    J --> M[冲突检测 & 精确卸载]
-```
-
-### ✨ 核心特性
-
-| 特性 | 说明 |
-|------|------|
-| 🧬 **manifest 驱动** | 组件一行声明，菜单自动生成，新增组件不改脚本逻辑 |
-| 🔍 **4 级版本识别** | 镜像tag → 容器内API → UI特征 → 手动选择 |
-| 🔌 **自适应锚点注入** | 兼容 `</head>` 与 `<body>` 两种 HTML 结构（4.8/4.9 通吃） |
-| 🛡️ **自动备份** | 每次注入前备份 index.html 到容器内 |
-| ⚡ **幂等安装** | marker 检测，重复运行不重复注入 |
-| 🔫 **冲突剔除** | 已装组件与冲突组件**直接不出现在安装菜单**（事前剔除，非事后警告） |
-| 🧹 **精确卸载** | `--only <组件>` 只删指定组件，不误伤其他脚本 |
-| 🌐 **在线安装** | 无需 clone，`curl | bash` 即用，支持代理镜像 |
-
----
-
-## 🖥️ 完整命令参考
+### 🛠️ 命令行详解
 
 ```bash
-# 在线安装（交互式）
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash
+bash install.sh                          # 交互式向导
+bash install.sh --container emby         # 指定容器
+bash install.sh --package full --yes     # 全家桶免确认
+bash install.sh --feature danmaku,douban # 只装指定组件
+bash install.sh --restore                # 容器重建后恢复美化
+bash install.sh --detect-only            # 只检测环境
 
-# 快速模式（零交互）
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash -s -- --quick
-
-# 指定容器（多 Emby 环境）
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash -s -- --container emby-18
-
-# 直接安装指定组件（跳过交互）
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash -s -- --feature jav
-curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/scripts/online-install.sh | bash -s -- --feature danmaku,douban
-
-# 本地运行
-git clone https://github.com/micimo13/emby-beautify.git
-cd emby-beautify
-bash install.sh              # 交互式
-bash uninstall.sh --all      # 卸载全部
-bash uninstall.sh --only jav # 只卸载 JAV 组件
+bash uninstall.sh --container emby --all          # 卸载全部
+bash uninstall.sh --container emby --only danmaku # 卸载单个组件
+bash uninstall.sh --container emby --reset        # 完全还原出厂
 ```
 
----
+### 💾 容器重建后恢复
 
-## ❓ 常见问题
-
-### 装了 emby-crx 后首页轮播不显示？
-**官方版 main.js 自动匹配全部媒体库**（`getItems` 不带 ParentId 递归搜索），无需任何配置、无需编辑 config.js。
-
-> ⚠️ 旧版增强型 main.js（依赖 config.js 的 `parentId` 白名单）已废弃。若你容器内还是旧版：
-> 重新运行 `bash install.sh` 安装一次 emby-crx 即可覆盖为官方版；或手动检查容器内
-> `/system/dashboard-ui/emby-crx/main.js` 是否含 `this.config = new Config()`（含 = 旧版需更新）。
-
-### CSS 主题会影响轮播吗？
-部分主题（如 Apple Glass，面向 4.10）的全局卡片规则可能影响 4.8 轮播。本工具已内置冲突检测与轮播保护 CSS，按提示选择即可。
+- **官方版 / LinuxServer 版**：重建后运行一次 `bash install.sh --restore` 即可恢复全部美化
+- **社区版（amilys 等）**：自动写入启动钩子，重建后自动恢复，无需手动操作
 
 ---
 
-## 🛠️ 开发者：新增组件
+## 📦 组件包
+
+| 包 | 包含组件 |
+|---|---|
+| 📦 **极简包** | 经典轮播 + Vanvy 品牌主题 |
+| 📦 **观影包** | 轮播 + 弹幕 / 豆瓣 / 剧照 / 倍速 / 播放器 / 远程路径 |
+| 📦 **详情包** | 轮播 + 品牌主题 + JAV 元数据 |
+| 📦 **全家桶** | 以上全部 + 播放页增强 |
+
+---
+
+## 🎠 首页轮播（7 款可选，三款原创）
+
+### 🌌 原创轮播（自研，6 色主题可选）
+
+| 风格 | 效果 | 专属加载动画 | 布局亮点 |
+|---|---|---|---|
+| 🌌 **AURORA 极光** | 极光光晕 + 封面流 + 毛玻璃 | 极光流动 + LOGO 呼吸 + 流光进度 | 左侧信息卡 + 右侧竖排影片备选（5行可滚）+ 底部媒体库卡片流 |
+| 🎬 **CINEMA 影院黑金** | 21:9 超宽画幅 + 上下黑边 + 胶片帧条 | 放映机光束 + 胶片帧条滚动 | 右下角毛玻璃信息卡 + 底部胶片缩略图 + 媒体库卡片流 |
+| 📐 **SPLIT 分屏新视界** | 左竖版海报 + 右毛玻璃面板 + 网格光效 | 左右分屏呼吸 | 全屏背景 + 悬浮海报卡 + 底部横图缩略流 + 媒体库卡片流 |
+
+> 原创轮播统一支持：**6 色主题**（蓝紫极光 / 青绿 / 粉紫 / 暖金 / 深海 / 黑金）、**品牌加载动画**、**媒体库卡片流**（拖拽 + 滚轮 + 箭头滚动）、**影片备选列表**（全量渲染可滚）、**详情/播放按钮**（官方路由直跳）、**顶栏悬浮透明**（轮播真满屏）、**手机响应式**。
+
+### 🎠 经典轮播（三选一 + 封面流）
+
+| 风格 | 效果 | 适配版本 |
+|---|---|---|
+| 🎠 经典轮播 | Backdrop 大图 + 信息 + LOGO，8 秒自动滚动 | 4.8 |
+| 🎠 Fluent 轮播 | 无缝循环 + 左右导航 + 失败自动清理 | 4.8 / 4.9 |
+| 🎠 封面流轮播 | Swiper 封面流: 主图+缩略图联动 (emby-crx 原版) | 4.8 / 4.9 |
+
+## 🎨 主题美化（毛玻璃互斥，可叠加品牌主题）
+
+| 主题 | 效果 |
+|---|---|
+| 🍇 石墨黑 / 🔵 冰川蓝 / 🟣 极光紫 | 深色系毛玻璃质感 |
+| 🟢 翡翠绿 / 🩷 樱花粉 / 🟠 琥珀金 | 彩色系毛玻璃质感 |
+| 👑 **Vanvy 定制** | LOGO 替换 / 椭圆标签 / 简介弹框 / 剧集列表 / 播放页 |
+
+## ⚡ 功能增强（13 个）
+
+| 组件 | 功能 |
+|---|---|
+| 🔞 JAV 元数据 | Javdb 刮削 / 番号识别 / 演员作品 / 翻译 / 预告片 |
+| 💬 弹幕 | 多源弹幕（B站 / 抖音等） |
+| ⭐ 豆瓣评分 | 豆瓣 / Bangumi 评分展示 |
+| ⏩ 播放倍速 | 快捷键调速 + **倍速记忆**（刷新/重启恢复） |
+| 🎬 外部播放器 | PotPlayer / VLC / MPV 等 |
+| 🎞️ 播放页增强 | OSD 布局 + **音量记忆**（会话恢复） |
+| 🔗 远程路径 | 显示远程资源路径并可复制 |
+| 🪟 Fluent 布局 | 侧边栏浮层 / 透明顶栏 / 毛玻璃标签 / 细滚动条 |
+| 🔤 全局字体 | Plus Jakarta + HarmonyOS + 霞鹜文楷（双 CDN 回退） |
+| ✨ 悬停发光 | 卡片 hover 放大 + 蓝框发光（CSS-only） |
+| 🖼️ 详情增强 | 剧照轮播 + 预告片 + 相似影片 + 演员作品（JavDB 可选） |
+| 🖼️ 剧照展示 | 剧集列表 hover 剧照（与 JAV 剧照互补，排在最后避免覆盖） |
+| 📚 媒体库卡片流 | 原创轮播底部媒体库分类卡片（拖拽/滚轮/箭头滚动 + hover 特效） |
+
+## 🎯 轮播内容策展（吸收 EmbyCarouselGUI）
+
+首页轮播不再"随机抽卡"，而是可运营的内容位。编辑容器内 `vanvy/carousel_rules/carousel-rules.json`：
+
+```json
+{
+  "version": 1,
+  "rule": {
+    "name": "高分精选",
+    "types": ["Movie"],
+    "libraries": ["电影"],
+    "sort": "CommunityRating",
+    "order": "Descending",
+    "minPremiereDays": 90,
+    "maxCount": 5,
+    "pin": ["星际穿越", "流浪地球"]
+  }
+}
+```
+
+- `types`: Movie / Series / BoxSet（可组合）
+- `libraries`: 媒体库名称（空 = 全部，支持模糊匹配）
+- `sort`: PremiereDate / CommunityRating / DateCreated / ProductionYear / Random
+- `minPremiereDays`: 仅最近 N 天首映
+- `pin`: 优先置顶片名（按配置顺序）
+
+生成器脚本（可 cron 自动刷新）：
 
 ```bash
-# 1. 资源放入 styles/ 或 features/<id>/
-# 2. lib/manifest.sh 加一行声明：
-#    "my_plugin|feature|📦 我的插件|all|描述|features/my_plugin|emby-my_plugin|<script src=\"emby-my_plugin/app.js\"></script>|emby-my_plugin/app.js|conflict_id1,conflict_id2"
-# 3. ✅ 菜单自动出现，注入/卸载/冲突检测自动适配
+python3 scripts/gen_carousel_rules.py --container emby gen --template daily --keep 1 --deploy
+python3 scripts/gen_carousel_rules.py --container emby gen --template top-rated --keep 5 --deploy
+# cron: 每天 6 点刷新每日推荐
+0 6 * * * python3 scripts/gen_carousel_rules.py --container emby gen --template daily --keep 1 --deploy
 ```
 
----
-
-## 🙏 致谢
-
-整合的开源项目：
-[emby-crx](https://github.com/Nolovenodie/emby-crx) · [dd-danmaku](https://github.com/chen3861229/dd-danmaku) · [Emby-Web-Dark-Themes-CSS](https://github.com/BenZuser/Emby-Web-Dark-Themes-CSS) · [embyToLocalPlayer](https://github.com/kjtsune/embyToLocalPlayer) · [Embymalism](https://github.com/v1rusnl/Embymalism) · [Emby-Javascript-Details](https://github.com/XingyiHua2024/Emby-Javascript-Details) · [Emby-Fluent](https://github.com/heichaowo/Emby-Fluent) · [emby-apple-glass](https://github.com/michaelfried-dev/emby-apple-glass) · [emby-home-beautify](https://github.com/rockyzhao3000/emby-home-beautify)
-
-**Vanvy 自研**：stills / douban-score / playback-speed / loading-animation / remote-path / external-player / banner-carousel / detail-tabs / trailer-enhance / custom-css
+模板：`daily`（每日推荐）/ `recent`（近期上映）/ `new-added`（最近入库）/ `top-rated`（高分精选）/ `collection`（随机合集）
 
 ---
 
-## ⚠️ 说明
+## 🧠 技术亮点
 
-- 只修改容器内 Web UI 静态文件，不动媒体库/数据库/用户配置
-- Emby 更新镜像后需重新运行安装脚本（自动备份保证可恢复）
-- 页面定制不受 Emby 官方支持，升级前建议先在次要实例验证
-- 弹幕/豆瓣/JAV 等功能依赖外网 API，容器需能访问外网
+- **加载动画全屏化**：`position:fixed` 挂载到 `document.body` 顶层，避开容器 `mask-image` 的包含块陷阱，真正占满视口（100vw×100vh），顶栏 `display:none` 彻底移除
+- **返回首页自动恢复**：URL 变化检测（Emby 的 `Emby.Page.show` 用 History API，不触发 hashchange），离开首页清理轮播，返回自动重挂载，无需刷新
+- **媒体库路由映射**：按 CollectionType 映射官方路由（movies/homevideos → `/videos`，tvshows → `/tv`，boxsets → `/list`），跳转带 `serverId`，点击即达
+- **播放器接入**：`Emby.importModule` 加载官方 playbackManager，`play({fullscreen, ids, serverId})` 全屏直播
+- **选择器提权**：顶栏透明规则用 `body.vanvy-carousel-active .skinHeader.skinHeader-withBackground`，避开主题 CSS 特异性冲突
+- **防冲突设计**：轮播内置媒体库为独立渲染（不 detach 原 section0，不破坏原布局），与右侧影片备选分工明确
+
+---
 
 ## 📄 License
 
-MIT — 本项目代码与 Vanvy 自研脚本；内置开源项目遵循各自 License。
-
----
-
-<p align="center">
-  Made with ❤️ by <a href="https://github.com/micimo13">micimo13</a> · Vanvy 出品
-</p>
+MIT

@@ -1,0 +1,9 @@
+/* Vanvy Emby Kit · 全局字体栈应用样式
+   字体由 global-fonts.js 动态加载 (本地优先 + CDN 双回退 + 冷却)
+   此处仅应用字体族, 字体加载失败自动回退系统字体, 绝不影响渲染 */
+
+.vanvy-fonts-applied {
+  font-family: "Plus Jakarta Sans", "HarmonyOS Sans SC", "LXGW WenKai",
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif !important;
+}

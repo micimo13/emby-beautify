@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "rule": {
+    "name": "每日推荐",
+    "types": [
+      "Movie",
+      "Series"
+    ],
+    "libraries": [],
+    "sort": "Random",
+    "order": "Descending",
+    "minPremiereDays": null,
+    "maxCount": 10,
+    "pin": []
+  }
+}

@@ -1,126 +1,172 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  Emby 美化全家桶 · 卸载脚本 (精确清理版)
-#  用法: bash uninstall.sh [--container <名>] [--all] [--only <组件id>]
-#  - 只删除本工具管理(manifest声明)的注入行和资源文件
-#  - 不误删用户其他自定义脚本（如 config.js 等非本工具文件）
-#  - 支持精确卸载单个组件: --only jav
+#  Vanvy Emby Kit · 卸载/还原
+#  ---------------------------------------------------------------------------
+#  用法:
+#    bash uninstall.sh --container <名> --all    # 卸载全部美化
+#    bash uninstall.sh --container <名> --only <组件>  # 卸载单个
+#    bash uninstall.sh --container <名> --reset  # 完全还原 (清持久化+钩子)
+#    bash uninstall.sh --container <名> --list-backups   # 列出所有 index.html 备份
+#    bash uninstall.sh --container <名> --restore-backup <时间戳>  # 恢复指定备份
 # =============================================================================
 
 set -u
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/common.sh"
 source "$SCRIPT_DIR/lib/manifest.sh"
+source "$SCRIPT_DIR/lib/detect.sh"
 
-CONTAINER=""; ALL=0; ONLY=""
+CONTAINER=""; ALL=0; ONLY=""; RESET=0; LIST_BACKUPS=0; RESTORE_BACKUP=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --container) CONTAINER="$2"; shift ;;
     --all) ALL=1 ;;
     --only) ONLY="$2"; shift ;;
+    --reset) RESET=1 ;;
+    --list-backups) LIST_BACKUPS=1 ;;
+    --restore-backup) RESTORE_BACKUP="$2"; shift ;;
+    --yes|-y) ASSUME_YES=1 ;;
     *) c_warn "忽略未知参数: $1" ;;
   esac
   shift
 done
 
-command -v docker >/dev/null 2>&1 || die "未检测到 docker。"
-[ -z "$CONTAINER" ] && pick_container
-detect_version
+command -v docker >/dev/null 2>&1 || die "未检测到 docker"
+[ -z "$CONTAINER" ] && detect_container
 detect_dashboard_dir || true
+detect_ext_hook
 INDEX_FILE="$DASHBOARD_DIR/index.html"
-c_info "卸载目标: $CONTAINER (Emby $VER) · $INDEX_FILE"
 
-# 收集要卸载的组件条目（--only 或全部）
-declare -a TARGETS
-if [ -n "$ONLY" ]; then
-  for t in style theme feature; do
-    line="$(manifest_find "$t" "$ONLY" 2>/dev/null)" && TARGETS+=("$line")
-  done
-  [ "${#TARGETS[@]}" = "0" ] && die "未找到组件: $ONLY"
-else
-  TARGETS=("${MANIFEST_STYLES[@]}" "${MANIFEST_THEMES[@]}" "${MANIFEST_FEATURES[@]}")
-fi
+# ── 完全还原 (--reset) ──
+reset_emby() {
+  c_warn "════════ 完全还原 Emby (恢复出厂状态) ════════"
+  c_warn "将删除所有美化 + 持久化数据, 不可恢复!"
+  [ "${ASSUME_YES:-0}" = "1" ] || confirm "确认完全还原 $CONTAINER?" || die "已取消"
 
-# 检测已安装项
-echo ""
-c_info "本工具管理的已安装组件:"
-found=0
-for line in "${TARGETS[@]}"; do
-  marker="$(manifest_marker "$line")"
-  name="$(manifest_field "$line" 3)"
-  if docker exec "$CONTAINER" sh -c "grep -qF '$marker' '$INDEX_FILE'" 2>/dev/null; then
-    echo "  ✓ $name ($marker)"
-    found=1
+  # 1. 恢复 index.html 镜像原始层 (失败则回退 pristine 备份)
+  c_info "恢复 index.html (镜像原始层)..."
+  local img cid restored=0
+  img=$(docker inspect "$CONTAINER" --format '{{.Config.Image}}' 2>/dev/null)
+  cid=$(docker create "$img" 2>/dev/null)
+  if [ -n "$cid" ]; then
+    if docker cp "$cid:$DASHBOARD_DIR/index.html" /tmp/vanvy-orig-index.html 2>/dev/null \
+      && docker cp /tmp/vanvy-orig-index.html "$CONTAINER:$DASHBOARD_DIR/index.html" 2>/dev/null; then
+      c_ok "✓ index.html 已恢复镜像原始层"
+      restored=1
+    else
+      c_warn "镜像层无 index.html (自定义镜像), 尝试 pristine 备份..."
+    fi
+    rm -f /tmp/vanvy-orig-index.html
+    docker rm "$cid" >/dev/null 2>&1
   fi
-done
-[ "$found" = "0" ] && echo "  (未发现任何本工具安装的组件)"
-
-if [ "$ALL" = "0" ] && [ -z "$ONLY" ]; then
-  c_ask "确认移除以上所有内容? [y/N]: "
-  safe_read confirm ""
-  [ "$confirm" = "y" ] || [ "$confirm" = "Y" ] || die "已取消。"
-fi
-
-# 精确删除：注入行 + 本工具管理的资源文件（不删未知文件）
-for line in "${TARGETS[@]}"; do
-  type="$(manifest_field "$line" 2)"
-  id="$(manifest_field "$line" 1)"
-  name="$(manifest_field "$line" 3)"
-  marker="$(manifest_marker "$line")"
-  resdir="$(manifest_field "$line" 6)"
-
-  # 是否已注入
-  if ! docker exec "$CONTAINER" sh -c "grep -qF '$marker' '$INDEX_FILE'" 2>/dev/null; then
-    continue
+  # 回退: pristine 出厂备份 (时间戳备份栈)
+  if [ "$restored" = "0" ]; then
+    local pristine
+    pristine=$(docker exec "$CONTAINER" sh -c "ls -t /config/backups/emby-beautify/index.html.pristine.* 2>/dev/null | head -1" 2>/dev/null)
+    if [ -n "$pristine" ]; then
+      docker exec "$CONTAINER" sh -c "cp '$pristine' '$DASHBOARD_DIR/index.html'" 2>/dev/null \
+        && c_ok "✓ index.html 已从 pristine 备份恢复: $(basename "$pristine")"
+    else
+      c_warn "未找到 pristine 备份, 仅清理注入行"
+      docker exec "$CONTAINER" sh -c "sed -i '/vanvy\//d' '$DASHBOARD_DIR/index.html'" 2>/dev/null
+    fi
   fi
 
-  # 1. 删除注入行（marker 所在行）
-  esc=$(echo "$marker" | sed 's|/|\\/|g; s|\.|\\.|g')
-  docker exec -i "$CONTAINER" sh -c "
+  # 2. 删美化资源
+  c_info "删除美化资源..."
+  docker exec "$CONTAINER" sh -c "rm -rf '$DASHBOARD_DIR/vanvy' '$DASHBOARD_DIR/config.json'" 2>/dev/null
+  c_ok "✓ 资源已清理"
+
+  # 3. 清持久化 + 钩子
+  c_info "清理持久化..."
+  docker exec "$CONTAINER" sh -c "
+    rm -rf /config/vanvy-official /config/vanvy-branding
+    EXT=/config/config/ext.sh
+    [ -f \"\$EXT\" ] && sed -i '/vanvy-beautify 持久化部署/,/end vanvy-beautify 持久化/d' \"\$EXT\"
+  " 2>/dev/null
+  c_ok "✓ 持久化已清理"
+
+  c_ok "✅ $CONTAINER 已完全还原!"
+  exit 0
+}
+
+# ── 卸载全部 (--all) ──
+uninstall_all() {
+  c_info "卸载全部美化..."
+  # 删注入行
+  docker exec "$CONTAINER" sh -c "
     INDEX='$INDEX_FILE'
-    TMP=\"\$INDEX.eb-rm.\$\$\"
-    sed -E '/$esc/d' \"\$INDEX\" > \"\$TMP\"
-    mv \"\$TMP\" \"\$INDEX\"
-  " 2>/dev/null && echo "  [移除注入] $name"
+    sed -i '/vanvy\\/core/d; /vanvy\\/banner/d; /vanvy\\/themes/d; /vanvy\\/features/d; /vanvy\\/branding/d; /vanvy\\/carousel_rules/d; /opencc-js/d' \"\$INDEX\"
+  " 2>/dev/null
+  # 删资源
+  docker exec "$CONTAINER" sh -c "rm -rf '$DASHBOARD_DIR/vanvy' '$DASHBOARD_DIR/config.json'" 2>/dev/null
+  # 清持久化
+  docker exec "$CONTAINER" sh -c "
+    rm -rf /config/vanvy-official /config/vanvy-branding
+    EXT=/config/config/ext.sh
+    [ -f \"\$EXT\" ] && sed -i '/vanvy-beautify 持久化部署/,/end vanvy-beautify 持久化/d' \"\$EXT\"
+  " 2>/dev/null
+  c_ok "✅ 已卸载全部美化 (含持久化)"
+}
 
-  # 2. 删除本工具管理的资源文件
+# ── 卸载单个 (--only) ──
+uninstall_one() {
+  local id="$1" entry type
+  entry="$(manifest_find "" "$id")" || { c_err "未知组件: $id"; return 1; }
+  type="$(manifest_field "$entry" 2)"
+  c_info "卸载组件: $(manifest_field "$entry" 3)"
+  # 注入路径用原名(下划线), CSS文件名用连字符
+  local fkey
+  fkey="$(echo "$id" | sed 's/_/-/g')"
+  # 用 grep -v 过滤注入行 (匹配 id 原名)
+  docker exec "$CONTAINER" sh -c "
+    INDEX='$INDEX_FILE'
+    grep -vE 'vanvy/$id|theme-$id' \"\$INDEX\" > \"\$INDEX.tmp\"
+    mv \"\$INDEX.tmp\" \"\$INDEX\"
+  " 2>/dev/null
+  # 删资源目录
   case "$type" in
     style)
-      # emby-crx 目录内本工具管理的文件
-      local_files=""
-      for f in "$SCRIPT_DIR/$resdir"/*; do
-        [ -f "$f" ] && local_files="$local_files $(basename "$f")"
-      done
-      [ -n "$local_files" ] && docker exec "$CONTAINER" sh -c "cd /system/dashboard-ui/emby-crx && rm -f $local_files" 2>/dev/null
-      echo "  [移除资源] $id 的 $(echo $local_files | wc -w) 个文件"
+      docker exec "$CONTAINER" sh -c "rm -rf '$DASHBOARD_DIR/vanvy/$id'" 2>/dev/null
+      # 联动清理: 轮播伴随的 carousel_rules (rules-loader + 规则文件)
+      if [ -d "$SCRIPT_DIR/components/home/carousel_rules" ]; then
+        docker exec "$CONTAINER" sh -c "
+          INDEX='$INDEX_FILE'
+          grep -v 'vanvy/carousel_rules' \"\$INDEX\" > \"\$INDEX.tmp\" && mv \"\$INDEX.tmp\" \"\$INDEX\"
+          rm -rf '$DASHBOARD_DIR/vanvy/carousel_rules'
+        " 2>/dev/null
+        c_ok "✅ 已联动清理 carousel_rules (策展组件)"
+      fi
       ;;
-    theme)
-      # theme 文件 = marker (theme-*.css)
-      docker exec "$CONTAINER" sh -c "rm -f /system/dashboard-ui/emby-crx/$marker" 2>/dev/null
-      echo "  [移除资源] $marker"
-      ;;
-    feature)
-      # 容器目录 = condir, 本地文件名列表
-      condir="$(manifest_condir "$line")"
-      local_files=""
-      for f in "$SCRIPT_DIR/$resdir"/*; do
-        [ -f "$f" ] && local_files="$local_files $(basename "$f")"
-      done
-      [ -n "$local_files" ] && docker exec "$CONTAINER" sh -c "cd /system/dashboard-ui/$condir && rm -f $local_files" 2>/dev/null
-      echo "  [移除资源] $id 的 $(echo $local_files | wc -w) 个文件"
-      ;;
+    theme) docker exec "$CONTAINER" sh -c "rm -f '$DASHBOARD_DIR/vanvy/themes/$fkey.css' '$DASHBOARD_DIR/vanvy/themes/theme-$id.js'" 2>/dev/null ;;
+    feature) docker exec "$CONTAINER" sh -c "rm -rf '$DASHBOARD_DIR/vanvy/features/$id'" 2>/dev/null ;;
   esac
-done
+  c_ok "✅ 已卸载 $id (含注入行)"
+}
 
-# 3. 清理空的 emby-crx 目录（只删空目录，保留用户文件）
-docker exec "$CONTAINER" sh -c '
-  for d in /system/dashboard-ui/emby-crx /system/dashboard-ui/emby-danmaku /system/dashboard-ui/emby-douban /system/dashboard-ui/emby-extrafanart /system/dashboard-ui/emby-playbackrate /system/dashboard-ui/emby-loading /system/dashboard-ui/emby-tool /system/dashboard-ui/emby-localplayer /system/dashboard-ui/emby-bannercarousel /system/dashboard-ui/emby-detailtabs /system/dashboard-ui/emby-trailer /system/dashboard-ui/emby-customcss /system/dashboard-ui/emby-detailpage; do
-    if [ -d "$d" ] && [ -z "$(ls -A "$d" 2>/dev/null)" ]; then
-      rmdir "$d" 2>/dev/null && echo "  [清理] 空目录 $d"
-    fi
-  done
-' 2>/dev/null
-
-c_ok "✅ 卸载完成。强制刷新浏览器即可恢复。"
-exit 0
+# ── 主流程 ──
+if [ "$LIST_BACKUPS" = "1" ]; then
+  c_info "index.html 备份列表 (时间戳备份栈):"
+  echo ""
+  list_index_backups
+  echo ""
+  c_warn "恢复用法: --restore-backup <时间戳>"
+  exit 0
+fi
+if [ -n "$RESTORE_BACKUP" ]; then
+  c_info "恢复备份: $RESTORE_BACKUP"
+  restore_index_backup "$RESTORE_BACKUP"
+  c_warn "提示: 恢复后浏览器请强制刷新 (Ctrl+F5)"
+  exit 0
+fi
+if [ "$RESET" = "1" ]; then
+  reset_emby
+elif [ "$ALL" = "1" ]; then
+  uninstall_all
+elif [ -n "$ONLY" ]; then
+  uninstall_one "$ONLY"
+else
+  c_warn "用法: --all (全卸) / --only <组件> / --reset (完全还原) / --list-backups (列备份) / --restore-backup <时间戳> (恢复)"
+  exit 1
+fi

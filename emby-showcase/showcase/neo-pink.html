@@ -1,0 +1,96 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+:root {
+  --ph:320; --ps:100%; --pl:55%;
+  --accent: hsl(var(--ph),var(--ps),var(--pl));
+  --accent2: hsl(calc(var(--ph) + 60),var(--ps),var(--pl));
+  --bg: #06060f;
+  --txt: rgba(255,255,255,.95); --txt2: rgba(255,255,255,.55);
+}
+* {margin:0;padding:0;box-sizing:border-box}
+body {background:var(--bg);color:var(--txt);font-family:'Rajdhani','HarmonyOS Sans SC','PingFang SC',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before {content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:56px 56px;transform:perspective(500px) rotateX(55deg) scale(2) translateY(35%);transform-origin:bottom center;mask-image:linear-gradient(transparent,#000 55%)}
+body::after {content:'';position:fixed;left:0;right:0;height:2px;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scan 5s linear infinite}
+@keyframes scan {0%{top:-2%}100%{top:102%}}
+.side {position:fixed;left:0;top:0;bottom:0;width:200px;z-index:40;padding:24px 14px;background:rgba(6,6,15,.85);backdrop-filter:blur(14px);border-right:1px solid rgba(255,255,255,.07)}
+.side .brand {font-size:16px;font-weight:800;letter-spacing:3px;padding:0 10px 18px;color:var(--accent);text-shadow:0 0 14px var(--accent)}
+.side .brand small {display:block;font-size:9px;letter-spacing:4px;color:var(--txt2);font-weight:400;margin-top:3px}
+.side .nav-it {display:flex;align-items:center;gap:11px;padding:10px 12px;margin:2px 0;border-radius:6px;font-size:13px;color:var(--txt2);cursor:pointer;border-left:2px solid transparent;font-family:'PingFang SC',sans-serif}
+.side .nav-it .c {font-size:15px;width:20px;text-align:center;color:var(--accent);opacity:.6}
+.side .nav-it:hover {background:rgba(255,255,255,.05);color:var(--txt)}
+.side .nav-it.sel {color:var(--accent);border-left-color:var(--accent);background:linear-gradient(90deg,hsla(var(--ph),var(--ps),var(--pl),.12),transparent);text-shadow:0 0 10px hsla(var(--ph),var(--ps),var(--pl),.6)}
+.top {position:fixed;top:0;left:200px;right:0;height:58px;z-index:40;display:flex;align-items:center;gap:14px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(6,6,15,.7);backdrop-filter:blur(12px)}
+.top .search {flex:1;max-width:360px}
+.top .search input {width:100%;padding:9px 18px;background:rgba(255,255,255,.05);border:1px solid hsla(var(--ph),var(--ps),var(--pl),.3);border-radius:4px;color:var(--txt);font-size:13px;outline:none;font-family:inherit}
+.top .search input:focus {box-shadow:0 0 18px hsla(var(--ph),var(--ps),var(--pl),.35);border-color:var(--accent)}
+.top .stat {font-size:10px;letter-spacing:2px;color:var(--txt2);font-family:'PingFang SC',sans-serif}
+.top .stat b {color:var(--accent)}
+.main {margin-left:200px;padding:80px 30px 40px;position:relative;z-index:2}
+.hero {display:flex;gap:44px;align-items:center;margin-bottom:40px;min-height:430px}
+.hero .poster {width:290px;height:430px;flex-shrink:0;position:relative;border-radius:10px;overflow:hidden;
+  box-shadow:0 0 0 2px hsla(var(--ph),var(--ps),var(--pl),.55),0 0 34px hsla(var(--ph),var(--ps),var(--pl),.35),0 0 90px hsla(var(--ph),var(--ps),var(--pl),.15);animation:pulse 2.6s ease-in-out infinite}
+@keyframes pulse {0%,100%{box-shadow:0 0 0 2px hsla(var(--ph),var(--ps),var(--pl),.55),0 0 34px hsla(var(--ph),var(--ps),var(--pl),.35)}50%{box-shadow:0 0 0 2px hsla(calc(var(--ph)+60),var(--ps),var(--pl),.6),0 0 44px hsla(calc(var(--ph)+60),var(--ps),var(--pl),.45)}}
+.hero .poster img {width:100%;height:100%;object-fit:cover}
+.hero .poster::after {content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55))}
+.hero .info {flex:1;max-width:620px;position:relative}
+.hero .info .tag {display:inline-block;padding:4px 14px;margin-bottom:14px;font-size:11px;letter-spacing:3px;color:var(--accent);border:1px solid hsla(var(--ph),var(--ps),var(--pl),.5);background:hsla(var(--ph),var(--ps),var(--pl),.06);text-shadow:0 0 8px var(--accent)}
+.hero .info h1 {font-size:52px;font-weight:900;line-height:1.02;margin-bottom:8px;letter-spacing:1px;text-shadow:0 0 12px hsla(var(--ph),var(--ps),var(--pl),.6),3px 3px 0 hsla(calc(var(--ph)+60),var(--ps),var(--pl),.45)}
+.hero .info .sub {font-size:16px;letter-spacing:6px;color:var(--accent);text-shadow:0 0 12px var(--accent);margin-bottom:16px;font-weight:300}
+.hero .info .meta {display:flex;gap:9px;margin-bottom:16px}
+.hero .info .chip {padding:3px 13px;font-size:11.5px;border-radius:3px;background:hsla(var(--ph),var(--ps),var(--pl),.1);border:1px solid hsla(var(--ph),var(--ps),var(--pl),.4);color:var(--accent);text-shadow:0 0 6px var(--accent)}
+.hero .info .chip.alt {background:hsla(calc(var(--ph)+60),var(--ps),var(--pl),.1);border-color:hsla(calc(var(--ph)+60),var(--ps),var(--pl),.4);color:var(--accent2)}
+.hero .info .desc {font-size:14px;line-height:1.8;color:var(--txt2);margin-bottom:22px;max-width:540px}
+.hero .info .btns {display:flex;gap:13px}
+.hero .info .pbtn {padding:13px 36px;font-size:14px;letter-spacing:2px;font-weight:700;cursor:pointer;background:transparent;color:var(--accent);border:2px solid var(--accent);text-shadow:0 0 8px var(--accent);box-shadow:0 0 18px hsla(var(--ph),var(--ps),var(--pl),.35),inset 0 0 18px hsla(var(--ph),var(--ps),var(--pl),.08);font-family:inherit;transition:.2s}
+.hero .info .pbtn:hover {background:hsla(var(--ph),var(--ps),var(--pl),.16);box-shadow:0 0 34px hsla(var(--ph),var(--ps),var(--pl),.6)}
+.hero .info .dbtn {padding:13px 30px;font-size:14px;letter-spacing:2px;cursor:pointer;background:transparent;color:var(--accent2);border:2px solid hsla(calc(var(--ph)+60),var(--ps),var(--pl),.55);text-shadow:0 0 8px var(--accent2);font-family:inherit}
+.thumbs {display:flex;gap:10px;margin-bottom:36px}
+.thumbs .t {width:120px;height:68px;border-radius:6px;background-size:cover;background-position:center;border:2px solid rgba(255,255,255,.14);cursor:pointer;position:relative;overflow:hidden;opacity:.6;transition:.2s}
+.thumbs .t.on {border-color:var(--accent);opacity:1;box-shadow:0 0 16px hsla(var(--ph),var(--ps),var(--pl),.5)}
+.thumbs .t.on::after {content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,hsla(var(--ph),var(--ps),var(--pl),.18),transparent);animation:scan2 1.8s infinite}
+@keyframes scan2 {from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.sec {margin-bottom:34px}
+.sec-h {display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-h h2 {font-size:15px;font-weight:700;letter-spacing:2px;color:var(--txt)}
+.sec-h h2::before {content:'▸ ';color:var(--accent)}
+.sec-h .more {font-size:11px;letter-spacing:2px;color:var(--accent);cursor:pointer}
+.scroll {display:flex;gap:14px;overflow-x:auto;padding-bottom:10px}
+.ncard {flex-shrink:0;width:142px;cursor:pointer;position:relative}
+.ncard .p {aspect-ratio:2/3;background-size:cover;background-position:center;border-radius:6px;border:1px solid rgba(255,255,255,.1);position:relative;transition:.2s}
+.ncard:hover .p {border-color:var(--accent);box-shadow:0 0 22px hsla(var(--ph),var(--ps),var(--pl),.35)}
+.ncard .p::after {content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.7));border-radius:6px}
+.ncard .rt {position:absolute;top:8px;left:8px;font-size:11px;color:var(--accent);font-weight:800;z-index:2;text-shadow:0 0 8px var(--accent)}
+.ncard .nm {position:absolute;bottom:7px;left:9px;right:9px;font-size:12px;font-weight:600;z-index:2;font-family:'PingFang SC',sans-serif}
+::-webkit-scrollbar {height:5px} ::-webkit-scrollbar-thumb {background:hsla(var(--ph),var(--ps),var(--pl),.3);border-radius:3px}
+</style></head><body>
+<div class="side">
+  <div class="brand">VANVY<small>NEON PROTOCOL</small></div>
+  NAV_HTML['neo']
+</div>
+<div class="top">
+  <div class="search"><input placeholder="SEARCH // 输入关键词..."></div>
+  <div style="flex:1"></div><div class="stat">NODE <b>07</b> · ONLINE</div>
+</div>
+<div class="main">
+  <div class="hero">
+    <div class="poster"><img src="https://image.tmdb.org/t/p/w500/kb4T9mU5pVYbVhFz3Kj0J8sYqW0.jpg"></div>
+    <div class="info">
+      <div class="tag">// CYBER-PROTOCOL //</div>
+      <h1>星际穿越</h1>
+      <div class="sub">INTERSTELLAR · 2014</div>
+      <div class="meta"><span class="chip">★ 9.4</span><span class="chip alt">科幻</span><span class="chip alt">冒险</span></div>
+      <div class="desc">地球濒临毁灭，一群探险家穿越虫洞寻找人类的新家园。诺兰的太空史诗，关于爱与时间的终极叩问。</div>
+      <div class="btns"><button class="pbtn">▶ 进入播放</button><button class="dbtn">系统详情</button></div>
+    </div>
+  </div>
+  <div class="thumbs">THUMB_HTML['neo']</div>
+  <div class="sec"><div class="sec-h"><h2>数据流 · 最近添加</h2><span class="more">VIEW ALL →</span></div>
+    <div class="scroll">NCARD_HTML</div>
+  </div>
+  <div class="sec"><div class="sec-h"><h2>继续传输 · 观看进度</h2><span class="more">RESUME →</span></div>
+    <div class="scroll">NCARD2_HTML</div>
+  </div>
+</div>
+</body></html>

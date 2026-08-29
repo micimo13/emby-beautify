@@ -1,0 +1,24 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · CINEMA 影院版
+   原创: 电影胶片卷轴 + 黑金配色 + 放映机效果
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes cinema-reel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes cinema-beam { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+@keyframes cinema-bar { 0% { width: 5%; } 50% { width: 40%; } 100% { width: 70%; } }
+@keyframes cinema-fadeout { 0% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }
+
+#vanvy-global-loading.vanvy-loading-cinema { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #0a0908 0%, #1a1612 50%, #0d0b0a 100%); transition: opacity 0.6s ease; }
+#vanvy-global-loading.vanvy-loading-cinema.vl-hide { opacity: 0; pointer-events: none; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at center top, rgba(255, 200, 100, 0.08) 0%, transparent 60%); }
+#vanvy-global-loading.vanvy-loading-cinema .vl-reel { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); width: 120px; height: 120px; background: radial-gradient(circle, #2a2520 0%, #1a1612 100%); border: 3px solid #3a3530; border-radius: 50%; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.5); animation: cinema-reel-spin 3s linear infinite; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-reel::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #0a0908; border-radius: 50%; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-reel::after { content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #c9a227; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-inner { position: relative; display: flex; flex-direction: column; align-items: center; gap: 30px; margin-top: 80px; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-logo-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-glow { position: absolute; inset: -30px; background: radial-gradient(ellipse, rgba(201, 162, 39, 0.2) 0%, transparent 70%); filter: blur(20px); }
+#vanvy-global-loading.vanvy-loading-cinema .vl-logo { width: 60px; height: 60px; object-fit: contain; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-bar { width: 250px; height: 2px; background: rgba(201, 162, 39, 0.2); position: relative; overflow: hidden; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-bar i { display: block; height: 100%; background: linear-gradient(90deg, transparent, #c9a227, #ffd700); position: absolute; left: 0; animation: cinema-bar 2s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-cinema .vl-brand { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; letter-spacing: 6px; color: #c9a227; text-shadow: 0 0 20px rgba(201, 162, 39, 0.5); }
+#vanvy-global-loading.vanvy-loading-cinema.hide-out { animation: cinema-fadeout 0.6s ease forwards; }

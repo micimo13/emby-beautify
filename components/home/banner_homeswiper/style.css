@@ -1,0 +1,455 @@
+/* Emby 4.9.3.0 Compatible Styles */
+
+/* Scrollbar */
+::-webkit-scrollbar {
+	width: .3em !important;
+	height: .3em !important;
+}
+
+/* Spinner - 修复: 移除 zoom:.5 (MDL spinner 的 border 圆弧被缩放后产生非整数像素, 导致转圈裂开) */
+.mdl-spinner {
+	/* zoom 已移除, 保持原始 28px 完整渲染 */
+	width: 28px !important;
+	height: 28px !important;
+}
+/* 防御: 确保 4 个圆弧 layer 的 border 保持整数像素, 杜绝裂缝 */
+.mdl-spinner__layer {
+	border-width: 3px !important;
+}
+
+/* Header */
+.skinHeader-withBackground {
+	right: 0 !important;
+	background-image: linear-gradient(rgba(0,0,0,.5), transparent);
+	background-color: unset;
+}
+
+.view:not(.hide) .skinHeader, .skinHeader-withBackground.headroom-scrolling {
+	width: auto;
+	background-image: linear-gradient(black, transparent) !important;
+	background-color: unset !important;
+}
+
+/* Home page adjustments */
+.view[data-type=home]:not(.hide) > div:nth-child(1) .scrollSlider.padded-top-page {
+	padding-top: 0 !important;
+}
+
+.view:not(.hide) .itemsContainer-finepointerwrap {
+	flex-wrap: initial !important;
+	-webkit-flex-wrap: initial !important;
+}
+
+/* Library cards */
+.view:not(.hide) .section0 {
+	z-index: 2;
+}
+
+.view:not(.hide) .section0 .cardText {
+	position: absolute;
+	top: 0;
+	display: flex;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	background-color: rgba(0, 0, 0, .5);
+	font-weight: bolder;
+	font-size: larger;
+	border-radius: 0.3em;
+	transition: .2s;
+	opacity: 0;
+}
+
+.view:not(.hide) .section0 .backdropCard:hover .cardText {
+	opacity: 1;
+}
+
+.view:not(.hide) .section0 .cardText button {
+	text-decoration: none;
+}
+
+.view:not(.hide) .section0 .cardOverlayContainer {
+	background: none;
+}
+
+.view:not(.hide) .section0 .cardOverlayContainer label,
+.view:not(.hide) .section0 .sectionTitleContainer {
+	display: none !important;
+}
+
+.view:not(.hide) .section0 .cardBox-touchzoom {
+	box-shadow: 0 8px 10px rgb(0 0 0 / 15%);
+}
+
+.view:not(.hide) .section0 .backdropCard {
+	transition: all 1.5s cubic-bezier(0, 1.75, .25, 1) 0s;
+}
+
+.view:not(.hide) .section0 .backdropCard:hover {
+	transform: scale(1.1) !important;
+}
+
+.view:not(.hide) .section0 .scrollbuttoncontainer {
+	top: 0;
+	bottom: calc(.8em - min(.72em, max(.48em, 1.78vw)) / 2);
+	background-color: rgba(0, 0, 0, 0);
+	overflow: visible;
+}
+
+.view:not(.hide) .section0 .scrollbuttoncontainer:hover > .emby-scrollbuttons-scrollbutton {
+	background-color: rgba(0, 0, 0, .5);
+	transform: scale(.85) !important;
+}
+
+.tabs-viewmenubar-backgroundcontainer:not(.tabs-viewmenubar-backgroundcontainer-tv) {
+	background: 0 0 !important;
+	-webkit-backdrop-filter: blur(10px) !important;
+	backdrop-filter: blur(10px) !important;
+}
+
+/* =====================================
+   Swiper Styles (for new home.js)
+   ===================================== */
+.swiper-home-container {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+}
+
+.swiper-home-banner {
+	width: 100%;
+	height: 70vh;
+	min-height: 400px;
+}
+
+.swiper-home-banner .swiper-slide {
+	position: relative;
+	overflow: hidden;
+}
+
+.swiper-home-banner .swiper-slide img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	-webkit-mask-image: linear-gradient(to top, transparent 0%, black 40%);
+	mask-image: linear-gradient(to top, transparent 0%, black 40%);
+}
+
+.swiper-home-info {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: clamp(1rem, 2vw, 2rem);
+	background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+	z-index: 10;
+}
+
+.swiper-home-info h1 {
+	color: #fff !important;
+	font-size: clamp(1.5rem, 4vw, 3rem);
+	font-weight: bolder;
+	margin: 0 0 0.5rem 0;
+	text-shadow: 0 2px 10px rgb(0 0 0 / 30%);
+	max-width: 80%;
+	display: -webkit-box !important;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+	overflow: hidden;
+}
+
+.swiper-home-info p {
+	color: #fff !important;
+	font-size: clamp(0.8rem, 2vw, 1.2rem);
+	font-weight: normal;
+	max-width: 60%;
+	opacity: 0.9;
+	display: -webkit-box !important;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	text-shadow: 0 1px 5px rgb(0 0 0 / 30%);
+}
+
+.swiper-home-logo {
+	position: absolute;
+	top: clamp(1rem, 3vw, 2rem);
+	right: clamp(1rem, 3vw, 2rem);
+	max-height: clamp(3rem, 8vw, 8rem);
+	max-width: 30%;
+	object-fit: contain;
+	z-index: 5;
+}
+
+/* Swiper pagination */
+.swiper-home-pagination {
+	position: absolute;
+	bottom: 10px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 20;
+	display: flex;
+	gap: 8px;
+}
+
+.swiper-home-pagination span {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.5);
+	cursor: pointer;
+	transition: all 0.3s;
+}
+
+.swiper-home-pagination span.active {
+	background-color: #fff;
+	width: 10px;
+	height: 10px;
+}
+
+/* Swiper navigation buttons */
+.swiper-home-button-prev,
+.swiper-home-button-next {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 20;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s;
+	font-size: 20px;
+	border: none;
+}
+
+.swiper-home-button-prev {
+	left: 10px;
+}
+
+.swiper-home-button-next {
+	right: 10px;
+}
+
+.swiper-home-button-prev:hover,
+.swiper-home-button-next:hover {
+	background-color: rgba(0, 0, 0, 0.8);
+	transform: translateY(-50%) scale(1.1);
+}
+
+/* Loading screen */
+.misty-loading {
+	z-index: 99999999;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.misty-loading h1 {
+	margin: 0;
+	margin-bottom: 3rem;
+	text-transform: uppercase;
+	transition: .8s;
+	transform: scale(1.15);
+	opacity: 0;
+	color: #fff;
+}
+
+.misty-loading h1.active {
+	transform: scale(1);
+	opacity: 1;
+}
+
+.misty-loading .mdl-spinner {
+	margin: 0;
+	position: initial;
+}
+
+.misty-loading .mdl-spinner__layer-1 {
+	border-color: #fff;
+}
+
+/* Legacy misty-banner support (for main.js) */
+.misty-banner {
+	position: relative;
+	overflow: hidden;
+}
+
+.misty-banner-cover {
+	width: 100%;
+	max-height: 100vh;
+	user-select: none;
+	object-fit: cover;
+	-webkit-mask-image: linear-gradient(to top, transparent 0%, black 30%);
+	mask-image: linear-gradient(to top, transparent 0%, black 30%);
+}
+
+.misty-banner-logo {
+	position: absolute;
+	user-select: none;
+	object-fit: contain;
+	height: clamp(0rem, -2.182rem + 10.91vw, 6rem);
+	transform: translateY(calc(-50% - clamp(-2rem, -3.455rem + 7.27vw, 2rem)));
+	right: calc(3.4% + min(0.72em, max(0.48em, 1.78vw)));
+	opacity: 0;
+	transition: 1s;
+	transition-delay: .8s;
+}
+
+.misty-banner-logo.active {
+	transform: translateY(calc(-100% - clamp(-2rem, -3.455rem + 7.27vw, 2rem)));
+	opacity: 1;
+}
+
+.misty-banner-library {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	padding: clamp(0rem, -1.313rem + 3.75vw, 1.5rem) 0;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: flex-end;
+	flex-direction: column;
+	background-image: linear-gradient(90deg, rgba(0, 0, 0, .6), transparent);
+}
+
+.misty-banner-body {
+	display: flex;
+	position: relative;
+	left: 0;
+	transition: all 1.5s cubic-bezier(0.15, 0.07, 0, 1) 0s;
+}
+
+.misty-banner-item {
+	min-width: 100%;
+}
+
+.misty-banner-info {
+	width: 100%;
+	margin: min(.72em, max(.48em, 1.78vw));
+	margin-top: 0;
+	position: absolute;
+	top: 0;
+	z-index: 1;
+	height: 100%;
+	height: -webkit-fill-available;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.misty-banner-info > * {
+	transition: all 2.5s cubic-bezier(0, 1.41, 0.36, 0.93) .4s;
+	transform: translateY(150%);
+	opacity: 0 !important;
+}
+
+.misty-banner-item.active .misty-banner-info > * {
+	transform: translateY(0);
+	opacity: 1 !important;
+}
+
+.misty-banner-info > div:nth-child(2) {
+	transition-delay: .6s;
+}
+
+.misty-banner-info > div:nth-child(3) {
+	transition-delay: .8s;
+}
+
+.misty-banner-info h1 {
+	color: #fff !important;
+	font-size: clamp(2rem, -.362rem + 6.75vw, 4.7rem);
+	font-weight: bolder;
+	margin: 0;
+	text-shadow: 0 4px 10px rgb(0 0 0 / 20%);
+	max-width: 80%;
+	display: -webkit-box !important;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+	overflow: hidden;
+}
+
+.misty-banner-info p {
+	color: #fff !important;
+	font-size: clamp(.6rem, .4rem + 1vw, 1.6rem);
+	font-weight: bold;
+	max-width: 47%;
+	opacity: .7;
+	display: -webkit-box !important;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+
+.misty-banner-info button {
+	cursor: pointer;
+	margin-top: clamp(0rem, -2.625rem + 7.5vw, 3rem);
+	width: 6em;
+	height: 1.8em;
+	background-color: #fff;
+	border: none;
+	font-size: clamp(.6rem, -.275rem + 2.5vw, 1.6rem);
+	border-radius: 10px;
+	font-weight: bold;
+	letter-spacing: 2px;
+	box-shadow: 0 2px 7px rgba(1, 1, 1, -.8);
+	font-family: system-ui;
+	transition: .2s;
+}
+
+.misty-banner-info button:hover {
+	transform: scale(.95);
+}
+
+@media screen and (max-width: 62.5em) {
+	.misty-banner-info button {
+		margin-top: 0;
+	}
+}
+
+@media screen and (max-width: 52em) {
+	.misty-banner-info button,
+	.misty-banner-info p {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 35em) {
+	.misty-banner-info,
+	.misty-banner-logo {
+		display: none !important;
+	}
+	.misty-banner-body {
+		opacity: 0;
+	}
+}
+
+.misty-banner .backdropCard {
+	transition-duration: 0;
+	transform: translateY(80%);
+	opacity: 0;
+}
+
+.misty-banner-library-show {
+	transition-duration: 1.7s !important;
+	transform: translateY(0) !important;
+	opacity: 1 !important;
+}
+
+.misty-banner-library-overflow {
+	overflow: visible !important;
+}

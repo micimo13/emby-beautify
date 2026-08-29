@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* V1.5 纯净测试台 — 模拟 Emby 原生布局（供 Playwright 验收，不碰生产） */
+  html,body{margin:0;padding:0;background:#101014;height:100%;font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif}
+  #embyTopbar{height:50px;background:#15151a;display:flex;align-items:center;padding:0 16px;color:#aaa;font-size:14px;position:fixed;top:0;left:0;right:0;z-index:500}
+  #embySidebar{position:fixed;top:50px;left:0;bottom:0;width:64px;background:#0e0e12;display:flex;flex-direction:column;align-items:center;padding-top:16px;z-index:500}
+  #embySidebar .sb-item{width:40px;height:40px;border-radius:8px;background:#1c1c22;margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888;cursor:pointer}
+  #embyContent{margin-left:64px;padding-top:50px;min-height:100vh}
+  .homeSectionsContainer{position:relative;padding:16px;min-height:60vh}
+  .sections{min-height:100vh}
+  .emby-scroll{overflow-y:auto;height:calc(100vh - 50px)}
+  .mock-row{margin:18px 0}
+  .mock-row h3{color:#ccc;font-size:15px;margin:8px 16px}
+  .mock-cards{display:flex;gap:12px;padding:0 16px;overflow-x:auto}
+  .mock-card{width:160px;height:90px;border-radius:8px;background:linear-gradient(135deg,#2a2a33,#1a1a22);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px}
+  .settings-page{padding:40px;color:#ccc}
+  .settings-page h1{color:#fff}
+</style>
+<!-- V1.5 统一加载器（唯一注入点，manifest 驱动） -->
+<script src="vanvy/vanvy-setup.js" defer></script>
+</head>
+<body class="skinBody">
+<div id="embyTopbar">⬅ Emby V1.5 纯净测试台 · <span id="routeLabel">home</span></div>
+<div id="embySidebar">
+  <div class="sb-item">🏠</div><div class="sb-item">🎬</div><div class="sb-item">📺</div><div class="sb-item">⚙️</div>
+</div>
+<div id="embyContent">
+  <div class="emby-scroll">
+    <div class="view">
+      <div class="homeSectionsContainer">
+        <!-- Emby 原生卡片结构（classic/fluent 轮播依赖 .section0 .card 才启动） -->
+        <div class="verticalSection section0">
+          <div class="sectionTitleContainer"><h2 class="sectionTitle">继续观看</h2></div>
+          <div class="emby-scroller">
+            <div class="itemsContainer">
+              <div class="card"><div class="cardBox"><div class="cardImageContainer"><img class="cardImage" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='90'><rect width='100%25' height='100%25' fill='%232a2a33'/></svg>"></div></div></div>
+              <div class="card"><div class="cardBox"><div class="cardImageContainer"><img class="cardImage" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='90'><rect width='100%25' height='100%25' fill='%232a2a33'/></svg>"></div></div></div>
+              <div class="card"><div class="cardBox"><div class="cardImageContainer"><img class="cardImage" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='90'><rect width='100%25' height='100%25' fill='%232a2a33'/></svg>"></div></div></div>
+              <div class="card"><div class="cardBox"><div class="cardImageContainer"><img class="cardImage" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='90'><rect width='100%25' height='100%25' fill='%232a2a33'/></svg>"></div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="mock-row"><h3>最近添加</h3><div class="mock-cards">
+          <div class="mock-card">攻壳机动队</div><div class="mock-card">星际穿越</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════ Emby ApiClient Mock (含剧集/季/集数据) ═══════ */
+window.ApiClient = {
+  _uid: 'u1',
+  getCurrentUserId: function () { return this._uid; },
+  serverAddress: function () { return 'http://mock.local'; },
+
+  getImageUrl: function (item, opts) {
+    // 支持传对象或字符串 id
+    if (typeof item === 'string') {
+      var all = this._movies.concat(this._seriesList);
+      for (var i = 0; i < all.length; i++) {
+        if (all[i].Id === item) { item = all[i]; break; }
+      }
+      if (typeof item === 'string') {
+        var name2 = item;
+        var type2 = opts && opts.type ? opts.type : 'Backdrop';
+        var w2 = (opts && opts.maxWidth) || 600;
+        var h2 = type2 === 'Primary' ? Math.round(w2 * 1.5) : Math.round(w2 * 0.5625);
+        var svg2 = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w2 + '" height="' + h2 + '"><rect width="100%" height="100%" fill="#2a2a3a"/><text x="50%" y="50%" fill="rgba(255,255,255,0.55)" font-size="20" text-anchor="middle">' + name2 + '</text></svg>';
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg2);
+      }
+    }
+    var type = opts && opts.type ? opts.type : 'Backdrop';
+    var name = encodeURIComponent((item.Name || 'img').slice(0, 6));
+    var w = (opts && opts.maxWidth) || 600;
+    var h = type === 'Primary' ? Math.round(w * 1.5) : Math.round(w * 0.5625);
+    var c1 = '#2a2a3a', c2 = type === 'Primary' ? '#1a1030' : '#0d0d16';
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">' +
+      '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient></defs>' +
+      '<rect width="100%" height="100%" fill="url(#g)"/>' +
+      '<text x="50%" y="50%" fill="rgba(255,255,255,0.55)" font-size="' + Math.round(w / 12) + '" text-anchor="middle" font-family="sans-serif">' + name + '</text></svg>';
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  },
+
+  getItems: function (uid, query) {
+    var q = query || {};
+    var items = [];
+    if (q.IncludeItemTypes === 'Episode') {
+      var s = this._series[q.ParentId || q.SeriesId || q.seriesId] || [];
+      var eps = s.filter(function (e) {
+        if (q.SeasonId) return e.SeasonId === q.SeasonId;
+        if (q.Season !== undefined) return e.Season === q.Season;
+        return true;
+      });
+      return Promise.resolve({ Items: eps, TotalRecordCount: eps.length });
+    }
+    if (q.IncludeItemTypes === 'Season') {
+      var s2 = this._series[q.ParentId || q.SeriesId] || [];
+      var seas = [];
+      s2.forEach(function (e) {
+        if (seas.indexOf(e.SeasonId) === -1) seas.push({ Id: e.SeasonId, Name: '季 ' + e.Season, IndexNumber: e.Season });
+      });
+      return Promise.resolve({ Items: seas });
+    }
+    if (q.IncludeItemTypes === 'Movie' || q.IncludeItemTypes === 'Series') {
+      items = q.IncludeItemTypes === 'Movie' ? this._movies : this._seriesList;
+      return Promise.resolve({ Items: items, TotalRecordCount: items.length });
+    }
+    items = this._movies.concat(this._seriesList);
+    return Promise.resolve({ Items: items, TotalRecordCount: items.length });
+  },
+
+  getItem: function (uid, itemId) {
+    var all = this._movies.concat(this._seriesList);
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].Id === itemId) return Promise.resolve(all[i]);
+    }
+    // 剧集/季也查一下
+    for (var s in this._series) {
+      var eps = this._series[s];
+      for (var j = 0; j < eps.length; j++) {
+        if (eps[j].Id === itemId) return Promise.resolve(eps[j]);
+      }
+    }
+    return Promise.resolve(null);
+  },
+
+  serverName: function () { return Promise.resolve('Mock Emby'); },
+
+  accessToken: function () { return 'mock-token'; },
+
+  _movies: [
+    { Id: 'm1', Name: '赛博朋克2077·边缘行者', OriginalTitle: 'Cyberpunk: Edgerunners', ProductionYear: 2022, CommunityRating: 8.9, Overview: '在夜之城的霓虹深渊中，边缘行者们游走于法律与科技的边界。', Genres: ['动画', '科幻', '动作'], ImageTags: { Primary: 'p', Backdrop: 'b' }, Type: 'Movie' },
+    { Id: 'm2', Name: '银翼杀手2049', OriginalTitle: 'Blade Runner 2049', ProductionYear: 2017, CommunityRating: 8.3, Overview: '复制人与人类的边界逐渐模糊。', Genres: ['科幻', '惊悚'], ImageTags: { Primary: 'p', Backdrop: 'b' }, Type: 'Movie' },
+    { Id: 'm3', Name: '星际穿越', OriginalTitle: 'Interstellar', ProductionYear: 2014, CommunityRating: 9.4, Overview: '地球濒临毁灭，探险家穿越虫洞寻找新家园。', Genres: ['科幻', '冒险'], ImageTags: { Primary: 'p', Backdrop: 'b' }, Type: 'Movie' },
+    { Id: 'm4', Name: '奥本海默', OriginalTitle: 'Oppenheimer', ProductionYear: 2023, CommunityRating: 8.8, Overview: '原子弹之父的传奇一生。', Genres: ['剧情', '传记'], ImageTags: { Primary: 'p', Backdrop: 'b' }, Type: 'Movie' }
+  ],
+
+  _seriesList: [
+    { Id: 's1', Name: '三体', ProductionYear: 2023, CommunityRating: 8.7, Overview: '地球文明与三体文明的第一次接触。', Genres: ['科幻', '悬疑'], ImageTags: { Primary: 'p', Backdrop: 'b' }, Type: 'Series' },
+    { Id: 's2', Name: '漫长的季节', ProductionYear: 2023, CommunityRating: 9.4, Overview: '一座小城里的悬案。', Genres: ['剧情', '悬疑'], ImageTags: { Primary: 'p', Backdrop: 'b' }, Type: 'Series' }
+  ],
+
+  _series: {
+    s1: [
+      { Id: 's1e1', SeriesId: 's1', SeasonId: 'sea1', Season: 1, ParentIndexNumber: 1, IndexNumber: 1, Name: '科学边界', ImageTags: { Primary: 'p' } },
+      { Id: 's1e2', SeriesId: 's1', SeasonId: 'sea1', Season: 1, ParentIndexNumber: 1, IndexNumber: 2, Name: '射手与农场主', ImageTags: { Primary: 'p' } },
+      { Id: 's1e3', SeriesId: 's1', SeasonId: 'sea1', Season: 1, ParentIndexNumber: 1, IndexNumber: 3, Name: '红岸基地', ImageTags: { Primary: 'p' } },
+      { Id: 's1e4', SeriesId: 's1', SeasonId: 'sea2', Season: 2, ParentIndexNumber: 2, IndexNumber: 1, Name: '黑暗森林', ImageTags: { Primary: 'p' } },
+      { Id: 's1e5', SeriesId: 's1', SeasonId: 'sea2', Season: 2, ParentIndexNumber: 2, IndexNumber: 2, Name: '面壁计划', ImageTags: { Primary: 'p' } }
+    ],
+    s2: [
+      { Id: 's2e1', SeriesId: 's2', SeasonId: 'sea2a', Season: 1, ParentIndexNumber: 1, IndexNumber: 1, Name: '桦林', ImageTags: { Primary: 'p' } },
+      { Id: 's2e2', SeriesId: 's2', SeasonId: 'sea2a', Season: 1, ParentIndexNumber: 1, IndexNumber: 2, Name: '响', ImageTags: { Primary: 'p' } }
+    ]
+  }
+};
+
+window.Emby = window.Emby || {};
+window.Emby.Page = { show: function (route) { location.hash = '!/' + route + '.html'; } };
+document.getElementById('embySidebar').addEventListener('click', function (e) {
+  var i = Array.prototype.indexOf.call(this.children, e.target);
+  var routes = ['home', 'movies', 'settings'];
+  if (i >= 0 && i < routes.length) { location.hash = '!/' + routes[i] + '.html'; }
+});
+window.addEventListener('hashchange', function () {
+  var r = (location.hash || '').replace(/^#!?\//, '').split('.')[0];
+  document.getElementById('routeLabel').textContent = r || 'home';
+  document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('hide'); });
+  // 模拟 Emby viewbeforeshow（carousel 轮播依赖此事件启动）
+  if (r === 'home' || !r) {
+    window.dispatchEvent(new CustomEvent('viewbeforeshow', { detail: { contextPath: '/home' } }));
+  }
+});
+// 初始加载也触发一次（模拟 Emby 进入首页），并模拟 body 渲染变化
+setTimeout(function () {
+  var p = document.createElement('div');
+  p.className = 'mock-render-tick';
+  document.body.appendChild(p);
+  window.dispatchEvent(new CustomEvent('viewbeforeshow', { detail: { contextPath: '/home' } }));
+  setTimeout(function () { p.remove(); }, 100);
+}, 500);
+</script>
+</body>
+</html>

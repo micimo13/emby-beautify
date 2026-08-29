@@ -1,0 +1,16 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · LOGO 动态版
+   品牌: 动态 Logo + 呼吸效果 + 脉冲
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes logo-pulse { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.2); } }
+@keyframes logo-breath { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes logo-fadeout { 0% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }
+
+#vanvy-global-loading.vanvy-loading-logo { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.9); transition: opacity 0.5s ease; }
+#vanvy-global-loading.vanvy-loading-logo.vl-hide { opacity: 0; pointer-events: none; }
+#vanvy-global-loading.vanvy-loading-logo .vl-inner { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+#vanvy-global-loading.vanvy-loading-logo .vl-logo-wrap { position: relative; animation: logo-pulse 2s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-logo .vl-logo { width: 80px; height: 80px; object-fit: contain; }
+#vanvy-global-loading.vanvy-loading-logo .vl-brand { font-size: 13px; letter-spacing: 3px; color: rgba(255, 255, 255, 0.7); animation: logo-breath 2s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-logo.hide-out { animation: logo-fadeout 0.5s ease forwards; }

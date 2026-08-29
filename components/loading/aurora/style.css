@@ -1,0 +1,36 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · AURORA 极光版
+   原创: 极光粒子效果 + 光晕 + 动态圆环
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes aurora-pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.1); } }
+@keyframes aurora-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes aurora-glow { 0%, 100% { box-shadow: 0 0 20px rgba(0, 200, 255, 0.3), 0 0 40px rgba(120, 0, 255, 0.2); } 50% { box-shadow: 0 0 40px rgba(0, 200, 255, 0.6), 0 0 80px rgba(120, 0, 255, 0.4); } }
+@keyframes aurora-bar { 0% { width: 0; opacity: 1; } 80% { width: 60%; opacity: 1; } 100% { width: 60%; opacity: 0; } }
+@keyframes aurora-float { 0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; } 50% { transform: translateY(-20px) scale(1.2); opacity: 1; } }
+@keyframes aurora-fadeout { 0% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }
+
+#vanvy-global-loading.vanvy-loading-aurora { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2e 100%); transition: opacity 0.5s ease, visibility 0.5s ease; }
+#vanvy-global-loading.vanvy-loading-aurora.vl-hide { opacity: 0; visibility: hidden; pointer-events: none; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 80%, rgba(0, 150, 255, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(120, 0, 255, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(0, 100, 200, 0.1) 0%, transparent 70%); animation: aurora-pulse 4s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-particles { position: absolute; inset: 0; overflow: hidden; }
+#vanvy-global-loading.vanvy-loading-aurora .vp { position: absolute; width: 4px; height: 4px; background: linear-gradient(90deg, #00ffff, #0088ff); border-radius: 50%; box-shadow: 0 0 6px #00ffff, 0 0 12px #0088ff; animation: aurora-float 3s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-aurora .vp-1 { left: 12%; top: 70%; animation-delay: 0s; }
+#vanvy-global-loading.vanvy-loading-aurora .vp-2 { left: 24%; top: 30%; animation-delay: 0.5s; width: 3px; height: 3px; }
+#vanvy-global-loading.vanvy-loading-aurora .vp-3 { left: 38%; top: 80%; animation-delay: 1s; }
+#vanvy-global-loading.vanvy-loading-aurora .vp-4 { left: 55%; top: 22%; animation-delay: 1.4s; width: 5px; height: 5px; }
+#vanvy-global-loading.vanvy-loading-aurora .vp-5 { left: 68%; top: 65%; animation-delay: 1.8s; width: 3px; height: 3px; }
+#vanvy-global-loading.vanvy-loading-aurora .vp-6 { left: 82%; top: 40%; animation-delay: 2.2s; }
+#vanvy-global-loading.vanvy-loading-aurora .vp-7 { left: 90%; top: 75%; animation-delay: 2.6s; width: 3px; height: 3px; }
+#vanvy-global-loading.vanvy-loading-aurora .vp-8 { left: 45%; top: 55%; animation-delay: 3s; width: 2px; height: 2px; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-inner { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-logo-wrap { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; animation: aurora-glow 3s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-glow { position: absolute; inset: -20px; background: radial-gradient(circle, rgba(0, 200, 255, 0.3) 0%, transparent 70%); filter: blur(20px); }
+#vanvy-global-loading.vanvy-loading-aurora .vl-ring { position: absolute; width: 80px; height: 80px; border: 2px solid transparent; border-top-color: #00ffff; border-radius: 50%; animation: aurora-rotate 2s linear infinite; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-ring::before { content: ''; position: absolute; inset: 8px; border: 2px solid transparent; border-top-color: #8800ff; border-radius: 50%; animation: aurora-rotate 1.5s linear infinite reverse; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-ring-2 { width: 100px; height: 100px; border-color: rgba(0, 200, 255, 0.2); border-top-color: rgba(0, 200, 255, 0.5); animation: aurora-rotate 3s linear infinite reverse; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-logo { width: 50px; height: 50px; object-fit: contain; position: relative; z-index: 1; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-bar { width: 200px; height: 3px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-bar i { display: block; height: 100%; background: linear-gradient(90deg, #00ffff, #8800ff); border-radius: 2px; animation: aurora-bar 2s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-aurora .vl-brand { font-family: 'Plus Jakarta Sans', 'Microsoft YaHei', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 4px; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; }
+#vanvy-global-loading.vanvy-loading-aurora.hide-out { animation: aurora-fadeout 0.5s ease forwards; }

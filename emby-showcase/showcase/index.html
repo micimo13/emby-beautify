@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<title>Vanvy Emby Showcase · 全新前端概念</title>
+<style>
+body{background:#0c0c14;color:#e8e6e3;font-family:'PingFang SC',sans-serif;margin:0;padding:40px}
+h1{font-size:26px;font-weight:800;letter-spacing:2px;margin-bottom:6px}
+h1 i{color:#f5c518;font-style:normal}
+p.sub{color:#888;margin-bottom:30px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.card{background:#15151c;border-radius:14px;overflow:hidden;border:1px solid #222;cursor:pointer;transition:.2s;text-decoration:none;color:inherit}
+.card:hover{transform:translateY(-4px);border-color:#f5c518;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.card img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+.card .t{padding:12px 14px;font-size:13px;font-weight:600}
+.card .t small{display:block;color:#777;font-weight:400;margin-top:3px;font-size:11px}
+</style></head><body>
+<h1>VANVY <i>SHOWCASE</i></h1>
+<p class="sub">Emby 全新前端 · 5 套架构 × 11 套配色概念稿</p>
+<div class="grid" id="g"></div>
+<script>
+const items = [
+  ['noir-gold.html','CINEMA · 深紫鎏金','影院侧栏+大横幅+卡片网格'],
+  ['noir-blue.html','CINEMA · 深海电蓝','影院侧栏+大横幅+卡片网格'],
+  ['noir-jade.html','CINEMA · 墨绿翡翠','影院侧栏+大横幅+卡片网格'],
+  ['glass-blue.html','STREAM · 冰川透明','玻璃流·dock导航+毛玻璃沉浸'],
+  ['glass-iris.html','STREAM · 紫晶流光','玻璃流·dock导航+毛玻璃沉浸'],
+  ['mag-paper.html','MAGAZINE · 纸媒米白','杂志刊头+不对称网格+引言'],
+  ['mag-mid.html','MAGAZINE · 墨夜鎏金','杂志刊头+不对称网格+引言'],
+  ['neo-cyan.html','NEON · 赛博青','霓虹发光+网格地面+扫描线'],
+  ['neo-pink.html','NEON · 赛博粉','霓虹发光+网格地面+扫描线'],
+  ['zen-ink.html','ZEN · 墨白极简','留白+细线+极简列表'],
+  ['zen-paper.html','ZEN · 纸白极简','留白+细线+极简列表']
+];
+document.getElementById('g').innerHTML = items.map(([f,t,s]) =>
+  `<a class="card" href="${f}"><img src="thumb/${f.replace('.html','.png')}"><div class="t">${t}<small>${s}</small></div></a>`).join('');
+</script>
+</body></html>

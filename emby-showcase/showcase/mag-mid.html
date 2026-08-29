@@ -1,0 +1,79 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+:root {
+  --bg-h:230; --bg-s:25%; --bg-l:10%;
+  --ph:35; --ps:90%; --pl:55%;
+  --bg: hsl(var(--bg-h),var(--bg-s),var(--bg-l));
+  --ink: hsl(var(--bg-h),var(--bg-s),calc(100% - var(--bl)));
+  --accent: hsl(var(--ph),var(--ps),var(--pl));
+  --line: hsla(var(--bg-h),var(--bg-s),70%,.18);
+  --txt2: hsla(var(--bg-h),var(--bg-s),80%,.6);
+}
+* {margin:0;padding:0;box-sizing:border-box}
+body {background:var(--bg);color:var(--ink);font-family:'Playfair Display','Noto Serif SC','Songti SC',serif;min-height:100vh}
+.masthead {padding:26px 48px 18px;border-bottom:2px solid var(--ink)}
+.masthead .row1 {display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.masthead .date {font-size:11px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase}
+.masthead h1 {font-size:34px;font-weight:900;letter-spacing:6px;text-align:center}
+.masthead h1 i {color:var(--accent);font-style:normal}
+.masthead .edition {font-size:11px;letter-spacing:2px;color:var(--txt2)}
+.masthead nav {display:flex;justify-content:center;gap:30px;padding-top:14px}
+.masthead nav a {font-size:12.5px;letter-spacing:2px;color:var(--ink);text-decoration:none;text-transform:uppercase;opacity:.75;cursor:pointer}
+.masthead nav a:hover {opacity:1;color:var(--accent)}
+.main {max-width:1400px;margin:0 auto;padding:36px 48px}
+.feature {display:grid;grid-template-columns:1.4fr 1fr;gap:34px;margin-bottom:44px;align-items:center}
+.feature .art {position:relative;border-radius:4px;overflow:hidden;aspect-ratio:16/9;cursor:pointer}
+.feature .art img {width:100%;height:100%;object-fit:cover;filter:grayscale(.15) contrast(1.05);transition:.4s}
+.feature .art:hover img {transform:scale(1.03);filter:grayscale(0)}
+.feature .art .cap {position:absolute;bottom:0;left:0;right:0;padding:40px 26px 20px;background:linear-gradient(180deg,transparent,var(--bg))}
+.feature .art .cap .k {font-size:10px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:6px}
+.feature .art .cap h2 {font-size:26px;font-weight:800;line-height:1.2}
+.feature .side {display:flex;flex-direction:column;gap:22px}
+.feature .side .item {padding-bottom:18px;border-bottom:1px solid var(--line)}
+.feature .side .item:last-child {border:none}
+.feature .side .item .k {font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:6px}
+.feature .side .item h3 {font-size:17px;font-weight:700;line-height:1.35;cursor:pointer}
+.feature .side .item h3:hover {color:var(--accent)}
+.feature .side .item .m {font-size:12px;color:var(--txt2);margin-top:6px}
+.col-head {display:flex;align-items:center;gap:16px;margin:38px 0 20px}
+.col-head .line {flex:1;height:1px;background:var(--line)}
+.col-head h2 {font-size:20px;font-weight:800;letter-spacing:4px;text-transform:uppercase}
+.col-head .lnk {font-size:12px;color:var(--txt2);cursor:pointer}
+.mag-grid {display:grid;grid-template-columns:repeat(4,1fr);gap:26px 20px}
+.mag-card {cursor:pointer}
+.mag-card .im {aspect-ratio:2/3;background-size:cover;background-position:center;margin-bottom:12px;position:relative;overflow:hidden;transition:.3s;filter:grayscale(.12)}
+.mag-card:hover .im {transform:scale(1.03);filter:grayscale(0)}
+.mag-card .im .rt {position:absolute;bottom:10px;left:10px;font-size:11px;color:var(--accent);font-weight:800;background:rgba(0,0,0,.5);padding:2px 9px;border-radius:2px}
+.mag-card .im .yr {position:absolute;top:10px;right:10px;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.85);background:rgba(0,0,0,.45);padding:2px 8px;border-radius:2px}
+.mag-card h4 {font-size:14.5px;font-weight:700;line-height:1.4;font-family:'PingFang SC',sans-serif}
+.mag-card:hover h4 {color:var(--accent)}
+.mag-card .cat {font-size:10px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-top:6px;font-family:'PingFang SC',sans-serif}
+.mag-card.big {grid-column:span 2;grid-row:span 2}
+.mag-card.big .im {aspect-ratio:auto;height:100%;min-height:380px}
+.mag-card.big h4 {font-size:20px}
+.quote {margin:40px 0;padding:26px 0;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);text-align:center}
+.quote p {font-size:19px;font-style:italic;letter-spacing:1px}
+.quote span {display:block;font-size:11px;letter-spacing:3px;color:var(--accent);margin-top:10px;text-transform:uppercase;font-family:'PingFang SC',sans-serif}
+</style></head><body>
+<div class="masthead">
+  <div class="row1"><span class="date">SATURDAY · AUG 16 · 2026</span><span class="edition">VOL.07 · VANVY MAGAZINE</span></div>
+  <h1>VANVY<i> 影志</i></h1>
+  <nav><a>首页</a><a>新片</a><a>科幻</a><a>剧集</a><a>影评</a><a>收藏</a></nav>
+</div>
+<div class="main">
+  <div class="feature">
+    <div class="art"><img src="https://image.tmdb.org/t/p/w1280/kb4T9mU5pVYbVhFz3Kj0J8sYqW0.jpg"><div class="cap"><div class="k">本周头条 · ★ 9.4</div><h2>星际穿越</h2></div></div>
+    <div class="side">
+      <div class="item"><div class="k">新片速递</div><h3>沙丘 2 — DUNE: PART TWO</h3><div class="m">★ 8.9 · 2024 · 科幻, 史诗</div></div>
+      <div class="item"><div class="k">剧集推荐</div><h3>三体：一场跨越光年的对话</h3><div class="m">★ 8.7 · 2023</div></div>
+      <div class="item"><div class="k">人物特写</div><h3>诺兰之后，谁在定义太空史诗？</h3><div class="m">深度 · 4 分钟阅读</div></div>
+    </div>
+  </div>
+  <div class="col-head"><h2>本期片单</h2><span class="lnk">浏览全部 →</span><div class="line"></div></div>
+  <div class="mag-grid">
+    <div class="mag-card big"><div class="im" style="background-image:url('https://image.tmdb.org/t/p/w500/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg')"><span class="rt">★ 8.9</span></div><h4>沙丘 2：沙海深处的命运史诗</h4><div class="cat">科幻 · 2024</div></div>
+    <div class="mag-card"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/7SF4VeJ8FThnS2J6hFdW4OqJ2vP.jpg)"><span class="rt">★ 8.7</span><span class="yr">2023</span></div><h4>三体</h4><div class="cat">科幻, 悬疑</div></div><div class="mag-card"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/43N6E1N6hYz3hX6g3h6j8X0kYqW0.jpg)"><span class="rt">★ 8.8</span><span class="yr">2023</span></div><h4>奥本海默</h4><div class="cat">剧情, 传记</div></div><div class="mag-card"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0zkoqLbhc.jpg)"><span class="rt">★ 8.1</span><span class="yr">2022</span></div><h4>瞬息全宇宙</h4><div class="cat">喜剧, 科幻</div></div><div class="mag-card"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/8ZiObr6Y2z6wB3Q4j8zH0fJ3sKQ.jpg)"><span class="rt">★ 8.3</span><span class="yr">2023</span></div><h4>哥斯拉-1.0</h4><div class="cat">科幻, 灾难</div></div>
+    <div class="mag-card"><div class="im" style="background-image:url('https://image.tmdb.org/t/p/w500/9xgAg2KGLSQDwB5pR8jS4Z0zQ2f.jpg')"><span class="rt">★ 8.5</span><span class="yr">2021</span></div><h4>沙丘</h4><div class="cat">科幻, 冒险</div></div>
+  </div>
+  <div class="quote"><p>「电影是造梦的机器，而我们负责把梦做得更美。」</p><span>— Vanvy 编辑手记</span></div>
+</div>
+</body></html>

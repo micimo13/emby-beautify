@@ -1,0 +1,117 @@
+/* ═══════════════════════════════════════════════════════════
+   Vanvy Noir 主题 · Emby 官方主题机制
+   深紫鎏金 · 基于官方 CSS 变量体系, 全功能保留
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 核心变量: 只改这几个, 全局联动 ── */
+:root {
+  --background-hue: 258;
+  --background-saturation: 30%;
+  --background-lightness: 7%;
+  --theme-primary-color-hue: 42;
+  --theme-primary-color-saturation: 92%;
+  --theme-primary-color-lightness: 55%;
+  --theme-text-color-hue: 258;
+  --theme-text-color-saturation: 28%;
+  --theme-text-color-lightness: 93%;
+  --theme-text-color-alpha: .92;
+  --theme-secondary-text-color-alpha: .62;
+  --theme-accent-text-color-lightbg: #a07818;
+  --theme-accent-text-color-darkbg: #f5c518;
+  --theme-accent-text-color: var(--theme-accent-text-color-darkbg);
+  --theme-accent-text-color-darkbg-alt: #e8a13a;
+  --theme-accent-text-color-alt: var(--theme-accent-text-color-darkbg-alt);
+}
+
+/* ── 派生变量 (沿用官方 dark 派生逻辑) ── */
+:root {
+  --button-background-hue: var(--background-hue);
+  --button-background-saturation: var(--background-saturation);
+  --button-background-lightness: calc(var(--background-lightness) + 12%);
+  --button-background-alpha: .75;
+  --card-background-hue: var(--background-hue);
+  --card-background-saturation: var(--background-saturation);
+  --card-background-lightness: calc(var(--background-lightness) + 11%);
+  --card-background-alpha: .78;
+  --input-background-hue: var(--background-hue);
+  --input-background-saturation: var(--background-saturation);
+  --input-background-lightness: calc(var(--background-lightness) + 12%);
+  --header-background: hsl(var(--background-hue), var(--background-saturation), calc(var(--background-lightness) + 5%));
+  --header-blur-background: rgba(28, 24, 44, .75);
+  --footer-background: hsl(var(--background-hue), var(--background-saturation), calc(var(--background-lightness) + 5%));
+  --line-background: hsla(var(--theme-text-color-hue), var(--theme-text-color-saturation), var(--theme-text-color-lightness), .13);
+  --line-size: .08em;
+  --docked-drawer-background: hsla(var(--background-hue), var(--background-saturation), calc(var(--background-lightness) + 17%), .32);
+  --focus-background-hue: 42;
+  --focus-background-saturation: 92%;
+  --focus-background-lightness: 55%;
+  --focus-blur-background-lightness: 55%;
+  --focus-text-color-lightness: 8%;
+  --slider-lower-opacity: .75;
+}
+
+/* ── 桌面端增强 (pointer:fine 同官方) ── */
+@media (pointer: fine) {
+  :root {
+    --background-lightness: 9%;
+    --theme-text-color-alpha: .9;
+    --header-blur-background: rgba(28, 24, 44, .72);
+    --button-background-lightness: calc(var(--background-lightness) + 12%);
+    --card-background-lightness: calc(var(--background-lightness) + 11%);
+    --input-background-lightness: calc(var(--background-lightness) + 12%);
+  }
+}
+
+/* ── 高级质感: 背景渐变 + 毛玻璃 ── */
+html, body, .backgroundContainer {
+  background-color: hsl(var(--background-hue), var(--background-saturation), var(--background-lightness)) !important;
+}
+html.vanvy-noir-bg .backgroundContainer {
+  background: linear-gradient(165deg,
+    hsl(258, 30%, 9%) 0%,
+    hsl(260, 28%, 7%) 45%,
+    hsl(262, 26%, 5%) 100%) !important;
+}
+
+/* 卡片: 圆角 + 边框 + 毛玻璃质感 */
+.card, .visualCardBox, .paperList {
+  border-radius: 12px !important;
+  border: 1px solid var(--line-background) !important;
+  overflow: hidden;
+}
+.card:hover {
+  border-color: hsla(var(--theme-primary-color-hue), var(--theme-primary-color-saturation), var(--theme-primary-color-lightness), .45) !important;
+}
+
+/* 侧栏: 半透明毛玻璃 */
+.mainDrawer, .drawerContainer {
+  background: var(--docked-drawer-background) !important;
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+}
+.navMenuOption-selected {
+  background: hsla(var(--theme-primary-color-hue), var(--theme-primary-color-saturation), var(--theme-primary-color-lightness), .14) !important;
+  border-inline-start: 3px solid hsl(var(--theme-primary-color-hue), var(--theme-primary-color-saturation), var(--theme-primary-color-lightness)) !important;
+}
+.navMenuOption-selected .listItem-content {
+  color: #fff !important;
+}
+
+/* 顶栏: 毛玻璃 */
+.skinHeader-withBackground, .skinHeader.semiTransparent {
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+}
+
+/* 按钮: 金色强调 */
+.button-submit, .raised.fab, .button-primary {
+  background: hsl(var(--theme-primary-color-hue), var(--theme-primary-color-saturation), var(--theme-primary-color-lightness)) !important;
+  color: #161616 !important;
+  font-weight: 600;
+}
+
+/* 滚动条: 细金色 */
+.emby-scroller::-webkit-scrollbar-thumb {
+  background: hsla(var(--theme-primary-color-hue), var(--theme-primary-color-saturation), var(--theme-primary-color-lightness), .35) !important;
+  border-radius: 4px;
+}

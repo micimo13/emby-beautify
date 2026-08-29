@@ -1,0 +1,104 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+:root {
+  --bg-h:45; --bg-s:8%; --bg-l:94%;
+  --ph:210; --ps:70%; --pl:40%;
+  --bg: hsl(var(--bg-h),var(--bg-s),var(--bg-l));
+  --ink: hsl(var(--bg-h),var(--bg-s),calc(100% - var(--bl)));
+  --accent: hsl(var(--ph),var(--ps),var(--pl));
+  --hair: hsla(var(--bg-h),var(--bg-s),70%,.16);
+  --txt2: hsla(var(--bg-h),var(--bg-s),75%,.5);
+}
+* {margin:0;padding:0;box-sizing:border-box}
+body {background:var(--bg);color:var(--ink);font-family:'Inter','HarmonyOS Sans SC','PingFang SC',sans-serif;min-height:100vh;letter-spacing:.2px}
+.top {display:flex;align-items:center;justify-content:space-between;padding:22px 44px;border-bottom:1px solid var(--hair)}
+.top .brand {font-size:15px;font-weight:700;letter-spacing:4px}
+.top .brand i {color:var(--accent);font-style:normal}
+.top .nav {display:flex;gap:28px}
+.top .nav a {font-size:12.5px;color:var(--txt2);text-decoration:none;cursor:pointer;letter-spacing:1px;transition:.2s}
+.top .nav a:hover,.top .nav a.on {color:var(--ink)}
+.top .nav a.on {border-bottom:1px solid var(--accent);padding-bottom:3px;color:var(--accent)}
+.top .acts {display:flex;gap:16px;align-items:center}
+.top .acts .ic {color:var(--txt2);cursor:pointer;font-size:14px}
+.top .acts .avatar {width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--bg);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.main {max-width:1200px;margin:0 auto;padding:40px 44px 60px}
+.greet {margin-bottom:40px}
+.greet .k {font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:10px}
+.greet h1 {font-size:32px;font-weight:300;letter-spacing:1px}
+.greet h1 b {font-weight:700}
+.focus {display:grid;grid-template-columns:2fr 1fr;gap:1px;background:var(--hair);border:1px solid var(--hair);margin-bottom:44px}
+.focus .big {background:var(--bg);padding:34px;cursor:pointer;position:relative;overflow:hidden}
+.focus .big .bg {position:absolute;inset:0;background-size:cover;background-position:center;opacity:.22;transition:.4s}
+.focus .big:hover .bg {opacity:.34}
+.focus .big .content {position:relative;z-index:2}
+.focus .big .k {font-size:10px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:14px}
+.focus .big h2 {font-size:26px;font-weight:600;margin-bottom:8px;letter-spacing:1px}
+.focus .big .en {font-size:12px;color:var(--txt2);letter-spacing:3px;margin-bottom:14px}
+.focus .big .meta {display:flex;gap:14px;font-size:12px;color:var(--txt2);margin-bottom:16px}
+.focus .big .meta b {color:var(--accent);font-weight:600}
+.focus .big .desc {font-size:13px;line-height:1.8;color:var(--txt2);max-width:440px;margin-bottom:20px}
+.focus .big .go {font-size:12px;color:var(--ink);border-bottom:1px solid var(--accent);padding-bottom:2px;cursor:pointer;display:inline-block}
+.focus .col {display:flex;flex-direction:column;gap:1px;background:var(--hair)}
+.focus .col .it {background:var(--bg);padding:22px 24px;cursor:pointer;flex:1;transition:.2s}
+.focus .col .it:hover {background:hsl(var(--bg-h),var(--bg-s),calc(var(--bg-l)+1.5%))}
+.focus .col .it .k {font-size:9px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-bottom:8px}
+.focus .col .it h3 {font-size:14.5px;font-weight:500;line-height:1.4}
+.focus .col .it .m {font-size:11px;color:var(--txt2);margin-top:6px}
+.sec {margin-bottom:38px}
+.sec-h {display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px}
+.sec-h h2 {font-size:15px;font-weight:600;letter-spacing:1px}
+.sec-h .n {font-size:11px;color:var(--txt2)}
+.grid {display:grid;grid-template-columns:repeat(6,1fr);gap:20px}
+.zcard {cursor:pointer}
+.zcard .im {aspect-ratio:2/3;background-size:cover;background-position:center;margin-bottom:10px;filter:grayscale(.2);transition:.3s}
+.zcard:hover .im {filter:grayscale(0)}
+.zcard .nm {font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zcard .meta {font-size:10.5px;color:var(--txt2);margin-top:3px}
+.zcard .meta .rt {color:var(--accent)}
+.list {display:flex;flex-direction:column}
+.lrow {display:flex;align-items:center;gap:16px;padding:13px 4px;border-bottom:1px solid var(--hair);cursor:pointer;transition:.15s}
+.lrow:hover {background:hsl(var(--bg-h),var(--bg-s),calc(var(--bg-l)+1%))}
+.lrow .idx {font-size:10px;color:var(--txt2);width:20px;text-align:right;font-variant-numeric:tabular-nums}
+.lrow .t {width:74px;height:42px;border-radius:3px;background-size:cover;background-position:center}
+.lrow .n {flex:1;font-size:13px;font-weight:500}
+.lrow .s {font-size:11px;color:var(--txt2);width:120px;text-align:right}
+.lrow .pb {font-size:11px;color:var(--accent);cursor:pointer;width:30px;text-align:center}
+</style></head><body>
+<div class="top">
+  <div class="brand">VANVY<i>.</i></div>
+  <div class="nav"><a class="on">首页</a><a>电影</a><a>剧集</a><a>音乐</a><a>收藏</a></div>
+  <div class="acts"><span class="ic">⌕</span><span class="ic">◌</span><div class="avatar">M</div></div>
+</div>
+<div class="main">
+  <div class="greet"><div class="k">Good Evening</div><h1>晚上好，<b>Marnie</b>。今晚想看点什么？</h1></div>
+  <div class="focus">
+    <div class="big">
+      <div class="bg" style="background-image:url('https://image.tmdb.org/t/p/w1280/kb4T9mU5pVYbVhFz3Kj0J8sYqW0.jpg')"></div>
+      <div class="content">
+        <div class="k">今日精选</div>
+        <h2>星际穿越</h2>
+        <div class="en">INTERSTELLAR · 2014</div>
+        <div class="meta"><span>★ <b>9.4</b></span><span>科幻 · 冒险</span></div>
+        <div class="desc">地球濒临毁灭，一群探险家穿越虫洞寻找人类的新家园。诺兰的太空史诗，关于爱与时间的终极叩问。</div>
+        <span class="go">立即观看 →</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="it"><div class="k">新片</div><h3>沙丘 2</h3><div class="m">★ 8.9 · 2024</div></div>
+      <div class="it"><div class="k">剧集</div><h3>三体</h3><div class="m">★ 8.7 · 更新至 07</div></div>
+      <div class="it"><div class="k">传记</div><h3>奥本海默</h3><div class="m">★ 8.8 · 2023</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-h"><h2>继续观看</h2><span class="n">3 部进行中</span></div>
+    <div class="list">
+      <div class="lrow"><span class="idx">01</span><div class="t" style="background-image:url('https://image.tmdb.org/t/p/w1280/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg')"></div><span class="n">沙丘 2</span><span class="s">E02 · 剩余 2:14</span><span class="pb">▶</span></div>
+      <div class="lrow"><span class="idx">02</span><div class="t" style="background-image:url('https://image.tmdb.org/t/p/w1280/7SF4VeJ8FThnS2J6hFdW4OqJ2vP.jpg')"></div><span class="n">三体</span><span class="s">E07 · 剩余 45:12</span><span class="pb">▶</span></div>
+      <div class="lrow"><span class="idx">03</span><div class="t" style="background-image:url('https://image.tmdb.org/t/p/w1280/9xgAg2KGLSQDwB5pR8jS4Z0zQ2f.jpg')"></div><span class="n">沙丘</span><span class="s">E01 · 剩余 2:35</span><span class="pb">▶</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-h"><h2>最近添加</h2><span class="n">查看全部 →</span></div>
+    <div class="grid"><div class="zcard"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/kb4T9mU5pVYbVhFz3Kj0J8sYqW0.jpg)"></div><div class="nm">星际穿越</div><div class="meta"><span class="rt">★ 9.4</span> · 2014</div></div><div class="zcard"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg)"></div><div class="nm">沙丘 2</div><div class="meta"><span class="rt">★ 8.9</span> · 2024</div></div><div class="zcard"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/7SF4VeJ8FThnS2J6hFdW4OqJ2vP.jpg)"></div><div class="nm">三体</div><div class="meta"><span class="rt">★ 8.7</span> · 2023</div></div><div class="zcard"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/43N6E1N6hYz3hX6g3h6j8X0kYqW0.jpg)"></div><div class="nm">奥本海默</div><div class="meta"><span class="rt">★ 8.8</span> · 2023</div></div><div class="zcard"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0zkoqLbhc.jpg)"></div><div class="nm">瞬息全宇宙</div><div class="meta"><span class="rt">★ 8.1</span> · 2022</div></div><div class="zcard"><div class="im" style="background-image:url(https://image.tmdb.org/t/p/w500/8ZiObr6Y2z6wB3Q4j8zH0fJ3sKQ.jpg)"></div><div class="nm">哥斯拉-1.0</div><div class="meta"><span class="rt">★ 8.3</span> · 2023</div></div></div>
+  </div>
+</div>
+</body></html>

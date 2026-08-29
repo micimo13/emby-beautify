@@ -1,0 +1,1058 @@
+/* ============================================================
+   Vanvy Black Gold Atelier · 高级黑金增强层
+   (GPT生成, 追加在 vanvy-black.css 之后加载, 纯外观增强)
+   用法: 最后加载 /web/vanvy-black-gold.css
+   不修改 banner-cinema.js / 核心 JS / 布局结构
+   ============================================================ */
+
+:root {
+  --vbg-black-0: #050506;
+  --vbg-black-1: #08080a;
+  --vbg-black-2: #0c0c0f;
+  --vbg-black-3: #111115;
+  --vbg-panel: rgba(17, 17, 20, .78);
+  --vbg-panel-strong: rgba(20, 20, 23, .92);
+
+  --vbg-gold: #d8ad55;
+  --vbg-gold-bright: #f0ce7a;
+  --vbg-gold-soft: #b9934b;
+  --vbg-gold-deep: #80652f;
+
+  --vbg-gold-line: rgba(224, 183, 91, .34);
+  --vbg-gold-line-soft: rgba(224, 183, 91, .16);
+  --vbg-gold-glow: rgba(224, 183, 91, .18);
+
+  --vbg-white: #f3f1ec;
+  --vbg-text: #d8d5cf;
+  --vbg-text-2: #a09d97;
+  --vbg-text-3: #74716c;
+
+  --vbg-radius: 16px;
+  --vbg-radius-sm: 11px;
+
+  --vbg-shadow:
+    0 18px 55px rgba(0, 0, 0, .58),
+    0 3px 12px rgba(0, 0, 0, .42);
+
+  --vbg-shadow-gold:
+    0 18px 55px rgba(0, 0, 0, .62),
+    0 0 0 1px rgba(224,183,91,.18),
+    0 0 32px rgba(190,145,52,.10);
+
+  --vbg-transition:
+    transform .28s cubic-bezier(.2,.75,.25,1),
+    box-shadow .28s ease,
+    border-color .28s ease,
+    background .28s ease,
+    opacity .28s ease;
+}
+
+/* 01 · 全局黑金环境 */
+html,
+body,
+.skinBody {
+  background:
+    radial-gradient(
+      ellipse 120% 60% at 50% -10%,
+      rgba(80, 62, 28, .055),
+      transparent 55%
+    ),
+    #050506 !important;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(190, 145, 52, .035), transparent 28%),
+    radial-gradient(circle at 85% 8%, rgba(240, 205, 120, .025), transparent 24%),
+    linear-gradient(180deg, rgba(255,255,255,.012), transparent 35%);
+}
+
+/* 02 · 页面背景黑曜石层次 */
+.backgroundContainer,
+.backgroundContainer.backgroundContainer-withBackdrop {
+  background:
+    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(68, 52, 25, .055), transparent 62%),
+    linear-gradient(180deg, #09090b 0%, #070708 42%, #050506 100%) !important;
+}
+
+.backdropContainer::after,
+.backgroundContainer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,.18) 72%, rgba(0,0,0,.48) 100%);
+  opacity: .82;
+}
+
+/* 03 · 顶部导航黑金控制台 */
+.skinHeader,
+.appHeader,
+.skinHeader.withBackground,
+.skinHeader-withBackground {
+  background:
+    linear-gradient(180deg, rgba(4,4,5,.96) 0%, rgba(5,5,6,.82) 55%, rgba(5,5,6,.30) 88%, transparent 100%) !important;
+  border-bottom: 1px solid rgba(255,255,255,.045) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.28);
+}
+
+.skinHeader::after,
+.appHeader::after {
+  content: "";
+  position: absolute;
+  left: 5%; right: 5%; bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(214,170,82,.22) 20%, rgba(245,208,120,.45) 50%, rgba(214,170,82,.22) 80%, transparent);
+  opacity: .72;
+  pointer-events: none;
+}
+
+.headerButton,
+.skinHeader .headerButton {
+  transition: var(--vbg-transition);
+}
+.headerButton:hover,
+.headerButton:focus {
+  color: var(--vbg-gold-bright) !important;
+  text-shadow: 0 0 14px rgba(240,206,122,.20);
+  transform: translateY(-1px);
+}
+
+/* 04 · 标题层级 + 金色标记 */
+.sectionTitle,
+.homePageSections .sectionTitle,
+.homePageSections h1,
+.homePageSections h2,
+.homePageSections .emby-scroller-heading,
+.homeSectionsContainer .sectionTitle {
+  color: var(--vbg-white) !important;
+  font-weight: 650 !important;
+  letter-spacing: .035em !important;
+  text-shadow: 0 1px 18px rgba(0,0,0,.45);
+}
+
+.homePageSections .sectionTitle::before,
+.homePageSections .emby-scroller-heading::before,
+.homeSectionsContainer .sectionTitle::before {
+  content: "";
+  display: inline-block;
+  width: 3px; height: 15px;
+  margin-right: 9px;
+  vertical-align: -1px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f0cf83, #a77d35);
+  box-shadow: 0 0 10px rgba(224,183,91,.25);
+}
+
+/* 05 · 卡片黑曜石金属边缘 */
+.card,
+.card.scalableCard,
+.cardBox {
+  position: relative;
+  background: linear-gradient(145deg, rgba(25,25,29,.94), rgba(13,13,16,.97)) !important;
+  border: 1px solid rgba(255,255,255,.055) !important;
+  border-radius: var(--vbg-radius) !important;
+  box-shadow: 0 7px 22px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.025) !important;
+  transition: var(--vbg-transition);
+}
+
+.card::before,
+.cardBox::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(224,183,91,.20), transparent);
+  opacity: .35;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.card:hover,
+.card:focus,
+.cardBox:hover {
+  transform: translateY(-4px);
+  border-color: rgba(224,183,91,.24) !important;
+  box-shadow: 0 18px 38px rgba(0,0,0,.65), 0 0 0 1px rgba(224,183,91,.08), 0 0 28px rgba(190,145,52,.08) !important;
+}
+
+.card:hover .cardImage,
+.card:hover .cardImageContainer .cardImage {
+  transform: scale(1.025);
+}
+.cardImageContainer .cardImage,
+.innerCardImageContainer .cardImage {
+  transition: transform .55s cubic-bezier(.2,.75,.25,1), filter .4s ease !important;
+}
+
+/* 06 · 卡片图片影院暗角 */
+.cardImageContainer,
+.innerCardImageContainer {
+  position: relative;
+}
+.cardImageContainer::after,
+.innerCardImageContainer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 52%, rgba(0,0,0,.08) 68%, rgba(0,0,0,.58) 100%);
+  opacity: .72;
+}
+
+/* 07 · 卡片文字 */
+.cardText,
+.cardText-first,
+.card-image-text,
+.itemDetailText {
+  color: #e2dfd9 !important;
+  font-weight: 560 !important;
+  letter-spacing: .012em;
+  text-shadow: 0 1px 8px rgba(0,0,0,.55);
+}
+.cardText-secondary {
+  color: #96928b !important;
+  letter-spacing: .01em;
+}
+
+/* 08 · 金属黑金按钮 */
+.emby-button,
+.button-flat,
+.raised,
+.button-submit {
+  transition: transform .2s cubic-bezier(.2,.75,.25,1), box-shadow .25s ease, border-color .25s ease, background .25s ease, color .25s ease !important;
+}
+.emby-button {
+  background: linear-gradient(180deg, rgba(42,42,46,.92), rgba(20,20,23,.94)) !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 5px 16px rgba(0,0,0,.30);
+}
+.emby-button:hover {
+  background: linear-gradient(180deg, rgba(53,50,43,.96), rgba(25,24,21,.96)) !important;
+  border-color: rgba(224,183,91,.38) !important;
+  color: #f1d58f !important;
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 8px 22px rgba(0,0,0,.48), 0 0 18px rgba(224,183,91,.09);
+}
+.button-submit,
+.emby-button.button-submit {
+  background: linear-gradient(135deg, #f0d58f 0%, #d4aa54 42%, #9e7530 100%) !important;
+  border-color: rgba(255,222,142,.62) !important;
+  color: #17130b !important;
+  font-weight: 700 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.42), inset 0 -1px 0 rgba(79,52,12,.24), 0 8px 24px rgba(0,0,0,.45), 0 0 22px rgba(214,170,82,.14);
+}
+.button-submit:hover,
+.emby-button.button-submit:hover {
+  background: linear-gradient(135deg, #ffe6a5, #e1b85e 48%, #b78938) !important;
+  color: #0b0906 !important;
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 12px 30px rgba(0,0,0,.55), 0 0 30px rgba(224,183,91,.24);
+}
+
+/* 09 · 输入框 */
+input,
+textarea,
+select,
+.emby-input,
+.emby-textarea,
+.emby-select {
+  background: linear-gradient(180deg, rgba(21,21,24,.92), rgba(11,11,13,.94)) !important;
+  color: #e6e2da !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  border-radius: 11px !important;
+  box-shadow: inset 0 1px 8px rgba(0,0,0,.28), 0 4px 14px rgba(0,0,0,.18);
+  transition: border-color .22s ease, box-shadow .22s ease, background .22s ease !important;
+}
+input:focus,
+textarea:focus,
+select:focus,
+.emby-input:focus,
+.emby-textarea:focus,
+.emby-select:focus {
+  border-color: rgba(224,183,91,.48) !important;
+  box-shadow: 0 0 0 3px rgba(224,183,91,.07), 0 0 20px rgba(190,145,52,.08), inset 0 1px 8px rgba(0,0,0,.28) !important;
+}
+
+/* 10 · 侧边栏高级黑玻璃 */
+.mainDrawer.drawer-docked,
+.mainDrawer:not(.drawer-open) {
+  background: linear-gradient(145deg, rgba(17,17,20,.91), rgba(7,7,9,.94)) !important;
+  border-right: 1px solid rgba(255,255,255,.055) !important;
+  box-shadow: 14px 0 45px rgba(0,0,0,.28);
+  backdrop-filter: blur(24px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(125%) !important;
+}
+.mainDrawer .navMenuOption {
+  position: relative;
+  margin: 2px 7px;
+  border-radius: 11px !important;
+  background: transparent !important;
+  color: #aaa7a1 !important;
+  transition: background .22s ease, color .22s ease, transform .22s ease !important;
+}
+.mainDrawer .navMenuOption:hover {
+  background: linear-gradient(90deg, rgba(224,183,91,.10), rgba(224,183,91,.025)) !important;
+  color: #eee7d9 !important;
+  transform: translateX(2px);
+}
+.mainDrawer .navMenuOption.selected,
+.mainDrawer .navMenuOption:focus {
+  background: linear-gradient(90deg, rgba(224,183,91,.15), rgba(224,183,91,.035)) !important;
+  color: #f0d28b !important;
+  box-shadow: inset 2px 0 0 #d8ad55, 0 0 20px rgba(224,183,91,.055);
+}
+.mainDrawer .navMenuOption.selected::after {
+  content: "";
+  position: absolute;
+  right: 10px; top: 50%;
+  width: 3px; height: 3px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #efd083;
+  box-shadow: 0 0 8px rgba(239,208,131,.65);
+}
+
+/* 11 · Dialog 黑金玻璃 */
+.dialog,
+.actionSheet,
+.menuDialog,
+.popup,
+.floatingMenu {
+  background: linear-gradient(145deg, rgba(25,25,28,.93), rgba(9,9,11,.96)) !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,.72), 0 0 0 1px rgba(224,183,91,.035) !important;
+  backdrop-filter: blur(24px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(135%) !important;
+}
+.dialog::before,
+.actionSheet::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(239,208,131,.42), transparent);
+  pointer-events: none;
+}
+
+/* 12 · 焦点统一黑金 */
+:focus-visible {
+  outline: 1px solid rgba(239,208,131,.68) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(224,183,91,.08) !important;
+}
+.focuscontainer-x :focus {
+  outline-color: rgba(239,208,131,.52) !important;
+}
+
+/* 13 · 链接 */
+a,
+.emby-link .button-link,
+.textlink {
+  color: #ddb65f !important;
+  transition: color .2s ease, text-shadow .2s ease !important;
+}
+a:hover,
+.emby-link .button-link:hover,
+.textlink:hover {
+  color: #f0d28b !important;
+  text-shadow: 0 0 13px rgba(224,183,91,.18);
+}
+
+/* 14 · 底部栏 */
+.appfooter,
+#appFooter {
+  background: linear-gradient(180deg, rgba(8,8,10,.68), rgba(5,5,6,.96)) !important;
+  border-top: 1px solid rgba(224,183,91,.08) !important;
+  box-shadow: 0 -12px 35px rgba(0,0,0,.30);
+}
+
+/* 15 · 滚动条金属石墨 */
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,.18); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3d3931, #25252a);
+  border: 1px solid rgba(224,183,91,.10);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #75613b, #3b3325);
+  border-color: rgba(224,183,91,.30);
+}
+
+/* 16 · 影院横幅外围金色光晕 */
+.vanvy-cinema { position: relative; }
+.vanvy-cinema::before {
+  content: "";
+  position: absolute;
+  left: 4%; right: 4%; top: 8%; height: 55%;
+  pointer-events: none;
+  background: radial-gradient(ellipse, rgba(224,183,91,.075), transparent 68%);
+  filter: blur(38px);
+  opacity: .75;
+  z-index: -1;
+}
+
+/* 17 · cinema-frame 影院银幕 */
+.vanvy-cinema .cinema-frame {
+  border: 1px solid rgba(255,255,255,.075) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 22px 60px rgba(0,0,0,.68), 0 0 0 1px rgba(224,183,91,.045), 0 0 50px rgba(190,145,52,.07) !important;
+  overflow: hidden;
+}
+.vanvy-cinema .cinema-frame::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(115deg, rgba(255,255,255,.065), transparent 18%, transparent 76%, rgba(224,183,91,.055));
+  z-index: 20;
+}
+.vanvy-cinema .cinema-frame::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 36%, rgba(0,0,0,.10) 63%, rgba(0,0,0,.48) 100%);
+  z-index: 19;
+}
+
+/* 18 · 横幅背景电影调色 */
+.vanvy-cinema .cinema-bg {
+  filter: brightness(.90) saturate(.92) contrast(1.035) !important;
+  transition: filter .6s ease, transform 1.2s cubic-bezier(.2,.7,.2,1) !important;
+}
+.vanvy-cinema:hover .cinema-bg {
+  filter: brightness(.94) saturate(1.00) contrast(1.04) !important;
+  transform: scale(1.012);
+}
+
+/* 19 · 横幅文字层次 */
+.vanvy-cinema .cinema-title {
+  color: #f3eee3 !important;
+  font-weight: 750 !important;
+  letter-spacing: .025em !important;
+  text-shadow: 0 2px 5px rgba(0,0,0,.80), 0 8px 28px rgba(0,0,0,.62);
+}
+.vanvy-cinema .cinema-desc {
+  color: rgba(235,231,222,.82) !important;
+  text-shadow: 0 1px 10px rgba(0,0,0,.70);
+}
+.vanvy-cinema .cinema-year,
+.vanvy-cinema .cinema-genre,
+.vanvy-cinema .cinema-quality,
+.vanvy-cinema .cinema-rating {
+  color: #d9c18b !important;
+}
+
+/* 20 · 横幅播放按钮金属 */
+.vanvy-cinema .cinema-btn-play {
+  background: linear-gradient(135deg, #f5d995 0%, #d9ae58 45%, #9c7330 100%) !important;
+  color: #151108 !important;
+  border: 1px solid rgba(255,230,163,.58) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(80,53,12,.20), 0 8px 25px rgba(0,0,0,.52), 0 0 28px rgba(224,183,91,.16) !important;
+  font-weight: 750 !important;
+  transition: transform .25s cubic-bezier(.2,.75,.25,1), box-shadow .25s ease, filter .25s ease !important;
+}
+.vanvy-cinema .cinema-btn-play:hover {
+  transform: translateY(-2px) scale(1.025);
+  filter: brightness(1.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 12px 32px rgba(0,0,0,.60), 0 0 38px rgba(224,183,91,.28) !important;
+}
+.vanvy-cinema .cinema-btn-info {
+  background: rgba(10,10,12,.62) !important;
+  color: #e5e0d7 !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 6px 18px rgba(0,0,0,.32);
+}
+.vanvy-cinema .cinema-btn-info:hover {
+  border-color: rgba(224,183,91,.35) !important;
+  color: #f0d28b !important;
+  background: rgba(27,25,20,.72) !important;
+}
+
+/* 21 · 轮播箭头影院玻璃 */
+.vanvy-cinema .cinema-prev,
+.vanvy-cinema .cinema-next {
+  width: 42px !important; height: 42px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(145deg, rgba(28,28,31,.88), rgba(7,7,9,.76)) !important;
+  border: 1px solid rgba(255,255,255,.13) !important;
+  color: #eee8dc !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.055);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, color .22s ease !important;
+}
+.vanvy-cinema .cinema-prev:hover,
+.vanvy-cinema .cinema-next:hover {
+  color: #f0cf83 !important;
+  border-color: rgba(224,183,91,.42) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.58), 0 0 20px rgba(224,183,91,.10);
+}
+
+/* 22 · progress 金色电影进度线 */
+.vanvy-cinema .cinema-progress {
+  background: rgba(255,255,255,.10) !important;
+  box-shadow: 0 0 8px rgba(0,0,0,.45);
+}
+.vanvy-cinema .cinema-progress i {
+  background: linear-gradient(90deg, #8d682c, #e2bd68, #f4d995) !important;
+  box-shadow: 0 0 9px rgba(224,183,91,.42);
+}
+
+/* 23 · 胶片条黑金 */
+.vanvy-cinema .cinema-strip { position: relative; }
+.vanvy-cinema .cinema-strip-inner { filter: drop-shadow(0 8px 20px rgba(0,0,0,.38)); }
+.vanvy-cinema .cinema-frame-card {
+  position: relative;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  border-radius: 9px !important;
+  background: #101013 !important;
+  box-shadow: 0 5px 15px rgba(0,0,0,.40);
+  transition: transform .25s cubic-bezier(.2,.75,.25,1), border-color .25s ease, box-shadow .25s ease !important;
+}
+.vanvy-cinema .cinema-frame-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(224,183,91,.30) !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,.55), 0 0 18px rgba(224,183,91,.07);
+}
+
+/* 24 · 剧集区 VIP 放映厅 */
+.vanvy-cinema .cinema-episodes {
+  background: linear-gradient(145deg, rgba(19,19,22,.78), rgba(7,7,9,.88)) !important;
+  border: 1px solid rgba(255,255,255,.065) !important;
+  border-radius: 14px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 10px 32px rgba(0,0,0,.32);
+  backdrop-filter: blur(18px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+}
+.vanvy-cinema .cinema-episodes::before {
+  content: "";
+  position: absolute;
+  left: 7%; right: 7%; top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(224,183,91,.30), transparent);
+  pointer-events: none;
+}
+
+/* 25 · Season Tab 黑金选集标签 */
+.vanvy-cinema .ce-season-tab {
+  background: linear-gradient(180deg, rgba(39,39,42,.78), rgba(18,18,21,.88)) !important;
+  border: 1px solid rgba(255,255,255,.085) !important;
+  color: #aaa7a0 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+  transition: transform .2s ease, color .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease !important;
+}
+.vanvy-cinema .ce-season-tab:hover {
+  color: #e8d19a !important;
+  border-color: rgba(224,183,91,.25) !important;
+  background: linear-gradient(180deg, rgba(53,47,35,.88), rgba(24,23,20,.92)) !important;
+  transform: translateY(-1px);
+}
+.vanvy-cinema .ce-season-tab.on {
+  color: #f1d38b !important;
+  background: linear-gradient(135deg, rgba(91,69,32,.62), rgba(35,29,19,.92)) !important;
+  border-color: rgba(224,183,91,.48) !important;
+  box-shadow: inset 0 1px 0 rgba(255,228,155,.08), 0 0 18px rgba(224,183,91,.11), 0 4px 15px rgba(0,0,0,.35);
+}
+
+/* 26 · Episode 卡 */
+.vanvy-cinema .ce-ep {
+  transition: transform .25s cubic-bezier(.2,.75,.25,1), filter .25s ease !important;
+}
+.vanvy-cinema .ce-ep:hover {
+  transform: translateY(-4px) !important;
+  filter: brightness(1.04);
+}
+.vanvy-cinema .ce-ep-thumb {
+  border: 1px solid rgba(255,255,255,.075) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 5px 16px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.025);
+  transition: border-color .25s ease, box-shadow .25s ease !important;
+}
+.vanvy-cinema .ce-ep:hover .ce-ep-thumb {
+  border-color: rgba(224,183,91,.28) !important;
+  box-shadow: 0 9px 22px rgba(0,0,0,.58), 0 0 17px rgba(224,183,91,.08);
+}
+.vanvy-cinema .ce-ep-thumb .ce-ep-num {
+  background: rgba(5,5,6,.76) !important;
+  border: 1px solid rgba(255,255,255,.08);
+  color: #e8e3d8 !important;
+  backdrop-filter: blur(8px);
+}
+.vanvy-cinema .ce-ep-thumb .ce-ep-playhint {
+  background: rgba(7,7,8,.65) !important;
+  border: 1px solid rgba(255,255,255,.24) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.45);
+}
+.vanvy-cinema .ce-ep:hover .ce-ep-playhint {
+  background: linear-gradient(135deg, #f1d48d, #bd8d3c) !important;
+  color: #151109 !important;
+  border-color: rgba(255,225,154,.65) !important;
+  box-shadow: 0 0 22px rgba(224,183,91,.25);
+}
+
+/* 27 · Episode 标题 */
+.vanvy-cinema .ce-ep-title { color: #bdb9b1 !important; transition: color .2s ease; }
+.vanvy-cinema .ce-ep:hover .ce-ep-title { color: #e3d2aa !important; }
+
+/* 28 · Media Library 黑金精品卡 */
+.vanvy-cinema .vanvy-cinema-library { position: relative; }
+.vanvy-cinema .vanvy-cinema-library::before {
+  content: "";
+  display: block;
+  width: 88%; height: 1px;
+  margin: 4px auto 14px;
+  background: linear-gradient(90deg, transparent, rgba(224,183,91,.18), transparent);
+}
+.vanvy-cinema .vml-card {
+  position: relative;
+  border: 1px solid rgba(255,255,255,.065) !important;
+  border-radius: 14px !important;
+  background: linear-gradient(145deg, rgba(24,24,27,.94), rgba(10,10,12,.97)) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.025);
+  transition: transform .32s cubic-bezier(.2,.75,.25,1), border-color .28s ease, box-shadow .28s ease, filter .28s ease !important;
+}
+.vanvy-cinema .vml-card:hover {
+  transform: translateY(-6px) scale(1.012) !important;
+  border-color: rgba(224,183,91,.30) !important;
+  box-shadow: 0 18px 40px rgba(0,0,0,.64), 0 0 25px rgba(224,183,91,.075) !important;
+  filter: brightness(1.035);
+}
+.vanvy-cinema .vml-card-img {
+  transition: transform .65s cubic-bezier(.2,.75,.25,1), filter .45s ease !important;
+}
+.vanvy-cinema .vml-card:hover .vml-card-img { transform: scale(1.035); }
+.vanvy-cinema .vml-card-blur {
+  filter: blur(24px) saturate(1.18) brightness(.54) !important;
+  opacity: .88;
+}
+.vanvy-cinema .vml-card-name {
+  color: #e6e1d8 !important;
+  font-weight: 650 !important;
+  text-shadow: 0 2px 9px rgba(0,0,0,.68);
+}
+.vanvy-cinema .vml-card-type { color: #b99858 !important; letter-spacing: .08em; }
+
+/* 29 · Media Library 左右按钮 */
+.vanvy-cinema .vml-scroll-left,
+.vanvy-cinema .vml-scroll-right {
+  background: linear-gradient(145deg, rgba(29,29,32,.94), rgba(7,7,9,.90)) !important;
+  border: 1px solid rgba(224,183,91,.16) !important;
+  color: #d8c18b !important;
+  border-radius: 50% !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,.50), inset 0 1px 0 rgba(255,255,255,.035);
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease !important;
+}
+.vanvy-cinema .vml-scroll-left:hover,
+.vanvy-cinema .vml-scroll-right:hover {
+  border-color: rgba(224,183,91,.42) !important;
+  transform: scale(1.06);
+  box-shadow: 0 10px 28px rgba(0,0,0,.60), 0 0 18px rgba(224,183,91,.11);
+}
+
+/* 30 · Loading shimmer 黑金 */
+.vanvy-cinema .ce-ep-thumb.ce-ep-loading::before {
+  background: linear-gradient(100deg, transparent 30%, rgba(224,183,91,.035) 42%, rgba(255,222,145,.11) 50%, rgba(224,183,91,.035) 58%, transparent 70%) !important;
+  background-size: 220% 100% !important;
+}
+
+/* 31 · 空状态 */
+
+/* 31 · 空缩略图 */
+.vanvy-cinema .ce-empty { color: #77736d !important; }
+.vanvy-cinema .ce-ep-thumb.ce-ep-fail {
+  background: radial-gradient(circle, rgba(224,183,91,.035), rgba(12,12,15,.95)) !important;
+  border: 1px dashed rgba(224,183,91,.14) !important;
+}
+
+/* 32 · Home Library Tile */
+.homePageLibraryTile .card {
+  background: linear-gradient(145deg, rgba(25,25,28,.90), rgba(9,9,11,.96)) !important;
+  border: 1px solid rgba(255,255,255,.065) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.025);
+}
+.homePageLibraryTile .card:hover {
+  border-color: rgba(224,183,91,.25) !important;
+  box-shadow: 0 16px 36px rgba(0,0,0,.60), 0 0 22px rgba(224,183,91,.07);
+}
+
+/* 33 · 播放器区域 */
+.videoPlayerContainer,
+.videoPlayerContainer video { background: #000 !important; }
+.videoPlayerContainer { box-shadow: 0 20px 65px rgba(0,0,0,.65); }
+
+/* 34 · Detail 页元信息 */
+.itemDetailPage .itemName,
+.itemDetailPage h1,
+.itemDetailPage h2 {
+  color: #eee9df !important;
+  text-shadow: 0 2px 18px rgba(0,0,0,.52);
+}
+.itemDetailPage .itemMiscInfo,
+.itemDetailPage .itemGenres,
+.itemDetailPage .itemExternalLinks { color: #aaa59c !important; }
+.itemDetailPage .itemMiscInfo strong,
+.itemDetailPage .itemGenres a { color: #d9b96d !important; }
+
+/* 35 · 分隔线 */
+hr,
+.divider,
+.paperList { border-color: rgba(255,255,255,.055) !important; }
+hr {
+  background: linear-gradient(90deg, transparent, rgba(224,183,91,.15), transparent) !important;
+  border: none !important;
+  height: 1px;
+}
+
+/* 36 · 列表项 */
+.listItem {
+  border-radius: 11px !important;
+  transition: background .2s ease, transform .2s ease, box-shadow .2s ease !important;
+}
+.listItem:hover {
+  background: linear-gradient(90deg, rgba(224,183,91,.075), rgba(255,255,255,.018)) !important;
+  box-shadow: inset 2px 0 0 rgba(224,183,91,.35);
+  transform: translateX(2px);
+}
+
+/* 37 · 播放按钮高光层 */
+.vanvy-cinema .cinema-btn-play::after {
+  content: "";
+  position: absolute; inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255,255,255,.20), transparent 22%, transparent 72%, rgba(255,255,255,.055));
+  opacity: .55;
+}
+
+/* 38 · 选中/Active 统一黑金 */
+.emby-checkbox:checked + span,
+.emby-radio:checked + span { color: #e8c978 !important; }
+.emby-toggle:checked {
+  background: linear-gradient(135deg, #e1bd69, #98702e) !important;
+  box-shadow: 0 0 16px rgba(224,183,91,.15);
+}
+
+/* 39 · Tooltip */
+.tooltip {
+  background: rgba(11,11,13,.94) !important;
+  color: #e8e2d7 !important;
+  border: 1px solid rgba(224,183,91,.15) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.55);
+  backdrop-filter: blur(12px);
+}
+
+/* 40 · 页面过渡 */
+.view:not(.hide) { animation: vanvyBlackGoldPageIn .34s ease both; }
+@keyframes vanvyBlackGoldPageIn {
+  from { opacity: .94; }
+  to { opacity: 1; }
+}
+
+/* 41 · 移动端防性能 */
+@media (max-width: 800px) {
+  .card:hover, .card:focus, .cardBox:hover { transform: none; }
+  .vanvy-cinema .cinema-bg { transform: none !important; }
+  .vanvy-cinema:hover .cinema-bg { transform: none !important; }
+  .vanvy-cinema .vml-card:hover { transform: translateY(-3px) !important; }
+  .mainDrawer .navMenuOption:hover { transform: none; }
+  .vanvy-cinema .cinema-frame { border-radius: 13px !important; }
+}
+
+/* 42 · 超窄屏 */
+@media (max-width: 480px) {
+  :root { --vbg-radius: 12px; }
+  .card, .card.scalableCard, .cardBox { box-shadow: 0 5px 17px rgba(0,0,0,.48) !important; }
+  .vanvy-cinema .cinema-frame {
+    border-radius: 11px !important;
+    box-shadow: 0 13px 35px rgba(0,0,0,.60), 0 0 0 1px rgba(224,183,91,.035) !important;
+  }
+  .vanvy-cinema .cinema-prev,
+  .vanvy-cinema .cinema-next { width: 34px !important; height: 34px !important; }
+}
+
+/* 43 · Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* 44 · 统一色彩校正 */
+.vanvy-cinema .cinema-logo,
+.vanvy-cinema .cinema-title,
+.vanvy-cinema .cinema-desc,
+.vanvy-cinema .cinema-rating,
+.vanvy-cinema .cinema-year,
+.vanvy-cinema .cinema-genre,
+.vanvy-cinema .cinema-quality,
+.vanvy-cinema .cinema-btn-play,
+.vanvy-cinema .cinema-btn-info {
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================================
+   Vanvy Black Gold Atelier · END
+  
+/* =====================================================
+   Obsidian Gold Cinema Library Cards
+   高级黑金媒体库卡片 (GPT生成, 追加入 Black Gold 末尾)
+   ===================================================== */
+.vanvy-cinema .vml-card {
+  position: relative;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  background:
+    linear-gradient(145deg, rgba(35,31,25,.92), rgba(8,8,10,.98)) !important;
+  border: 1px solid rgba(214,177,92,.18) !important;
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.65),
+    inset 0 1px 0 rgba(255,255,255,.045),
+    inset 0 -1px 0 rgba(214,177,92,.08);
+  transition:
+    transform .45s cubic-bezier(.22,.8,.25,1),
+    box-shadow .45s ease,
+    border-color .45s ease !important;
+}
+.vanvy-cinema .vml-card::before {
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:15px;
+  pointer-events:none;
+  z-index:5;
+  background: linear-gradient(120deg, transparent 35%, rgba(255,224,145,.22), transparent 65%);
+  opacity:.25;
+  transition:opacity .4s ease;
+}
+.vanvy-cinema .vml-card::after {
+  content:"";
+  position:absolute;
+  left:12%; right:12%; bottom:0;
+  height:1px;
+  background: linear-gradient(90deg, transparent, rgba(230,190,100,.8), transparent);
+  opacity:.35;
+  z-index:6;
+}
+.vanvy-cinema .vml-card:hover {
+  transform: translateY(-8px) scale(1.018) !important;
+  border-color: rgba(235,196,103,.55) !important;
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.75),
+    0 0 28px rgba(220,180,85,.16),
+    inset 0 1px 0 rgba(255,230,160,.15);
+}
+.vanvy-cinema .vml-card:hover::before { opacity:.75; }
+.vanvy-cinema .vml-card-blur {
+  position:absolute;
+  inset:-14px;
+  z-index:0;
+  background-size:cover !important;
+  background-position:center !important;
+  filter: blur(28px) saturate(1.25) brightness(.38) !important;
+  opacity:.9;
+  transform:scale(1.12);
+}
+.vanvy-cinema .vml-card-img {
+  position:relative;
+  z-index:1;
+  background-size:contain !important;
+  background-position:center !important;
+  transition: transform .65s cubic-bezier(.2,.75,.25,1), filter .45s ease !important;
+}
+.vanvy-cinema .vml-card-img::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:2;
+  background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.45) 100%);
+  pointer-events:none;
+}
+.vanvy-cinema .vml-card:hover .vml-card-img {
+  transform: scale(1.045);
+  filter: brightness(1.08) contrast(1.05);
+}
+.vanvy-cinema .vml-card-shine {
+  position:absolute;
+  inset:0;
+  z-index:7;
+  pointer-events:none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,235,170,.18), transparent 65%);
+  transform: translateX(-130%);
+  transition: transform .75s ease;
+}
+.vanvy-cinema .vml-card:hover .vml-card-shine { transform: translateX(130%); }
+.vanvy-cinema .vml-card-meta {
+  position:relative;
+  z-index:8;
+}
+.vanvy-cinema .vml-card-name {
+  color:#f0e6d0 !important;
+  font-weight:700 !important;
+  letter-spacing:.035em;
+  text-shadow: 0 2px 10px rgba(0,0,0,.9), 0 0 12px rgba(210,170,80,.18);
+}
+.vanvy-cinema .vml-card-type {
+  color:#c9a45c !important;
+  font-size:.82em !important;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.9;
+}
+.vanvy-cinema .vml-card-meta::before {
+  content:"◆";
+  position:absolute;
+  right:8px; bottom:3px;
+  font-size:9px;
+  color:rgba(230,190,100,.55);
+  opacity:.7;
+}
+@media(max-width:700px){
+  .vanvy-cinema .vml-card:hover {
+    transform: translateY(-4px) scale(1.01) !important;
+  }
+}
+
+/* =====================================================
+   Media Library Hero Covers · 媒体库封面动态剧照 + 高级字体
+   (GPT方案, 覆盖在 gold 末尾, 确保生效)
+   ===================================================== */
+/* 封面图铺满(宽幅剧照), 不用 contain(藏默认图标) */
+.vanvy-cinema .vml-card-img {
+  background-size: cover !important;
+  background-position: center !important;
+}
+/* 封面底部黑金遮罩(字更清晰+影院感) */
+.vanvy-cinema .vml-card-img::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(5,5,6,.80) 88%, rgba(3,3,4,.96) 100%),
+    radial-gradient(circle at 50% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,.42) 100%);
+  pointer-events: none;
+}
+/* 名称: 香槟金渐变 + 衬线电影标题风 */
+.vanvy-cinema .vml-card-name {
+  font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif !important;
+  font-weight: 700 !important;
+  font-size: 1.18em !important;
+  letter-spacing: .05em !important;
+  background: linear-gradient(180deg, #fff6d8 0%, #f0cf83 40%, #d4af37 78%, #a97c2e 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: 0 2px 12px rgba(0,0,0,.85) !important;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,.25));
+}
+/* 类型: 金色小标, 大字距 */
+.vanvy-cinema .vml-card-type {
+  font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: .72em !important;
+  letter-spacing: .22em !important;
+  text-transform: uppercase !important;
+  color: rgba(255,220,140,.92) !important;
+  text-shadow: 0 0 10px rgba(212,175,55,.35) !important;
+}
+
+/* =====================================================
+   FIX · vml-card-img 高度为0, 封面图显示不出
+   设 absolute inset:0 铺满卡片(修复img height:0塌陷)
+   ===================================================== */
+.vanvy-cinema .vml-card-img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: auto !important;
+  width: 100% !important;
+  margin: 0 !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+/* 信息文字提到封面之上 */
+.vanvy-cinema .vml-card-meta {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  padding: 8px 10px 10px !important;
+  z-index: 8 !important;
+}
+/* meta 背景压暗保证字清晰 */
+.vanvy-cinema .vml-card-meta {
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(3,3,4,.88) 100%) !important;
+}
+
+/* =====================================================
+   FIX · 去掉媒体库卡片上的类型标签(白色字), 保留金色分类名
+   主人要求 2026-08-17
+   ===================================================== */
+.vanvy-cinema .vml-card-type { display: none !important; }
+
+/* =====================================================
+   FIX · 只隐藏"滚轮/拖拽"提示字, 恢复"🎬 媒体库"标题显示(主人要求还回来 2026-08-17)
+   ===================================================== */
+.vanvy-cinema .vml-hint { display: none !important; }
+
+/* =====================================================
+   FIX · 金色分类名跨浏览器稳显(GPT方案)
+   默认纯金fallback, 支持background-clip:text才渐变 — 任何浏览器绝不白字
+   ===================================================== */
+.vanvy-cinema .vml-card-name {
+  color: #d8aa52 !important;
+  font-weight: 700 !important;
+  -webkit-text-fill-color: initial !important;
+  background: none !important;
+  text-shadow: 0 1px 8px rgba(0,0,0,.9), 0 0 12px rgba(210,170,80,.25) !important;
+}
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .vanvy-cinema .vml-card-name {
+    background: linear-gradient(180deg, #fff0b0 0%, #d5a13b 45%, #8c5715 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+  }
+}
+
+
+/* =====================================================
+   Lishu Outline · 隶书镂空白线(GPT定夺 2026-08-17)
+   书法隶书 + 镂空白线描边 + 字号收紧, 东方奢品/碑帖气质
+   ===================================================== */
+.vanvy-cinema .vml-card-name {
+  font-family: "STLiti", "LiSu", "KaiTi", "STKaiti", "Noto Serif SC", serif !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.12em !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  background: none !important;
+  background-image: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-stroke: 1px #ffffff !important;
+  text-stroke: 1px #ffffff !important;
+  text-shadow: 0 0 6px rgba(255,255,255,.10) !important;
+  line-height: 1.4 !important;
+}
+/* 2026-08-17 主人反馈: 媒体库标题字号太大且溢出屏幕 → 移除 32px 隶书镂空强制, 用组件默认小字号 */

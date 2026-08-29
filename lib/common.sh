@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  Emby 美化全家桶 · 公共函数库
-#  lib/common.sh — 被 install.sh / uninstall.sh 引用
+#  Emby 美化引擎 · 公共函数库
 # =============================================================================
 
-set -u
-
-# ── 颜色输出 ──
 C_INFO='\033[1;36m'; C_OK='\033[1;32m'; C_WARN='\033[1;33m'
 C_ERR='\033[1;31m'; C_ASK='\033[1;35m'; C_OFF='\033[0m'
 
@@ -18,261 +14,224 @@ c_ask()   { printf "${C_ASK}[询问]${C_OFF} %s" "$*"; }
 
 die() { c_err "$*"; exit 1; }
 
-# 安全读取用户输入: 优先 stdin(真实终端) → /dev/tty(管道安装) → 默认值
-# 用法: safe_read <变量名> [默认值]
-safe_read() {
+# 从用户读取输入 (终端/管道/无tty 全兼容, 永不死等, 静默无报错)
+# 优先级: 终端 stdin → /dev/tty 秒级超时尝试 (curl|bash 管道时用户终端仍可交互) → stdin 回退
+read_from_user() {
   local var="$1" default="${2:-}" val=""
   if [ -t 0 ]; then
-    read -r val 2>/dev/null
+    # 终端: 无限等待用户输入
+    read -r val
   else
-    # 尝试从 /dev/tty 读取, 失败静默(不打印错误)
-    { read -r val < /dev/tty; } 2>/dev/null || val=""
+    # 非终端: 尝试从 /dev/tty 读 (curl|bash 时 online-install 已把 stdin 切到终端)
+    # 无限等待, 绝不 1 秒超时 (那是之前把交互搞坏的元凶)
+    { read -r val < /dev/tty; } 2>/dev/null || read -r val
   fi
   [ -z "$val" ] && val="$default"
   eval "$var=\"$val\""
 }
 
-# ── 演练模式 ──
-maybe() {
-  if [ "${DRY_RUN:-0}" = "1" ]; then
-    printf '    ▶ (演练) %s\n' "$*"
-  else
-    eval "$*" 2>/dev/null
-  fi
+# 检测是否存在可用的 /dev/tty (静默)
+tty_available() {
+  ( exec 3<> /dev/tty ) 2>/dev/null
 }
 
-# ── 下载（GitHub 直连 → 镜像加速）──
-download() {
-  local url="$1" dest="$2" mirror murl
-  [ "${DRY_RUN:-0}" = "1" ] && { printf '    ▶ (演练) 下载 %s\n' "$url"; return 0; }
-  if curl -fsSL --connect-timeout 10 --max-time 90 -o "$dest" "$url" 2>/dev/null; then
+# 安全读取输入 (兼容旧调用, 内部走 read_from_user)
+safe_read() {
+  read_from_user "$@"
+}
+
+# 健壮多选解析: 把用户输入的数字列表拆成干净的数字数组
+# 兼容: 半角/全角逗号(,) 顿号(、) 任意空格(含全角空格) 全角数字(１２３)
+# 注意: 不用 sed 字符类处理多字节 (POSIX locale 下会把全角字符拆字节误伤)
+# 用法: picks=($(parse_multi "1 ，5、6,7  8")) → (1 5 6 7 8)
+parse_multi() {
+  local raw="$1"
+  # 逗号类字符 → 空格 (bash 参数扩展, 子串匹配不拆多字节)
+  raw="${raw//，/ }"
+  raw="${raw//、/ }"
+  raw="${raw//,/ }"
+  # 全角数字 → 半角
+  raw="${raw//０/0}"; raw="${raw//１/1}"; raw="${raw//２/2}"; raw="${raw//３/3}"
+  raw="${raw//４/4}"; raw="${raw//５/5}"; raw="${raw//６/6}"; raw="${raw//７/7}"
+  raw="${raw//８/8}"; raw="${raw//９/9}"
+  # 全角空格 → 半角
+  raw="${raw//　/ }"
+  # 按空白分割 (IFS 默认含空格/tab/换行)
+  for token in $raw; do
+    # 关键: 只保留数字字符! 过滤一切干扰 (不可见字符/退格/控制符/输入法残留)
+    # 例: 输入法或退格产生的 "\x7f1" → "1"
+    token=$(printf '%s' "$token" | tr -dc '0-9')
+    [ -z "$token" ] && continue
+    echo "$token"
+  done
+}
+
+# 确认 (默认N, 支持管道输入)
+confirm() {
+  c_ask "$1 [y/N]: "
+  local ans=""
+  read_from_user ans
+  [ "$ans" = "y" ] || [ "$ans" = "Y" ]
+}
+
+# 备份 index.html (每次注入前)
+backup_index() {
+  docker exec "$CONTAINER" sh -c "
+    mkdir -p /config/backups/emby-beautify
+    cp '$DASHBOARD_DIR/index.html' \"/config/backups/emby-beautify/index.html.bak.\$(date +%Y%m%d-%H%M%S)\"
+  " 2>/dev/null && c_ok "✓ index.html 已备份"
+}
+
+# 出厂原始备份: 仅当 index.html 尚未被美化 (无 vanvy/ 注入) 时, 保存一份 pristine 原始版
+# (吸收 emby-home-beautify / Quick-Deployment 的时间戳备份栈理念)
+backup_index_pristine() {
+  docker exec "$CONTAINER" sh -c "
+    mkdir -p /config/backups/emby-beautify
+    INDEX='$DASHBOARD_DIR/index.html'
+    if ! grep -q 'vanvy/' \"\$INDEX\" 2>/dev/null; then
+      cp \"\$INDEX\" \"/config/backups/emby-beautify/index.html.pristine.\$(date +%Y%m%d-%H%M%S)\" 2>/dev/null && echo '✓ 出厂原始 index.html 已备份'
+    else
+      echo '  已存在美化注入, 跳过出厂备份 (沿用历史备份)'
+    fi
+  " 2>/dev/null | sed 's/^/    /'
+}
+
+# 列出所有备份 (含时间戳)
+list_index_backups() {
+  docker exec "$CONTAINER" sh -c "ls -lt /config/backups/emby-beautify/index.html.* 2>/dev/null | head -20" 2>/dev/null
+}
+
+# 恢复指定备份: --restore-backup <时间戳> 或 pristine 完整文件名
+restore_index_backup() {
+  local want="$1"
+  [ -z "$want" ] && { c_err "用法: --restore-backup <时间戳> (如 20260813-093000)"; return 1; }
+  docker exec "$CONTAINER" sh -c "
+    mkdir -p /config/backups/emby-beautify
+    BACKUP=\$(ls /config/backups/emby-beautify/index.html.* 2>/dev/null | grep -E \"index.html.(bak|pristine).$want\" | head -1)
+    [ -z \"\$BACKUP\" ] && BACKUP=\$(ls /config/backups/emby-beautify/index.html.$want 2>/dev/null | head -1)
+    if [ -z \"\$BACKUP\" ] || [ ! -f \"\$BACKUP\" ]; then
+      echo \"  未找到匹配备份: $want\"
+      exit 1
+    fi
+    # 恢复前先备份当前状态
+    cp '$DASHBOARD_DIR/index.html' \"/config/backups/emby-beautify/index.html.bak.\$(date +%Y%m%d-%H%M%S).pre-restore\" 2>/dev/null
+    cp \"\$BACKUP\" '$DASHBOARD_DIR/index.html'
+    echo \"✓ 已从 \$BACKUP 恢复 index.html\"
+  " 2>&1 | sed 's/^/    /'
+}
+
+# 幂等注入: 把注入行插入 </head> 前 (marker 已存在则跳过)
+inject_to_index() {
+  local marker="$1" inject_file="$2" index_file="$3"
+  # 逐行检查已存在 (防重复), 过滤出真正需要注入的行
+  local filtered="/tmp/vanvy-filtered.html"
+  : > "$filtered"
+  local total=0 exist=0 line
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    total=$((total+1))
+    if docker exec "$CONTAINER" sh -c "grep -qF -- '${line}' '$index_file'" 2>/dev/null; then
+      exist=$((exist+1))
+    else
+      printf '%s\n' "$line" >> "$filtered"
+    fi
+  done < "$inject_file"
+
+  if [ "$total" -gt 0 ] && [ "$exist" -eq "$total" ]; then
+    echo "    [已存在] $marker 相关注入已存在, 跳过"
+    rm -f "$filtered"
     return 0
   fi
-  for mirror in "https://gh-proxy.com/https://raw.githubusercontent.com" "https://mirror.ghproxy.com/https://raw.githubusercontent.com"; do
-    murl="${url/https:\/\/raw.githubusercontent.com/$mirror}"
-    if curl -fsSL --connect-timeout 10 --max-time 120 -o "$dest" "$murl" 2>/dev/null; then
-      c_warn "GitHub 直连失败，已通过镜像 $mirror 下载"
-      return 0
+  if [ ! -s "$filtered" ]; then
+    echo "    [已存在] 所有注入行已存在, 跳过"
+    rm -f "$filtered"
+    return 0
+  fi
+
+  # 上传过滤后的注入文件
+  docker cp "$filtered" "$CONTAINER:/tmp/vanvy-inject-final.html" 2>/dev/null
+  docker exec -i "$CONTAINER" sh -c "
+    set -e
+    INDEX='$index_file'
+    if [ ! -s /tmp/vanvy-inject-final.html ]; then
+      echo '[错误] 注入文件为空, 已中止'
+      exit 1
     fi
+    mkdir -p /config/backups/emby-beautify
+    cp \"\$INDEX\" \"/config/backups/emby-beautify/index.html.bak.\$(date +%Y%m%d-%H%M%S)\" || exit 1
+    if grep -q '</head>' \"\$INDEX\"; then
+      ANCHOR='</head>'
+    else
+      ANCHOR='<body'
+    fi
+    awk -v anchor=\"\$ANCHOR\" 'FNR==NR { lines[NR]=\$0; n=NR; next } index(\$0, anchor) > 0 && !injected { for (i=1; i<=n; i++) print lines[i]; injected=1 } { print }' \\
+      /tmp/vanvy-inject-final.html \"\$INDEX\" > \"\$INDEX.new\"
+    rm -f /tmp/vanvy-inject-final.html
+    if [ -s \"\$INDEX.new\" ]; then
+      mv \"\$INDEX.new\" \"\$INDEX\"
+      # 注入后验证: 确认 marker 真的写入 (防静默失败)
+      if grep -qF -- '$marker' \"\$INDEX\"; then
+        echo \"[注入] $marker 完成\"
+      else
+        echo \"[警告] 注入未检测到 marker ($marker), 请检查 index.html 结构\"
+      fi
+    else
+      rm -f \"\$INDEX.new\"
+      echo '注入失败: 新文件为空, 已保留原文件'
+      exit 1
+    fi
+  " 2>&1 | sed 's/^/    /'
+  rm -f "$filtered"
+}
+
+# 拷贝资源到容器
+push_assets() {
+  local src_dir="$1" dst_dir="$2"
+  docker exec "$CONTAINER" sh -c "mkdir -p '$dst_dir'" 2>/dev/null
+  for f in "$src_dir"/*; do
+    [ -f "$f" ] || continue
+    local fname
+    fname="$(basename "$f")"
+    docker cp "$f" "$CONTAINER:$dst_dir/$fname" 2>/dev/null || { c_err "复制失败: $fname"; return 1; }
+    echo "    ✓ 复制 $fname"
   done
-  return 1
 }
 
-# ─────────────────────────────── 容器发现 ───────────────────────────────
-
-list_emby_containers() {
-  docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}' 2>/dev/null \
-    | awk -F'\t' 'tolower($1) ~ /emby/ || tolower($2) ~ /emby/ {print}'
-}
-
-pick_container() {
-  local list total sel
-  list="$(list_emby_containers)"
-  if [ -z "$list" ]; then
-    c_warn "未发现名称或镜像含 emby 的运行中容器。"
-    c_ask "请手动输入容器名称: "
-    safe_read CONTAINER
-    [ -z "$CONTAINER" ] && die "未输入容器名。"
-    docker inspect "$CONTAINER" >/dev/null 2>&1 || die "容器 $CONTAINER 不存在。"
-    return
-  fi
-
-  # 有交互能力（真实终端 或 管道但存在 /dev/tty）→ 让用户选择
-  if [ -t 0 ] || [ -e /dev/tty ]; then
-    c_info "发现以下 Emby 容器:"
-    echo "$list" | nl -w2 -s'. '
-    total=$(echo "$list" | wc -l)
-    c_ask "请选择容器 [1-$total]: "
-    safe_read sel
-    if echo "$sel" | grep -qE '^[0-9]+$' && [ "$sel" -ge 1 ] && [ "$sel" -le "$total" ]; then
-      CONTAINER=$(echo "$list" | sed -n "${sel}p" | cut -f1)
-      c_ok "已选择容器: $CONTAINER"
-      return
-    fi
-    c_warn "输入无效，自动使用第一个容器。"
-  fi
-
-  # 完全无交互环境（cron/CI）→ 自动第一个
-  CONTAINER=$(echo "$list" | head -1 | cut -f1)
-  c_ok "自动选择容器: $CONTAINER"
-}
-
-# ─────────────────────────────── 版本识别 ───────────────────────────────
-
-detect_version() {
-  local image_tag ver_api ports p v
-  # L1: 镜像 tag
-  image_tag=$(docker inspect "$CONTAINER" --format '{{.Config.Image}}' 2>/dev/null)
-  if echo "$image_tag" | grep -qiE '4\.8\.'; then
-    VER="4.8"; VER_SRC="镜像tag ($image_tag)"; return
-  elif echo "$image_tag" | grep -qiE '4\.9\.'; then
-    VER="4.9"; VER_SRC="镜像tag ($image_tag)"; return
-  fi
-  # L2: 容器内 API 探测
-  ports="${API_PORT:-8096}"
-  for p in $ports; do
-    ver_api=$(docker exec "$CONTAINER" sh -c \
-      "curl -s --max-time 5 http://127.0.0.1:$p/System/Info/Public 2>/dev/null || wget -qO- --timeout=5 http://127.0.0.1:$p/System/Info/Public 2>/dev/null" 2>/dev/null)
-    if [ -n "$ver_api" ]; then
-      API_PORT="$p"
-      v=$(echo "$ver_api" | grep -oE '"Version":"[^"]+"' | head -1 | cut -d'"' -f4)
-      case "$v" in
-        4.8*) VER="4.8"; VER_SRC="API版本 ($v)"; return ;;
-        4.9*) VER="4.9"; VER_SRC="API版本 ($v)"; return ;;
-      esac
-    fi
-  done
-  # L3: UI 结构特征
-  if docker exec "$CONTAINER" sh -c 'grep -q "require.js" /system/dashboard-ui/index.html' 2>/dev/null; then
-    VER="4.9"; VER_SRC="UI特征 (require.js 模块化)"; return
-  fi
-  if docker exec "$CONTAINER" sh -c 'grep -qE "danmaku\.min\.js|modules/fonts" /system/dashboard-ui/index.html' 2>/dev/null; then
-    VER="4.8"; VER_SRC="UI特征 (旧版模块/弹幕库)"; return
-  fi
-  VER="unknown"; VER_SRC="无法自动识别"
-}
-
-ask_version_manual() {
-  local vsel
-  c_warn "无法自动识别版本，请手动选择。"
-  c_ask "Emby 版本: [1] 4.8.x  [2] 4.9.x  [3] 不确定: "
-  safe_read vsel ""
-  case "$vsel" in
-    1) VER="4.8"; VER_SRC="手动选择" ;;
-    2) VER="4.9"; VER_SRC="手动选择" ;;
-    *) VER="unknown"; VER_SRC="手动·不确定" ;;
-  esac
-}
-
-# 检查组件是否已安装 (按 marker 在 index.html 中匹配)
+# 检查组件是否已注入
 is_installed() {
   local marker="$1"
   [ -n "$marker" ] || return 1
   docker exec "$CONTAINER" sh -c "grep -qF '$marker' '$DASHBOARD_DIR/index.html'" 2>/dev/null
 }
 
-# 检查组件是否与已安装的其他组件冲突 (有冲突返回 0/true)
-has_conflict_installed() {
-  local entry="$1" conflicts cid ctype centry cmarker
-  conflicts="$(manifest_conflicts "$entry")"
-  [ -n "$conflicts" ] || return 1
-  for cid in $(echo "$conflicts" | tr ',' ' '); do
-    [ -z "$cid" ] && continue
-    ctype="feature"
-    case "$cid" in
-      *:style) ctype="style"; cid="${cid%:style}" ;;
-      *:theme) ctype="theme"; cid="${cid%:theme}" ;;
-    esac
-    centry="$(manifest_find "$ctype" "$cid" 2>/dev/null)" || continue
-    cmarker="$(manifest_marker "$centry")"
-    if is_installed "$cmarker"; then
-      return 0
+# 官方版检测: 首页美化是否官方版 (区分镜像自带旧版)
+# 返回: 0=官方版 1=未装 2=旧版残留
+is_banner_official() {
+  local id="$1" dir="vanvy/banner_$id" mainjs
+  if ! is_installed "vanvy/banner_$id/banner-$id.js"; then
+    # 检查是否旧版美化残留
+    if docker exec "$CONTAINER" sh -c "grep -q 'emby-crx/main.js' '$DASHBOARD_DIR/index.html'" 2>/dev/null; then
+      return 2
     fi
-  done
-  return 1
-}
-
-# ─────────────────────────────── 注入引擎 ───────────────────────────────
-
-# 容器内 dashboard 路径探测（官方镜像: /system/dashboard-ui 或 /app/emby/system/dashboard-ui 等）
-detect_dashboard_dir() {
-  local d
-  for d in /system/dashboard-ui /app/emby/system/dashboard-ui /usr/lib/emby-server/web; do
-    if docker exec "$CONTAINER" sh -c "[ -f '$d/index.html' ]" 2>/dev/null; then
-      DASHBOARD_DIR="$d"; return 0
-    fi
-  done
-  DASHBOARD_DIR="/system/dashboard-ui"
-  return 1
-}
-
-# 幂等注入: inject_marker <marker字符串> <inject文件(容器内路径)> <目标index.html>
-# 把 inject 文件内容插入 </head> 前；若 marker 已存在则跳过
-inject_to_index() {
-  local marker="$1" inject_file="$2" index_file="$3"
-  docker exec -i "$CONTAINER" sh -c "
-    set -e
-    INDEX='$index_file'
-    if grep -qF '$marker' \"\$INDEX\"; then
-      echo '[已存在] $marker 已注入，跳过'
-      exit 0
-    fi
-    mkdir -p /config/backups/emby-beautify
-    cp \"\$INDEX\" \"/config/backups/emby-beautify/index.html.bak.\$(date +%Y%m%d-%H%M%S)\"
-    # 自适应锚点: 优先 </head>, 没有则用 <body (4.9 新版无闭合 head 标签)
-    if grep -q '</head>' \"\$INDEX\"; then
-      ANCHOR='</head>'
-    else
-      ANCHOR='<body'
-    fi
-    awk -v anchor=\"\$ANCHOR\" 'FNR==NR { lines[NR]=\$0; n=NR; next } index(\$0, anchor)==1 && !injected { for (i=1; i<=n; i++) print lines[i]; injected=1 } { print }' \\
-      '$inject_file' \"\$INDEX\" > \"\$INDEX.new\"
-    mv \"\$INDEX.new\" \"\$INDEX\"
-    echo \"[注入] $marker 完成\"
-  " 2>&1 | sed 's/^/    /'
-}
-
-# 往容器拷贝资源并返回容器内路径
-push_assets() {
-  # push_assets <本地资源目录> <容器目标目录>
-  # 特殊保护: config.js 若容器内已有非空 parentId 配置, 不覆盖(避免破坏用户轮播配置)
-  local src_dir="$1" dst_dir="$2" f
-  maybe "docker exec \"$CONTAINER\" sh -c 'mkdir -p $dst_dir'"
-  if [ "${DRY_RUN:-0}" = "0" ]; then
-    docker exec "$CONTAINER" sh -c "mkdir -p '$dst_dir'" 2>/dev/null || die "容器内创建目录失败: $dst_dir"
-    for f in "$src_dir"/*; do
-      [ -f "$f" ] || continue
-      local fname
-      fname="$(basename "$f")"
-      # config.js 保护: 容器内已有且 parentId 非空 → 跳过覆盖
-      if [ "$fname" = "config.js" ]; then
-        # 仅当容器 config.js 的实际配置行(this.parentId = "含ID")非空才保护
-        if docker exec "$CONTAINER" sh -c "grep -qE '^\s*this\.parentId\s*=\s*\"[0-9a-fA-F,]' '$dst_dir/config.js'" 2>/dev/null; then
-          echo "    ⏭ 保留容器内 config.js (已配置媒体库, 避免覆盖破坏轮播)"
-          continue
-        fi
-      fi
-      if ! docker cp "$f" "$CONTAINER:$dst_dir/$fname" 2>/dev/null; then
-        die "docker cp 失败: $f → $dst_dir/"
-      fi
-      echo "    ✓ 复制 $fname"
-    done
+    return 1
   fi
+  return 0
 }
 
-# 卸载指定 marker（删除注入行 + 可选资源目录）
-remove_injection() {
-  local marker="$1" asset_dir="${2:-}" index_file="$3"
-  docker exec -i "$CONTAINER" sh -c "
-    INDEX='$index_file'
-    TMP=\"$INDEX.eb-rm.$$\"
-    sed -E '/$marker/d' \"$INDEX\" > \"\$TMP\"
-    mv \"\$TMP\" \"$INDEX\"
-    rm -rf '$asset_dir'
-    echo '[卸载] 已移除 $marker'
-  " 2>&1 | sed 's/^/    /'
-}
-
-# 生成注入行文件（本地）
-gen_inject_file() {
-  # gen_inject_file <输出文件> <行1> <行2> ...
-  local out="$1"; shift
-  : > "$out"
-  for line in "$@"; do
-    printf '%s\n' "$line" >> "$out"
-  done
-}
-
-
-# 列出本地可用主题
-list_themes() {
-  local d="$SCRIPT_DIR/themes"
-  [ -d "$d/dark" ] && for f in "$d"/dark/*.css; do echo "  dark/$(basename "$f" .css)"; done
-  for f in "$d"/*.css; do
-    [ -f "$f" ] || continue
-    case "$(basename "$f")" in
-      Embymalism.css) echo "  embymalism" ;;
-      *) echo "  $(basename "$f" .css)" ;;
-    esac
-  done
+# 清理镜像内置旧版美化残留 (社区镜像)
+cleanup_builtin_crx() {
+  if [ "$BUILTIN_CRX" = "1" ]; then
+    c_warn "清理镜像内置旧版美化..."
+    # 移除 index.html 中的旧版美化注入行
+    docker exec "$CONTAINER" sh -c "
+      INDEX='$DASHBOARD_DIR/index.html'
+      cp \"\$INDEX\" \"/config/backups/emby-beautify/index.html.pre-clean.\$(date +%Y%m%d-%H%M%S)\" 2>/dev/null
+      sed -i '/emby-crx\/style.css/d; /emby-crx\/common-utils.js/d; /emby-crx\/jquery/d; /emby-crx\/md5/d; /emby-crx\/config.js/d; /emby-crx\/main.js/d' \"\$INDEX\"
+      # 保留目录(避免破坏), 但删旧版 main.js 防止误加载
+      rm -f '$DASHBOARD_DIR/emby-crx/main.js' '$DASHBOARD_DIR/emby-crx/config.js'
+      echo '  旧版美化注入已清理'
+    " 2>&1 | sed 's/^/    /'
+    BUILTIN_CRX=0
+    c_ok "✓ 镜像内置旧版美化已清理"
+  fi
 }

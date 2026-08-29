@@ -1,0 +1,18 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · MINIMAL 简约版
+   纯粹: 细线动画 + 黑色背景 + 白色文字
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes minimal-dots { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+@keyframes minimal-fadeout { 0% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }
+
+#vanvy-global-loading.vanvy-loading-minimal { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: #0a0a0a; transition: opacity 0.4s ease; }
+#vanvy-global-loading.vanvy-loading-minimal.vl-hide { opacity: 0; pointer-events: none; }
+#vanvy-global-loading.vanvy-loading-minimal .vl-inner { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+#vanvy-global-loading.vanvy-loading-minimal .vl-dots { display: flex; gap: 8px; }
+#vanvy-global-loading.vanvy-loading-minimal .vl-dots i { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: minimal-dots 1.4s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-minimal .vl-dots i:nth-child(1) { animation-delay: 0s; }
+#vanvy-global-loading.vanvy-loading-minimal .vl-dots i:nth-child(2) { animation-delay: 0.2s; }
+#vanvy-global-loading.vanvy-loading-minimal .vl-dots i:nth-child(3) { animation-delay: 0.4s; }
+#vanvy-global-loading.vanvy-loading-minimal .vl-brand { font-size: 11px; letter-spacing: 2px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; }
+#vanvy-global-loading.vanvy-loading-minimal.hide-out { animation: minimal-fadeout 0.4s ease forwards; }

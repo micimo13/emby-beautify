@@ -1,0 +1,24 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · SPLIT 分屏版
+   原创: 左右分屏 + 毛玻璃 + 网格光效
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes split-slide-l { 0% { transform: translateX(-100%); opacity: 0; } 50% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes split-slide-r { 0% { transform: translateX(100%); opacity: 0; } 50% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes split-grid { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+@keyframes split-fadeout { 0% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }
+
+#vanvy-global-loading.vanvy-loading-split { position: fixed; inset: 0; z-index: 99999; display: flex; transition: opacity 0.5s ease; }
+#vanvy-global-loading.vanvy-loading-split.vl-hide { opacity: 0; pointer-events: none; }
+#vanvy-global-loading.vanvy-loading-split .vl-split-l, #vanvy-global-loading.vanvy-loading-split .vl-split-r { flex: 1; position: relative; overflow: hidden; }
+#vanvy-global-loading.vanvy-loading-split .vl-split-l { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); animation: split-slide-l 0.8s ease-out; }
+#vanvy-global-loading.vanvy-loading-split .vl-split-r { background: linear-gradient(225deg, #1a1a2e 0%, #0f3460 100%); animation: split-slide-r 0.8s ease-out; }
+#vanvy-global-loading.vanvy-loading-split .vl-split-l::after, #vanvy-global-loading.vanvy-loading-split .vl-split-r::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 30px 30px; animation: split-grid 2s ease-in-out infinite; }
+#vanvy-global-loading.vanvy-loading-split .vl-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10; }
+#vanvy-global-loading.vanvy-loading-split .vl-logo-wrap { position: relative; width: 80px; height: 80px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.1); }
+#vanvy-global-loading.vanvy-loading-split .vl-logo { width: 40px; height: 40px; object-fit: contain; }
+#vanvy-global-loading.vanvy-loading-split .vl-bar { width: 180px; height: 2px; background: rgba(255, 255, 255, 0.1); border-radius: 1px; }
+#vanvy-global-loading.vanvy-loading-split .vl-bar i { display: block; width: 30%; height: 100%; background: rgba(255, 255, 255, 0.6); border-radius: 1px; animation: cinema-bar 1.5s ease-in-out infinite; }
+@keyframes cinema-bar { 0% { width: 5%; } 50% { width: 50%; } 100% { width: 80%; } }
+#vanvy-global-loading.vanvy-loading-split .vl-brand { font-size: 12px; letter-spacing: 3px; color: rgba(255, 255, 255, 0.5); }
+#vanvy-global-loading.vanvy-loading-split.hide-out { animation: split-fadeout 0.5s ease forwards; }
