@@ -1,43 +1,40 @@
 #!/usr/bin/env bash
-# =============================================================================
-#  Emby 美化引擎 · 主安装器
-#  支持: 本地运行 / curl remote | bash / bash <(curl ...)
-#  ---------------------------------------------------------------------------
-#  用法:
-#    bash install.sh                        # 交互式
-#    bash install.sh --container emby      # 指定容器
-#    bash install.sh --package movie        # 装组件包
-#    bash install.sh --detect-only          # 只检测环境
-#    bash install.sh --restore               # 从持久卷恢复 (容器重建后)
-# =============================================================================
-
+# Emby 美化引擎 v15
 set -u
-# 兼容多种运行方式: 本地 / curl | bash / bash <(curl...)
-if [ -n "${BASH_SOURCE[0]:-}" ]; then
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-elif [ -n "${0:-}" ]; then
+
+REMOTE_BASE="http://192.168.100.106:18099"
+
+# 简单检测脚本目录
+if [ "${0:0:1}" = "/" ] && [ -f "${0}" ]; then
   SCRIPT_DIR="$(cd "$(dirname "${0}")" && pwd)"
 else
-  SCRIPT_DIR="$(pwd)"
+  SCRIPT_DIR=""
 fi
 
-# 兼容 curl remote | bash: 自动识别并从远程加载依赖库
-SCRIPT_BASE_URL="http://192.168.100.106:18099"
-if [ ! -f "$SCRIPT_DIR/lib/common.sh" ] && [ -n "${BASH_SOURCE[0]:-}" ]; then
-  # 本地没有 lib 目录，尝试从远程加载
-  source <(curl -s "$SCRIPT_BASE_URL/lib/common.sh")
-  source <(curl -s "$SCRIPT_BASE_URL/lib/manifest.sh")
-  source <(curl -s "$SCRIPT_BASE_URL/lib/detect.sh")
-  source <(curl -s "$SCRIPT_BASE_URL/lib/persist.sh")
-  SCRIPT_DIR="$(curl -s "$SCRIPT_BASE_URL/" -I 2>/dev/null | grep -i '^content-location' | cut -d' ' -f2 | tr -d '\r')"
-  # 如果无法确定目录，使用远程 base
-  [ -z "$SCRIPT_DIR" ] && SCRIPT_DIR="$SCRIPT_BASE_URL"
-else
-  source "$SCRIPT_DIR/lib/common.sh"
-  source "$SCRIPT_DIR/lib/manifest.sh"
-  source "$SCRIPT_DIR/lib/detect.sh"
-  source "$SCRIPT_DIR/lib/persist.sh"
+# 检查本地 lib
+if [ -z "$SCRIPT_DIR" ] || [ ! -f "$SCRIPT_DIR/lib/common.sh" ]; then
+  echo "📥 远程模式..."
+  LIB_DIR=$(mktemp -d)
+  cd "$LIB_DIR"
+  curl -sf "$REMOTE_BASE/lib/common.sh" -o common.sh
+  curl -sf "$REMOTE_BASE/lib/manifest.sh" -o manifest.sh
+  curl -sf "$REMOTE_BASE/lib/detect.sh" -o detect.sh
+  curl -sf "$REMOTE_BASE/lib/persist.sh" -o persist.sh
+  SCRIPT_DIR="$(pwd)"
+  echo "✅"
 fi
+
+cd "$SCRIPT_DIR"
+
+# 加载 lib（兼容 sh）
+. common.sh
+. manifest.sh
+. detect.sh
+. persist.sh
+
+# 变量定义
+CONTAINER=""; PACKAGE=""; CLI_FEATURES=""; DETECT_ONLY=0; QUICK=0; ASSUME_YES=0
+STYLE=""; THEMES=(); FEATURES=(); LOADING_ENABLED=(); BRANDING=0; RESTORE=0
 
 CONTAINER=""; PACKAGE=""; CLI_FEATURES=""; DETECT_ONLY=0; QUICK=0; ASSUME_YES=0
 STYLE=""; THEMES=(); FEATURES=(); BRANDING=0; RESTORE=0; AURORA_THEME="aurora"; AURORA_THEME_CLI=0
