@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 #  Emby 美化引擎 · 主安装器
+#  支持: 本地运行 / curl remote | bash / bash <(curl ...)
 #  ---------------------------------------------------------------------------
 #  用法:
 #    bash install.sh                        # 交互式
@@ -11,11 +12,32 @@
 # =============================================================================
 
 set -u
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/lib/common.sh"
-source "$SCRIPT_DIR/lib/manifest.sh"
-source "$SCRIPT_DIR/lib/detect.sh"
-source "$SCRIPT_DIR/lib/persist.sh"
+# 兼容多种运行方式: 本地 / curl | bash / bash <(curl...)
+if [ -n "${BASH_SOURCE[0]:-}" ]; then
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+elif [ -n "${0:-}" ]; then
+  SCRIPT_DIR="$(cd "$(dirname "${0}")" && pwd)"
+else
+  SCRIPT_DIR="$(pwd)"
+fi
+
+# 兼容 curl remote | bash: 自动识别并从远程加载依赖库
+SCRIPT_BASE_URL="http://192.168.100.106:18099"
+if [ ! -f "$SCRIPT_DIR/lib/common.sh" ] && [ -n "${BASH_SOURCE[0]:-}" ]; then
+  # 本地没有 lib 目录，尝试从远程加载
+  source <(curl -s "$SCRIPT_BASE_URL/lib/common.sh")
+  source <(curl -s "$SCRIPT_BASE_URL/lib/manifest.sh")
+  source <(curl -s "$SCRIPT_BASE_URL/lib/detect.sh")
+  source <(curl -s "$SCRIPT_BASE_URL/lib/persist.sh")
+  SCRIPT_DIR="$(curl -s "$SCRIPT_BASE_URL/" -I 2>/dev/null | grep -i '^content-location' | cut -d' ' -f2 | tr -d '\r')"
+  # 如果无法确定目录，使用远程 base
+  [ -z "$SCRIPT_DIR" ] && SCRIPT_DIR="$SCRIPT_BASE_URL"
+else
+  source "$SCRIPT_DIR/lib/common.sh"
+  source "$SCRIPT_DIR/lib/manifest.sh"
+  source "$SCRIPT_DIR/lib/detect.sh"
+  source "$SCRIPT_DIR/lib/persist.sh"
+fi
 
 CONTAINER=""; PACKAGE=""; CLI_FEATURES=""; DETECT_ONLY=0; QUICK=0; ASSUME_YES=0
 STYLE=""; THEMES=(); FEATURES=(); BRANDING=0; RESTORE=0; AURORA_THEME="aurora"; AURORA_THEME_CLI=0
