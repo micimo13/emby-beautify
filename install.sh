@@ -3,41 +3,40 @@
 set -u
 
 REMOTE_BASE="http://192.168.100.106:18099"
+DEPLOY_DIR="/vol1/1001/web"
 
-# 简单检测脚本目录
-if [ "${0:0:1}" = "/" ] && [ -f "${0}" ]; then
+# 计算脚本目录
+if [ -n "${BASH_SOURCE[0]:-}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+elif [ -n "${0:-}" ] && [ -f "${0}" ]; then
   SCRIPT_DIR="$(cd "$(dirname "${0}")" && pwd)"
 else
   SCRIPT_DIR=""
 fi
 
-# 检查本地 lib
+# 加载 lib
 if [ -z "$SCRIPT_DIR" ] || [ ! -f "$SCRIPT_DIR/lib/common.sh" ]; then
   echo "📥 远程模式..."
   LIB_DIR=$(mktemp -d)
-  cd "$LIB_DIR"
-  curl -sf "$REMOTE_BASE/lib/common.sh" -o common.sh
-  curl -sf "$REMOTE_BASE/lib/manifest.sh" -o manifest.sh
-  curl -sf "$REMOTE_BASE/lib/detect.sh" -o detect.sh
-  curl -sf "$REMOTE_BASE/lib/persist.sh" -o persist.sh
-  SCRIPT_DIR="$(pwd)"
-  echo "✅"
+  curl -sf "$REMOTE_BASE/lib/common.sh" -o "$LIB_DIR/common.sh"
+  curl -sf "$REMOTE_BASE/lib/manifest.sh" -o "$LIB_DIR/manifest.sh"
+  curl -sf "$REMOTE_BASE/lib/detect.sh" -o "$LIB_DIR/detect.sh"
+  curl -sf "$REMOTE_BASE/lib/persist.sh" -o "$LIB_DIR/persist.sh"
+  SCRIPT_DIR="$LIB_DIR"
+  echo "✅ OK"
 fi
 
 cd "$SCRIPT_DIR"
 
-# 加载 lib（兼容 sh）
 . common.sh
 . manifest.sh
 . detect.sh
 . persist.sh
 
-# 变量定义
 CONTAINER=""; PACKAGE=""; CLI_FEATURES=""; DETECT_ONLY=0; QUICK=0; ASSUME_YES=0
 STYLE=""; THEMES=(); FEATURES=(); LOADING_ENABLED=(); BRANDING=0; RESTORE=0
+ASSETS_DIR="$DEPLOY_DIR"
 
-CONTAINER=""; PACKAGE=""; CLI_FEATURES=""; DETECT_ONLY=0; QUICK=0; ASSUME_YES=0
-STYLE=""; THEMES=(); FEATURES=(); BRANDING=0; RESTORE=0; AURORA_THEME="aurora"; AURORA_THEME_CLI=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
