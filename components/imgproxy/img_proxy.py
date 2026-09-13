@@ -63,7 +63,8 @@ DEFAULTS = {
     "proxy_mode": "auto",
     "proxy_hosts": [
         "ytimg.com", "youtube.com", "googlevideo.com",
-        "dmm.co.jp", "dmm.com"
+        "dmm.co.jp", "dmm.com",
+        "api.themoviedb.org", "image.tmdb.org"      # TMDB 增强走的域名
     ],
     # 代理全部失败时是否回退直连
     "proxy_fallback_direct": True,
@@ -79,6 +80,17 @@ DEFAULTS = {
         "raw.githubusercontent.com",
         "image.tmdb.org", "www.themoviedb.org"
     ],
+
+    # ── 通用透传 /p?u= 允许的域名（直链媒体/预告片；空=只认图床白名单）──
+    "passthrough_hosts": [
+        "dmm.co.jp", "dmm.com", "awsimgsrc.dmm.co.jp", "pics.dmm.co.jp",
+        "youtube.com", "googlevideo.com", "ytimg.com",
+        "javdb.com", "cdn.javdb.com", "jdbstatic.com",
+        "spfcas.com", "tp.spfcas.com"
+    ],
+
+    # ── 可选：TMDB API Key（配了才开放 /tmdb/ 通道）──────────────────
+    "tmdb_key": "",
 
     # ── 可选：上游解码引擎（能解 JavDB 的混淆图；公共用户可留空）──────
     # 形如 http://host:port/api/v1/img-proxy/?url=  ；留空则跳过
@@ -116,6 +128,8 @@ ENV_MAP = {
     "VANVY_IMG_UA": ("user_agent", str),
     "VANVY_IMG_REFERER": ("referer", str),
     "VANVY_IMG_ALLOW_PRIVATE": ("allow_private_network", "bool"),
+    "VANVY_PASSTHROUGH_HOSTS": ("passthrough_hosts", "list"),
+    "VANVY_TMDB_KEY": ("tmdb_key", "str"),
 }
 
 
@@ -328,6 +342,7 @@ def fetch_via_tunnel(ps, url, timeout):
         hdrs = ["GET %s HTTP/1.1" % path, "Host: %s" % host,
                 "User-Agent: %s" % CFG["user_agent"],
                 "Accept: image/avif,image/webp,image/*,*/*;q=0.8",
+                "Accept-Encoding: identity",     # 不做压缩，省去解压；下面自解 chunked
                 "Connection: close"]
         if CFG.get("referer"):
             hdrs.append("Referer: %s" % CFG["referer"])
@@ -353,12 +368,37 @@ def fetch_via_tunnel(ps, url, timeout):
     if "200" not in line:
         raise OSError("上游返回: " + line[:80])
     ctype = "image/jpeg"
+    chunked = False
     for ln in head.decode("latin-1", "ignore").split("\r\n")[1:]:
         if ln.lower().startswith("content-type:"):
             ctype = ln.split(":", 1)[1].strip()
+        if ln.lower().startswith("transfer-encoding:") and "chunked" in ln.lower():
+            chunked = True
+    # ⚠️ HTTP/1.1 常见 chunked 分块：不解析会把「分块长度」混进正文
+    #    （实测 TMDB JSON 头部出现 "6e1" 之类 → 浏览器 JSON.parse 直接失败）
+    if chunked:
+        body = _dechunk(body)
     if len(body) > CFG["max_bytes"]:
         raise ValueError("too large")
     return body, ctype
+
+
+def _dechunk(buf):
+    """解析 Transfer-Encoding: chunked 正文"""
+    out, i = b"", 0
+    while True:
+        j = buf.find(b"\r\n", i)
+        if j < 0:
+            break
+        try:
+            size = int(buf[i:j].split(b";")[0].strip(), 16)
+        except Exception:
+            break
+        if size == 0:
+            break
+        out += buf[j + 2: j + 2 + size]
+        i = j + 2 + size + 2
+    return out
 
 
 def fetch_direct(url, timeout):
@@ -428,7 +468,7 @@ def _retry(fn, tries=2, delay=0.6, what=""):
     raise last
 
 
-def fetch(url):
+def fetch(url, want_json=False):
     global _PROXY_BREAK_UNTIL
     timeout = CFG["timeout"]
     host = urllib.parse.urlparse(url).hostname
@@ -534,11 +574,95 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self._send(204, extra={"Access-Control-Allow-Headers": "*"})
 
+    # ── /p?u= 通用透传（复用代理链/白名单/缓存）──────────────────────
+    def _handle_passthrough(self, parsed):
+        qs = urllib.parse.parse_qs(parsed.query)
+        target = (qs.get("u") or qs.get("url") or [""])[0].strip()
+        if not target:
+            return self._send(400, b"missing u")
+        if not target.startswith(("http://", "https://")):
+            target = "https://" + target
+        host = urllib.parse.urlparse(target).hostname or ""
+        # 直链媒体域名通常不在图床白名单内 → 这里用扩展白名单
+        extra = [h.lower().lstrip(".") for h in CFG.get("passthrough_hosts", [])]
+        if not host_allowed(host) and not any(host == h or host.endswith("." + h) for h in extra):
+            return self._send(403, ("host not allowed: %s" % host).encode())
+        if not CFG["allow_private_network"] and is_private(host):
+            return self._send(403, b"private address blocked")
+        cp = cache_path(target)
+        if os.path.exists(cp) and (time.time() - os.path.getmtime(cp)) < CFG["cache_ttl"]:
+            try:
+                with open(cp, "rb") as f:
+                    data = f.read()
+                ctype = "application/octet-stream"
+                if os.path.exists(cp + ".ct"):
+                    with open(cp + ".ct") as f:
+                        ctype = f.read().strip() or ctype
+                return self._send(200, data, ctype, {"Cache-Control": "public, max-age=86400"})
+            except Exception:
+                pass
+        try:
+            data, ctype = fetch(target)
+        except Exception as e:
+            logging.warning("passthrough fail %s: %s", target[:70], e)
+            return self._send(502, ("upstream error: %s" % e).encode())
+        try:
+            with open(cp, "wb") as f:
+                f.write(data)
+            with open(cp + ".ct", "w") as f:
+                f.write(ctype or "")
+        except Exception:
+            pass
+        self._send(200, data, ctype or "application/octet-stream",
+                   {"Cache-Control": "public, max-age=86400"})
+
+    # ── /tmdb/<path>：TMDB API 代理（服务端持 Key，走同一代理链）───────
+    def _handle_tmdb(self, parsed):
+        key = CFG.get("tmdb_key") or ""
+        if not key:
+            return self._send(501, json.dumps(
+                {"ok": False, "err": "tmdb_key 未配置（config.json: tmdb_key）"}, ensure_ascii=False).encode(),
+                "application/json; charset=utf-8")
+        path = parsed.path[len("/tmdb"):]           # 例：/movie/872585
+        qs = urllib.parse.parse_qs(parsed.query)
+        params = {k: v[0] for k, v in qs.items() if k != "api_key"}
+        params["api_key"] = key
+        url = "https://api.themoviedb.org/3" + path + "?" + urllib.parse.urlencode(params)
+        cp = cache_path("tmdb:" + url)
+        if os.path.exists(cp) and (time.time() - os.path.getmtime(cp)) < CFG["cache_ttl"]:
+            try:
+                with open(cp, "rb") as f:
+                    return self._send(200, f.read(), "application/json; charset=utf-8",
+                                      {"Cache-Control": "public, max-age=86400"})
+            except Exception:
+                pass
+        try:
+            data, _ = fetch(url, want_json=True)
+        except Exception as e:
+            logging.warning("tmdb fail %s: %s", path[:60], e)
+            return self._send(502, json.dumps({"ok": False, "err": str(e)}, ensure_ascii=False).encode(),
+                              "application/json; charset=utf-8")
+        try:
+            with open(cp, "wb") as f:
+                f.write(data)
+        except Exception:
+            pass
+        self._send(200, data, "application/json; charset=utf-8", {"Cache-Control": "public, max-age=86400"})
+
     def do_HEAD(self):
         self.do_GET()
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        # ── 通用透传 /p?u=<url>：把「直链媒体」类流量也走本机代理链 ──────
+        #   用途（主人 2026-09-13）：浏览器不一定挂代理，预告片(mp4/m3u8)常看不了；
+        #   由本服务代取，复用同一套上游代理 + 缓存 + 白名单。
+        if parsed.path in ("/p", "/proxy", "/passthrough"):
+            return self._handle_passthrough(parsed)
+        # ── TMDB 直连通道 /tmdb/<path>：服务端持 Key + 走代理 ───────────
+        #   用途：外网环境下 TMDB 增强不可用 → 由本服务代理请求 TMDB API。
+        if parsed.path.startswith("/tmdb/"):
+            return self._handle_tmdb(parsed)
         # 健康检查
         if parsed.path in ("/healthz", "/health"):
             info = {

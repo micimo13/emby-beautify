@@ -1,0 +1,45 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Login · AURORA 极光
+   深色底 + 极光光带，卡片仍为毛玻璃但整体更“通透流动”。
+   仅覆盖外观，不动任何原生控件。
+   ═══════════════════════════════════════════════════════════ */
+body.vl-style-aurora .vl-orn{
+  background:
+    radial-gradient(1400px 700px at 18% -10%, color-mix(in srgb, var(--vanvy-accent) 22%, transparent), transparent 62%),
+    radial-gradient(1100px 620px at 86% 8%, color-mix(in srgb, var(--vanvy-accent-2) 26%, transparent), transparent 64%),
+    radial-gradient(900px 700px at 50% 120%, color-mix(in srgb, var(--vanvy-accent) 16%, transparent), transparent 70%),
+    linear-gradient(165deg, #0b1220 0%, #0a0a12 55%, #06070d 100%) !important;
+}
+body.vl-style-aurora .vl-orn::after{ background: rgba(6,8,14, calc(var(--vanvy-login-tint, .42) * .55)) !important; }
+body.vl-style-aurora .vl-orn-glow{ filter: blur(110px); opacity: .5; width: 58vw; height: 58vw; }
+/* 极光带：两条斜向柔光带缓慢流动 */
+body.vl-style-aurora .vl-orn::before{
+  content: ""; position: absolute; inset: -20% -10%; pointer-events: none;
+  background:
+    linear-gradient(102deg, transparent 34%, color-mix(in srgb, var(--vanvy-accent) 20%, transparent) 48%, transparent 62%),
+    linear-gradient(76deg, transparent 40%, color-mix(in srgb, var(--vanvy-accent-2) 24%, transparent) 54%, transparent 68%);
+  filter: blur(34px); opacity: .75; animation: vlAuFlow 26s ease-in-out infinite alternate;
+}
+@keyframes vlAuFlow{ from{ transform: translate3d(-3%,0,0) } to{ transform: translate3d(4%,-2%,0) } }
+@media (prefers-reduced-motion: reduce){ body.vl-style-aurora .vl-orn::before{ animation: none } }
+body.vl-style-aurora .vl-logo{
+  background: linear-gradient(135deg, var(--vanvy-accent), var(--vanvy-accent-2)) !important;
+  border-radius: 14px; box-shadow: 0 10px 30px color-mix(in srgb, var(--vanvy-accent) 30%, transparent);
+}
+body.vl-style-aurora .vl-form{
+  background: rgba(12,18,30,.55) !important;
+  border-color: color-mix(in srgb, var(--vanvy-accent) 24%, transparent) !important;
+  box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 0 1px color-mix(in srgb, var(--vanvy-accent) 10%, transparent) inset !important;
+}
+body.vl-style-aurora .squareCard .cardBox{
+  border-color: color-mix(in srgb, var(--vanvy-accent) 22%, transparent) !important;
+}
+body.vl-style-aurora .squareCard:hover .cardBox,
+body.vl-style-aurora .squareCard:focus-within .cardBox{
+  border-color: color-mix(in srgb, var(--vanvy-accent) 72%, transparent) !important;
+  box-shadow: 0 18px 44px rgba(0,0,0,.62), 0 0 26px color-mix(in srgb, var(--vanvy-accent) 24%, transparent) !important;
+}
+body.vl-style-aurora .vl-form .paperSubmit{
+  background: linear-gradient(135deg, var(--vanvy-accent), var(--vanvy-accent-2)) !important;
+  color: #05121f !important;
+}

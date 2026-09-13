@@ -126,14 +126,21 @@
       // 卡片是合集/人物/文件夹 → 不掺和
       if (item.Type === 'BoxSet' || item.Type === 'Person' || item.Type === 'Folder' ||
           item.Type === 'CollectionFolder' || item.Type === 'UserView') return null;
-      var rt = (item.RemoteTrailers || []).filter(function (t) { return t && t.Url; });
-      if (rt.length) return rt[0].Url;
+      // ⚠️ 调度顺序对齐 JAV 原作者（主人 2026-09-13）：
+      //   ① **先本地预告片**（LocalTrailerCount / getLocalTrailers，来自元数据）
+      //   ② 本地没有再回落到 RemoteTrailers（外站/YouTube）
       if ((item.LocalTrailerCount || 0) > 0 && c.getLocalTrailers) {
         return Promise.resolve(c.getLocalTrailers(uid, id)).then(function (ls) {
-          if (!ls || !ls.length) return null;
-          return trailerStreamUrl(ls[0].Id);
-        }).catch(function () { return null; });
+          if (ls && ls.length) return trailerStreamUrl(ls[0].Id);
+          var rt = (item.RemoteTrailers || []).filter(function (t) { return t && t.Url; });
+          return rt.length ? rt[0].Url : null;
+        }).catch(function () {
+          var rt = (item.RemoteTrailers || []).filter(function (t) { return t && t.Url; });
+          return rt.length ? rt[0].Url : null;
+        });
       }
+      var rt2 = (item.RemoteTrailers || []).filter(function (t) { return t && t.Url; });
+      if (rt2.length) return rt2[0].Url;
       return null;
     }).catch(function (e) { log('getItem 失败', id, e && e.message); return null; });
   }

@@ -1,0 +1,61 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Login · PAPER 纸感暖色
+   暖米色纸面 + 柔和阴影 + 衬线标题；安静、有呼吸感。
+   ═══════════════════════════════════════════════════════════ */
+body.vl-style-paper .vl-orn{
+  background:
+    radial-gradient(900px 520px at 50% -8%, #fffdf7, transparent 62%),
+    linear-gradient(168deg, #f6f1e6 0%, #efe7d8 60%, #e9dfcd 100%) !important;
+}
+body.vl-style-paper .vl-orn::after{ background: none !important; }
+body.vl-style-paper .vl-orn-glow{ display: none; }
+/* 纸纹：极淡的斜向纹理 */
+body.vl-style-paper .vl-orn::before{
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35;
+  background-image: repeating-linear-gradient(115deg, rgba(120,96,60,.035) 0 2px, transparent 2px 7px);
+}
+body.vl-style-paper .vl-head .vl-txt b{
+  color: #3b3227 !important; font-family: Georgia, 'Songti SC', serif !important; letter-spacing: .5px;
+}
+body.vl-style-paper .vl-head .vl-txt i{ color: rgba(59,50,39,.5) !important; font-family: Georgia, serif !important; }
+body.vl-style-paper .vl-logo{
+  background: #fbf7ee !important; color: #8a6a3a !important; border-radius: 50% !important;
+  box-shadow: 0 8px 20px rgba(120,96,60,.20), inset 0 0 0 1px rgba(138,106,58,.28) !important;
+}
+body.vl-style-paper .vl-form{
+  background: #fdfaf3 !important;
+  border: 1px solid rgba(120,96,60,.16) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 20px 50px rgba(120,96,60,.14) !important;
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+}
+body.vl-style-paper .vl-form h1{ color: #3b3227 !important; font-family: Georgia, 'Songti SC', serif !important; }
+body.vl-style-paper .vl-form .inputLabel{ color: rgba(59,50,39,.6) !important; }
+body.vl-style-paper .vl-form .emby-input,
+body.vl-style-paper .vl-form input[type=text],
+body.vl-style-paper .vl-form input[type=password]{
+  background: #f7f2e7 !important; border-color: rgba(120,96,60,.20) !important; color: #3b3227 !important;
+}
+body.vl-style-paper .vl-form input::placeholder{ color: rgba(59,50,39,.35) !important; }
+body.vl-style-paper .vl-form .toggleLabel,
+body.vl-style-paper .vl-form .emby-toggle-label{ color: rgba(59,50,39,.7) !important; }
+body.vl-style-paper .vl-form .button-link,
+body.vl-style-paper .vl-form .btnForgotPassword,
+body.vl-style-paper .vl-form .btnSelectServer{ color: rgba(59,50,39,.62) !important; }
+body.vl-style-paper .vl-form .buttonCancel{
+  background: #f2ecdf !important; border-color: rgba(120,96,60,.18) !important; color: rgba(59,50,39,.75) !important;
+}
+body.vl-style-paper .vl-form .paperSubmit{
+  background: linear-gradient(135deg, color-mix(in srgb, var(--vanvy-accent) 78%, #a8843c), #8a6a3a) !important;
+  color: #fffdf7 !important; box-shadow: 0 10px 24px rgba(120,96,60,.28) !important;
+}
+body.vl-style-paper .squareCard .cardBox{
+  background: #fdfaf3 !important; border-color: rgba(120,96,60,.16) !important;
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  box-shadow: 0 10px 26px rgba(120,96,60,.12) !important;
+}
+body.vl-style-paper .squareCard .cardText-first{ color: #3b3227 !important; }
+body.vl-style-paper .squareCard:hover .cardBox{
+  border-color: rgba(138,106,58,.6) !important;
+  box-shadow: 0 16px 34px rgba(120,96,60,.2) !important;
+}

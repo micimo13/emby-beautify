@@ -1,0 +1,83 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · PULSE 声波版
+   设计意图：用「频谱音柱」表达媒体/影音的属性 —— 正在把声音与画面准备就绪。
+            16 根柱子按正弦错峰起伏，中央 LOGO 轻微呼吸。
+   适用：影音库、音乐库；比三点脉冲更有“内容感”，比极光更克制。
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes pls-wave   { 0%,100% { transform: scaleY(.22); opacity:.42 } 50% { transform: scaleY(1); opacity:1 } }
+@keyframes pls-halo   { 0%,100% { opacity:.28; transform: scale(1) } 50% { opacity:.6; transform: scale(1.06) } }
+@keyframes pls-bar    { 0% { width:0 } 70% { width:64% } 100% { width:64% } }
+@keyframes pls-brand  { 0%,100% { letter-spacing:5px; opacity:.6 } 50% { letter-spacing:7px; opacity:.95 } }
+@keyframes pls-fadeout{ to { opacity:0; visibility:hidden; pointer-events:none } }
+
+#vanvy-loading.vl-style-pulse{
+  position: fixed; inset: 0; z-index: 99999;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(1000px 520px at 50% 58%, color-mix(in srgb, var(--vl-acc) 8%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--vl-bg, #08080c) 92%, #000), var(--vl-bg, #08080c));
+  transition: opacity .5s ease, visibility .5s ease;
+}
+#vanvy-loading.vl-style-pulse.vl-hide{ opacity:0; visibility:hidden; pointer-events:none }
+#vanvy-loading.vl-style-pulse .vl-bg{
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(255,255,255,.014) 3px 4px);
+  opacity: .6;
+}
+#vanvy-loading.vl-style-pulse .vl-inner{
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 22px;
+}
+/* 中央 LOGO + 光晕 */
+#vanvy-loading.vl-style-pulse .vl-logo-wrap{
+  position: relative; width: 108px; height: 108px; display: grid; place-items: center; border-radius: 50%;
+}
+#vanvy-loading.vl-style-pulse .vl-halo{
+  position: absolute; inset: -16px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--vl-acc) 26%, transparent), transparent 70%);
+  filter: blur(16px); animation: pls-halo 2.8s ease-in-out infinite;
+}
+#vanvy-loading.vl-style-pulse .vl-logo{ width: 52px; height: 52px; object-fit: contain; position: relative; z-index: 1; }
+/* 频谱：16 根柱 */
+#vanvy-loading.vl-style-pulse .vl-wave{
+  display: flex; align-items: flex-end; gap: 5px; height: 66px;
+}
+#vanvy-loading.vl-style-pulse .vl-wave i{
+  display: block; width: 5px; height: 100%; border-radius: 3px; transform-origin: bottom center;
+  background: linear-gradient(180deg, var(--vl-acc), var(--vl-acc2));
+  animation: pls-wave 1.25s ease-in-out infinite;
+}
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(1) { animation-delay: 0s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(2) { animation-delay: .08s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(3) { animation-delay: .16s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(4) { animation-delay: .24s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(5) { animation-delay: .32s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(6) { animation-delay: .40s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(7) { animation-delay: .48s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(8) { animation-delay: .56s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(9) { animation-delay: .48s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(10){ animation-delay: .40s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(11){ animation-delay: .32s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(12){ animation-delay: .24s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(13){ animation-delay: .16s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(14){ animation-delay: .08s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(15){ animation-delay: .02s }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(16){ animation-delay: .10s }
+/* 其余柱子高度差异化，避免整排同高显得呆板 */
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(3n)  { height: 78%; }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(4n)  { height: 92%; }
+#vanvy-loading.vl-style-pulse .vl-wave i:nth-child(5n)  { height: 64%; }
+#vanvy-loading.vl-style-pulse .vl-bar{ width: 220px; height: 2px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
+#vanvy-loading.vl-style-pulse .vl-bar i{ display: block; height: 100%; background: linear-gradient(90deg, var(--vl-acc), var(--vl-acc2)); animation: pls-bar 2.1s ease-in-out infinite; }
+#vanvy-loading.vl-style-pulse .vl-brand{
+  font-family: 'Plus Jakarta Sans','Microsoft YaHei',system-ui,sans-serif;
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  color: color-mix(in srgb, var(--vl-acc) 66%, #fff); animation: pls-brand 3s ease-in-out infinite;
+}
+#vanvy-loading.vl-style-pulse .vl-txt{ font-size: 12px; color: rgba(255,255,255,.42); }
+#vanvy-loading.vl-style-pulse.hide-out{ animation: pls-fadeout .5s ease forwards }
+
+@media (prefers-reduced-motion: reduce){
+  #vanvy-loading.vl-style-pulse .vl-wave i{ animation-duration: 3.6s }
+  #vanvy-loading.vl-style-pulse .vl-halo{ animation: none }
+}

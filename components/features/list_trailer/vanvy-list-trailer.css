@@ -22,7 +22,10 @@
 .cardBox .vtl-preview .vtl-media {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: cover; border: 0;
+  /* 按比例完整显示（主人 2026-09-13）：卡片多为 2:3 竖版，预告片是 16:9，
+     用 cover 会裁掉大半 → 只看到「卡片大小的部分」。改 contain，整帧可见。 */
+  object-fit: contain; border: 0;
+  background: #000;
   opacity: 0; transition: opacity .3s ease;   /* 真正可播时才淡入 */
 }
 .cardBox .vtl-preview.playing .vtl-media { opacity: 1; }

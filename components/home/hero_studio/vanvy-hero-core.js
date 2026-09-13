@@ -88,6 +88,9 @@
       var s = document.createElement('style'); s.id = 'vanvy-motion-css';
       s.textContent =
         '@keyframes vnvTextIn{from{opacity:0;transform:translate3d(0,16px,0);filter:blur(7px)}to{opacity:1;transform:none;filter:blur(0)}}'
+        /* 文字溢出保护（主人 2026-09-13）：长标题/长简介不得溢出容器与屏幕 */
+        + '[class*="-title"],[class*="-h1"],[class*="-sub"],[class*="-desc"],[class*="-syn"],[class*="-meta"]'
+        + '{max-width:100%;overflow-wrap:anywhere;word-break:break-word}'
         + '@keyframes vnvImgIn{from{opacity:.5}to{opacity:1}}'
         + '@media (prefers-reduced-motion:reduce){.vnv-a-text,.vnv-a-img{animation:none!important}}';
       (document.head || document.documentElement).appendChild(s);

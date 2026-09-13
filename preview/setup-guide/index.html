@@ -93,10 +93,10 @@
     <div class="nav">
       <a href="#quick">快速开始</a>
       <a href="#banner">轮播样式</a>
-      <a href="#loading">加载页</a>
+      <a href="#loading">加载页 / 登录页</a>
       <a href="#theme">配色</a>
       <a href="#logo">LOGO</a>
-      <a href="#backend">后端填写</a>
+      <a href="#backend">后端 / 外部服务</a>
       <a href="#imgproxy">图片代理</a>
       <a href="#faq">常见问题</a>
     </div>
@@ -107,10 +107,11 @@
 
 <div class="hero">
   <h1>Vanvy Emby Suite</h1>
-  <div class="sub">给你的 Emby 换上漂亮外衣：预热加载页 · 首页轮播 · 详情页 Hero · 第三方播放器 · JAV 增强 · 毛玻璃</div>
+  <div class="sub">给你的 Emby 换上漂亮外衣：预热加载页 · 首页轮播 · 详情页 Hero · 第三方播放器 · 卡片预告片 · JAV 增强 · 资料增强 · 登录页美化 · 毛玻璃</div>
   <div class="badges">
     <span class="badge">支持 Emby 4.8 / 4.9</span>
     <span class="badge">Docker 部署</span>
+    <span class="badge">8 大模块可选</span>
     <span class="badge">一键回滚</span>
     <span class="badge">不修改媒体文件</span>
   </div>
@@ -124,6 +125,14 @@
   <h3>方式 A · 在线一键安装（最省事）</h3>
   <pre><code>curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/online-install.sh | bash</code></pre>
   <p>会自动下载 → 探测你的 Emby → 弹出交互向导，一步步问你。</p>
+  <div class="tip warn">
+    <b>⚠️ 关于「无人值守」</b>：本脚本<b>不会替你猜</b>。若当前没有可交互终端
+    （例如写进 CI、或某些面板里执行），它会<b>明确中止</b>并提示用法，绝不会静默安装。
+    要无人值守请显式指定：
+    <pre><code>curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/online-install.sh | bash -s -- \
+  --container emby --features 1,2,3,4,5,6,7,8 --theme blackgold --yes</code></pre>
+    另外：<b>只认真正的 Emby 容器</b>（名字里带 emby 的其它容器会被拒绝）。
+  </div>
 
   <h3>方式 B · 交互向导（想要更多控制）</h3>
   <pre><code>tar xzf ves.tar.gz &amp;&amp; cd ves-*
@@ -131,24 +140,40 @@ bash install-ves.sh</code></pre>
 
   <h3>方式 C · 一条命令直装（老手）</h3>
   <pre><code>bash install-ves.sh --container emby \
-  --features 1,2,3,4,5,6 \
+  --features 1,2,3,4,5,6,7,8 \
   --theme blackgold \
   --bstyle wave --lstyle cinema \
   --frost weak --perrow 6 --yes</code></pre>
 
+  <h3>方式 D · 连外部后端一起装（最完整）</h3>
+  <p>需要 JAV 增强 / TMDB 资料增强？先把配套服务拉起来，再装美化：</p>
+  <pre><code># ① 一键构建 AVDB + MetaTube（各自带数据库，不碰你已有容器）
+bash components/external/install-external.sh --avdb --metatube --yes
+
+# ② 装美化并关联（脚本会自动回填地址）
+bash install-ves.sh --container emby --features 1,2,3,4,5,6,7,8 \
+  --avdb http://<本机IP>:38000 --metatube http://<本机IP>:28080 \
+  --imgproxy --proxy "socks5h://user:pass@代理:1080" --yes</code></pre>
+
   <div class="tip">
     <b>向导会问你什么？</b><br>
-    ① 选容器 → ② 功能多选(1-6) → ③ 加载页样式 → ④ 浏览器标签图标 → ⑤ 轮播样式 →
-    ⑥ 配色(10套) → ⑦ 毛玻璃强度 → ⑧ 每行卡片数 → ⑨ 后端依赖(MetaTube/AVDB/图片代理) → ⑩ 确认
+    ① 选容器 → ② 功能多选(1-8) → ③ 加载页 LOGO → ④ 浏览器标签图标 → ⑤ 加载页样式 →
+    ⑥ 轮播样式 → ⑦ 配色(10套) → ⑧ 毛玻璃强度 → ⑨ 每行卡片数 →
+    ⑩ 后端从哪来(本机一键构建 / 填已有地址 / 跳过) → ⑪ TMDB Key(可选) → ⑫ 确认
   </div>
 
   <table>
     <tr><th>参数</th><th>取值</th></tr>
     <tr><td><code>--container</code></td><td>容器名（必填）</td></tr>
-    <tr><td><code>--features</code></td><td><code>1</code>加载页 <code>2</code>轮播 <code>3</code>详情页 <code>4</code>播放器 <code>5</code>JAV <code>6</code>毛玻璃</td></tr>
+    <tr><td><code>--features</code></td><td><code>1</code>加载页 <code>2</code>轮播 <code>3</code>详情页 <code>4</code>播放器 <code>5</code>JAV <code>6</code>毛玻璃 <code>7</code>卡片预告片 <code>8</code>登录页美化<br><span style="opacity:.7">（也支持写功能名：<code>--features loading,home,detail</code>）</span></td></tr>
+    <tr><td><code>--avdb</code> / <code>--avdb-key</code></td><td>AVDB 引擎地址 / API Key（JAV 搜索·短评·图解码）</td></tr>
+    <tr><td><code>--metatube</code></td><td>MetaTube 后端地址（JAV 元数据刮削）</td></tr>
+    <tr><td><code>--tmdb-key</code></td><td>TMDB API Key（让「正经库资料增强」在外网也可用）</td></tr>
+    <tr><td><code>--socks5</code></td><td>同 <code>--proxy</code>，填 SOCKS5 代理</td></tr>
     <tr><td><code>--theme</code></td><td>见 <a href="#theme">配色</a></td></tr>
     <tr><td><code>--bstyle</code></td><td>见 <a href="#banner">轮播样式</a></td></tr>
-    <tr><td><code>--lstyle</code></td><td>见 <a href="#loading">加载页样式</a></td></tr>
+    <tr><td><code>--lstyle</code></td><td>见 <a href="#loading">加载页样式</a>（8 款）</td></tr>
+    <tr><td><code>--lstyle-login</code></td><td>登录页风格：<code>glass</code>/<code>aurora</code>/<code>cinema</code>/<code>minimal</code>/<code>split</code>/<code>neon</code>/<code>paper</code>/<code>orbital</code></td></tr>
     <tr><td><code>--frost</code></td><td><code>off</code> / <code>weak</code> / <code>mid</code> / <code>strong</code></td></tr>
     <tr><td><code>--perrow</code></td><td>3-10（详情页每行卡片数）</td></tr>
     <tr><td><code>--logo</code> / <code>--favicon</code></td><td>加载页 LOGO / 浏览器标签图标（本地路径或图片 URL）</td></tr>
@@ -180,9 +205,27 @@ bash install-ves.sh</code></pre>
 <!-- ══════════════ 加载页 ══════════════ -->
 <section id="loading">
   <h2>③ 预热加载页样式</h2>
-  <div class="lead">消除首屏白屏，展示品牌 LOGO。6 款可选。</div>
+  <div class="lead"><b>8 款</b>可选（新增 <b>orbit 轨道</b> / <b>pulse 声波</b>）。
+  也可 <code>--lstyle orbit</code> 直接指定。</div>
   <div class="grid" id="gridLoading"></div>
-  <div class="tip">全屏预览（含 10 套配色实时切换）：<a href="../loading-gallery/">加载页画廊</a></div>
+  <div class="tip">全屏预览（含 10 套配色实时切换）：<a href="../loading-gallery/">加载页画廊</a>
+  ・ 新增两款：<a href="../loading-lab/orbit.html">orbit</a> / <a href="../loading-lab/pulse.html">pulse</a>（或 <a href="../loading-lab/">lab 索引</a>）</div>
+  <h3>🔐 登录页风格（8 套）</h3>
+  <p>与加载页一样，登录页也是<b>一套 DOM、8 种外观</b>（改动仅限样式，不碰任何原生控件与事件）：</p>
+  <table>
+    <tr><th>值</th><th>风格</th><th>适合</th></tr>
+    <tr><td><code>glass</code></td><td>黑金毛玻璃（默认）</td><td>与详情页/轮播同语言，沉稳耐看</td></tr>
+    <tr><td><code>aurora</code></td><td>极光</td><td>流动光带，通透</td></tr>
+    <tr><td><code>cinema</code></td><td>影院</td><td>上下遮幅 + 胶片颗粒</td></tr>
+    <tr><td><code>minimal</code></td><td>极简浅色</td><td>白天 / 办公环境</td></tr>
+    <tr><td><code>split</code></td><td>左右分屏</td><td>品牌与表单分区（窄屏自动堆叠）</td></tr>
+    <tr><td><code>neon</code></td><td>霓虹赛博</td><td>发光描边 + 扫描线</td></tr>
+    <tr><td><code>paper</code></td><td>纸感暖色</td><td>米色纸面，安静</td></tr>
+    <tr><td><code>orbital</code></td><td>轨道</td><td>同心环缓转（与加载页 orbit 呼应）</td></tr>
+  </table>
+  <pre><code>bash install-ves.sh --container emby --features 8 --lstyle-login neon   # 指定风格
+# 或交互式安装：选完功能后会问你「登录页风格」</code></pre>
+  <div class="tip">在线预览 8 套效果：<a href="../login-lab/">登录页风格画廊</a></div>
   <h3>🖼 LOGO 怎么配置</h3>
   <p><b>加载页 LOGO</b> 与 <b>浏览器标签图标（favicon）</b> 是两项独立设置，引导向导会分别问你。</p>
   <pre><code># ① 加载页 LOGO：本地文件 或 图片 URL（两种都行）
@@ -231,7 +274,28 @@ bash install-ves.sh --container emby --features 1 --logo-width 240</code></pre>
   <h2>⑤ 后端服务地址怎么填</h2>
   <div class="lead">这几项<b>全部可选</b>。不填 = 对应功能自动降级，<b>不影响其它模块</b>。</div>
 
-  <h3>🧩 JAV 增强（只有这个需要自建服务）</h3>
+  <h3>⚡ 更省事：一键构建这些服务（推荐）</h3>
+  <p>不想手动找镜像/配数据库？用内置的构建器，<b>docker compose 一键拉起</b>
+  （<b>各自带独立数据库，不碰你已有的容器和库</b>）：</p>
+  <pre><code># 交互式（会问你代理、端口）
+bash components/external/install-external.sh
+
+# 或一条命令：同时装 AVDB + MetaTube，并给出地址
+bash components/external/install-external.sh --avdb --metatube \
+  --proxy "http://192.168.1.10:1082" --yes
+
+# 其他：
+bash components/external/install-external.sh --status          # 看状态
+bash components/external/install-external.sh --uninstall       # 停容器（留数据）
+bash components/external/install-external.sh --uninstall --purge   # 连数据一起删</code></pre>
+  <p>装完把打印出的地址填给美化安装器即可（写 <code>--avdb</code> / <code>--metatube</code>，
+  或在向导里选「本机一键构建」会自动回填）。容器名：
+  <code>vanvy-avdb</code> / <code>vanvy-metatube</code>（各带一个 <code>*-db</code>）。</p>
+  <div class="tip">
+    <b>提示</b>：AVDB 首次启动要初始化数据库，约 1–2 分钟，属正常现象。
+  </div>
+
+  <h3>🧩 JAV 增强需要哪些服务</h3>
   <p>装了 JAV 增强后，若想让页面显示番号 / 演员 / 标签 / 短评 / 外链，需要这些服务：</p>
 
   <table>
@@ -249,12 +313,22 @@ bash install-ves.sh --container emby --features 1 --logo-width 240</code></pre>
       <td>你所用的 JavDB 数据引擎后台</td>
     </tr>
     <tr>
-      <td><b>图片代理</b></td>
-      <td>图床被墙时转发图片（不做则部分图不显示）</td>
+      <td><b>连接器</b><br><span style="color:#8a90a0;font-size:12px">（即图片代理）</span></td>
+      <td>一服务解决三件事：<b>图片</b>（图床被墙时转发）· <b>预告片</b>（直链媒体透传）· <b>TMDB</b>（API 代理）</td>
       <td><code>https://你的域名/vdimg</code></td>
-      <td>自建 Nginx / CDN 反代，<b>可留空</b></td>
+      <td>一键部署：<code>install-ves.sh --imgproxy</code><br>（自建 Nginx / CDN 反代，<b>可留空</b>）</td>
     </tr>
   </table>
+
+  <div class="tip ok">
+    <b>🎯 只想填一个代理？</b><br>
+    连接器（图片代理服务）现在同时提供三条路：<br>
+    · <code>/i?u=&lt;图片地址&gt;</code> ---- 图片代理<br>
+    · <code>/p?u=&lt;媒体地址&gt;</code> ---- <b>通用透传</b>：预告片等直链媒体走它，<b>浏览器自己不必能出网</b><br>
+    · <code>/tmdb/&lt;path&gt;</code> ---- <b>TMDB API 代理</b>：服务端持 Key + 走代理，<b>外网也能用资料增强</b><br>
+    所以通常只需要给它配一个出网代理（HTTP / SOCKS5），
+    <b>图片、预告片、TMDB 就全通了</b>。
+  </div>
 
   <div class="tip warn">
     <b>填写要点</b><br>
@@ -287,15 +361,21 @@ bash install-ves.sh --container emby --features 1 --logo-width 240</code></pre>
     只是拿不到番号/演员/短评这类增强数据。<b>其它 5 个模块完全不受影响。</b>
   </div>
 
-  <h3>📧 TMDB（可选）</h3>
-  <p>轮播<b>不需要</b> TMDB —— 评分/年份直接取 Emby 本地数据。若想额外补全，可申请免费 Key：
-  <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org/settings/api</a>
-  （注意：国内访问需代理）。</p>
+  <h3>📧 TMDB 资料增强（可选）</h3>
+  <p><b>轮播不需要 TMDB</b>（评分/年份直接取 Emby 本地数据）。<br>
+  <b>详情页「资料增强」</b>（剧照 / 预告片 / 更多类似 / 演员）需要 TMDB：
+  申请免费 Key：<a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org/settings/api</a>，
+  用 <code>--tmdb-key &lt;KEY&gt;</code> 传给连接器即可。</p>
+  <div class="tip ok">
+    <b>外网也能用</b>：Key 存在连接器服务端，请求由它带出去（走你配的代理），
+    所以即使你在外网、浏览器本身没挂代理，资料增强照样有数据。
+  </div>
 
   <div class="tip warn" id="imgproxy">
-    <b>③ 图片代理</b><br>
-    安装向导的第 ⑨ 步会问你（三选一）：<br>
-    <code>[0]</code> 跳过 ｜ <code>[1]</code> 已有图片代理服务 → 填地址 ｜ <code>[2]</code> <b>本机一键部署</b>（向导里直接问 <b>出网代理 HTTP/SOCKS5</b>）<br>
+    <b>③ 连接器（图片代理 / 预告片 / TMDB）</b><br>
+    安装向导会问你（三选一）：<br>
+    <code>[0]</code> 跳过 ｜ <code>[1]</code> 已有服务 → 填地址 ｜ <code>[2]</code> <b>本机一键部署</b>
+    （向导里直接问 <b>出网代理 HTTP/SOCKS5</b>，以及可选的 <b>TMDB Key</b>）<br>
     公共用户请自建，不要填别人的域名（流量会走对方服务器）。
   </div>
 
@@ -383,7 +463,16 @@ bash scripts/ves-persist.sh restore --container emby   # 升级后恢复</code><
   <p>它会等轮播就绪，最长 12 秒强制淡出（内置兜底）。若一直卡 → 检查轮播是否装成功。</p>
 
   <h4>JAV 页面没有番号/演员？</h4>
-  <p>未配 MetaTube。见 <a href="#backend">第 ⑤ 节</a>。</p>
+  <p>未配 MetaTube。见 <a href="#backend">第 ⑤ 节</a>（可用一键构建拉起）。</p>
+
+  <h4>外网访问时「资料增强 / 剧照 / 预告片」没了？</h4>
+  <p>多半是后端地址填的是<b>内网 IP</b>。本套件已做适配：内网访问→内网优先（快），
+  外网访问→<b>自动跳过内网地址</b>，只用公网 <code>/enrich</code> · <code>/avdb</code> · <code>/vdimg</code>。
+  请确保这些公网出口可访问（见 <a href="#backend">第 ⑤ 节</a> 的连接器）。</p>
+
+  <h4>执行安装脚本时需要交互吗？会不会自动给我装了？</h4>
+  <p><b>不会</b>。脚本只从终端读答案；拿不到就<b>中止</b>，不会用默认值蒙。
+  无人值守请显式传 <code>--container</code> 与 <code>--yes</code>。</p>
 
   <h4>支持群晖 / 裸机 Emby 吗？</h4>
   <p>目前只支持 <b>Docker 部署</b>的 Emby。</p>
@@ -432,7 +521,9 @@ bash scripts/ves-persist.sh restore --container emby   # 升级后恢复</code><
     {id:'cinema',  cn:'影院',   d:'胶片卷轴环抱 LOGO + 放映机光束',      fx:'影视气质'},
     {id:'split',   cn:'分屏',   d:'左右异色面板 + 中缝分隔线',           fx:'设计感'},
     {id:'minimal', cn:'极简',   d:'只有三点脉冲动画',                   fx:'最轻量'},
-    {id:'logo',    cn:'纯 LOGO', d:'品牌 LOGO 呼吸发光',                fx:'品牌露出'}
+    {id:'logo',    cn:'纯 LOGO', d:'品牌 LOGO 呼吸发光',                fx:'品牌露出'},
+    {id:'orbit',   cn:'轨道 ★新', d:'三层同心轨道反向自转 + 卫星点 + 扫描光', fx:'秩序感'},
+    {id:'pulse',   cn:'声波 ★新', d:'16 根频谱音柱错峰起伏 + 中央光晕',       fx:'影音气质'}
   ];
   var THEMES = [
     {k:'blackgold',n:'黑金',a:'#e8c66a',b:'#a8741a',rec:1},

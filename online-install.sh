@@ -107,10 +107,30 @@ INST="$(find "$TMP" -maxdepth 3 -name 'install-ves.sh' -type f 2>/dev/null | hea
 SRC="$(dirname "$INST")"
 ok "安装器就绪: $(basename "$SRC")"
 
-# ── 交给统一安装器（文件方式执行，交互向导可读 tty）──────────
-# 非交互环境（如 CI）自动补 --yes，避免卡住
-if [ ! -r /dev/tty ] && [ "${VES_NO_TTY:-0}" != "1" ]; then
-  case " $* " in *" --yes "*) ;; *) warn "当前环境无终端，自动追加 --yes"; set -- "$@" --yes;; esac
+# ── 交给统一安装器 ────────────────────────────────────────────
+# 🔴 安全策略（2026-09-13 教训）：
+#   以前「无终端就自动补 --yes」→ 配合安装器里读 stdin，导致 `curl | bash`
+#   在用户没选容器、没确认的情况下**直接自动部署**（严重事故）。
+#   现在：无终端且未显式给 --container/--yes → **明确中止并给出用法**，绝不擅自装。
+if [ ! -r /dev/tty ]; then
+  if [ "${VES_NO_TTY:-0}" = "1" ]; then
+    warn "VES_NO_TTY=1 → 非交互模式（请确保已传 --container 与 --yes）"
+  else
+    case " $* " in
+      *" --container "*)
+        case " $* " in *" --yes "*|*" -y "*) ;; *) info "已指定容器，补 --yes 以便无人值守完成"; set -- "$@" --yes;; esac ;;
+      *)
+        err "当前没有可交互终端，无法进行向导式安装（不会替你猜容器）。"
+        echo "   请显式指定参数后重试，例如："
+        echo "     ${C_DIM}curl -sL <本脚本地址> | bash -s -- --container emby-302 --features 1,2,3,4,5,6,7,8 --theme blackgold --yes${C_OFF}"
+        echo "   本机 emby 容器："
+        docker ps --format '{{.Names}}' 2>/dev/null | grep -i emby | sed 's/^/     - /'
+        exit 2 ;;
+    esac
+  fi
+else
+  # 有终端：正常进入交互向导
+  case " $* " in *" --yes "*) ;; esac
 fi
 
 echo

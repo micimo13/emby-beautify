@@ -139,6 +139,7 @@ done
 copy_comp components/features/detail                      components/features/detail
 copy_comp components/features/list_trailer                components/features/list_trailer
 copy_comp components/features/login                       components/features/login
+copy_comp components/external                             components/external
 copy_comp components/enrich                              components/enrich
 copy_comp components/imgproxy                             components/imgproxy
 copy_comp components/home/banner_home                     components/home/banner_home

@@ -166,37 +166,25 @@
   }
 
   function javScore(item, ctx) {
-    // ── 修（主人 2026-09-13）：动漫剧集被误判成 JAV ─────────────────
-    //   旧逻辑「番号正则 +2 即命中(>=2)」太宽：`Episode 094`、`Chapter 12`、
-    //   `Part 03` 这类**剧集名**全部命中 [A-Za-z]{2,8}[-_ ]?\d{2,6} → 动漫库中招。
-    //   现在要求：① 必须有**强信号**（MetaTube / 18+ 分级 / 库名关键字）；
-    //            ② 番号只作为弱信号，且必须「名字以番号开头」或「带分隔符」；
-    //            ③ Episode / Series 只有在 MetaTube 明确标记时才算 JAV。
-    var strong = 0, weak = 0, why = [];
+    // ── 路由判定（主人 2026-09-13 二次修正）────────────────────────
+    //   hit  = 「内容本身是 R18」→ 决定是否走 AVDB 增强（剧照/演员资料/磁力）
+    //   libAv= 「所属库像 R18 库」 → **仅**用于紧凑布局兜底，不再决定数据源
+    //   ⚠️ 关键教训：以前「库名命中」也能单独判定为 JAV →
+    //      混合库（正经片 + R18 片同库）里正经片被连累 → 走 AVDB 抓不到 →
+    //      且 TMDB 增强被 `if (jav) return false` 跳过 → 两边都不显示。
+    var why = [], hit = false, libAv = false;
     try {
+      hit = isAvItem(item);
       var pid = item.ProviderIds || {};
-      var t = item.Type || '';
-      var isMetaTube = !!(pid.MetaTube || pid.Metatube);
-      if (isMetaTube) { strong += 5; why.push('MetaTube'); }
-      if (/JP-?18|18\+|R18/i.test(item.OfficialRating || '')) { strong += 4; why.push('18+分级'); }
+      if (pid.MetaTube || pid.Metatube) why.push('MetaTube');
+      if (/JP-?18|18\+|R18/i.test(item.OfficialRating || '')) why.push('18+分级');
+      if (hit && why.length === 0) why.push('番号');
       var ln = ((ctx && ctx.libName) || '').trim();
       if (ln && ln.length <= 40 && CFG.javLibKeys.some(function (k) { return ln.indexOf(k) >= 0; })) {
-        strong += 4; why.push('库名');
+        libAv = true; why.push('库名(仅布局)');
       }
-      // 番号（弱信号）：名字以番号开头，或番号带明确分隔符（IPX-123 / SIRO-4567）
-      if (t === 'Movie') {
-        var nm = item.Name || '';
-        if (/^[A-Za-z]{2,8}[-_]\d{2,5}(\b|$)/.test(nm) || /\b[A-Za-z]{2,8}[-_]\d{2,5}\b/.test(nm)) {
-          weak += 2; why.push('番号');
-        }
-      }
-      var g = (item.Genres || []).join(' ');
-      if (/单体作品|中出|素人|女优|片商:|无码|有码|人妻|痴女/.test(g)) { weak += 2; why.push('标签'); }
-      var hit = strong >= 4;
-      // 剧集/剧集库：无 MetaTube 标记一律不按 JAV 处理
-      if ((t === 'Episode' || t === 'Series') && !isMetaTube) hit = false;
-    } catch (e) { strong = weak = 0; }
-    return { hit: hit, score: strong * 10 + weak, strong: strong, weak: weak, why: why };
+    } catch (e) {}
+    return { hit: hit, libAv: libAv, score: (hit ? 10 : 0) + (libAv ? 1 : 0), why: why };
   }
 
   function fetchItem(id) {
@@ -497,7 +485,10 @@
     });
 
     var extra = $('.vd-hero-extra', el);
-    if (CFG.showPlayers) injectPlayers(extra, item);
+    // 移动端：第三方播放器**不放进首屏 hero**（主人 2026-09-13）
+    //   小屏首屏高度 = 可视区 − 顶栏(80) − 底栏(55)，放不下「信息 + 播放器设置」两整块，
+    //   末行会被固定底栏盖住（看起来像容器重叠）。改为移动端下沉到下滑区首位。
+    if (CFG.showPlayers && !isMobileLayout()) injectPlayers(extra, item);
     // ⑦⑩ 异步补全 LOGO（剧集 Logo / 文字徽标）
     try { resolveHeroLogo(el, item); } catch (e) { log('LOGO 补全失败', e && e.message); }
     markReady(view);
@@ -1035,25 +1026,30 @@
     return out;
   }
   async function injectStills(view, item, jav) {
-    if (!CFG.p2 || CFG.p2.enrichStills === false) return false;
+    if (!CFG.p2) return false;                          // p2 整体关闭 → 不注入
     if ($('.vd-stills-section', view)) return true;
     if (view.__vdStillsTried === item.Id) return !!view.__vdStillsOk;
     view.__vdStillsTried = item.Id;
     var api = window.ApiClient;
 
-    var local = await collectLocalStills(api, item);
-    var ext = [];                                 // {u, src}
-    if (jav) {
+    // 三个来源**各自独立**决定是否贡献（不再二选一；主人 2026-09-13）
+    var wantAvdb = jav && !(CFG.p2 && CFG.p2.javGallery === false);
+    var wantTmdb = !(CFG.p2 && CFG.p2.enrichStills === false);
+    var local = await collectLocalStills(api, item);   // ① 本地（永远在，且不标记）
+    var avdb = [], tmdb = [];
+    if (wantAvdb) {                                    // ② AVDB 外站（R18）
       var code = javCode(item);
       if (code && avdbBases().length && CFG.avdbKey) {
         var ga = await fetchJavGallery(code);
-        (ga || []).slice(0, 24).forEach(function (p) { ext.push({ u: avdbImgUrl(p), src: 'AVDB' }); });
+        (ga || []).slice(0, 24).forEach(function (p) { avdb.push({ u: avdbImgUrl(p), src: 'AVDB' }); });
       }
-    } else {
+    }
+    if (wantTmdb) {                                    // ③ TMDB（正经库；R18 片若也有 id 同样受益）
       ((view.__vdEnrichStills) || []).slice(0, 24).forEach(function (x) {
-        if (x && x.url) ext.push({ u: imgProxy(x.url), src: 'TMDB' });
+        if (x && x.url) tmdb.push({ u: imgProxy(x.url), src: 'TMDB' });
       });
     }
+    var ext = avdb.concat(tmdb);
     var total = local.length + ext.length;
     if (!total) return false;
 
@@ -1326,7 +1322,62 @@
     } catch (e) {}
     var seen = {}, uniq = [];
     out.forEach(function (x) { x = String(x || '').replace(/\/$/, ''); if (!x || seen[x]) return; seen[x] = 1; uniq.push(x); });
-    return uniq;
+    return preferReachable(uniq);
+  }
+
+  // 页面是否从「内网地址」加载（判断用户此刻是家里还是外网）
+  function pageIsPrivate() {
+    var h = location.hostname || '';
+    return /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|127\.|localhost$)/.test(h);
+  }
+  function isPrivateUrl(u) {
+    try { var h = new URL(u, location.href).hostname; return /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|127\.)/.test(h); }
+    catch (e) { return false; }
+  }
+  // 把候选列表重排：外网访问时优先公网地址（避免每次都先等内网超时 3.5s 才回落）
+  function preferReachable(list) {
+    var pub = [], priv = [];
+    list.forEach(function (u) { (isPrivateUrl(u) ? priv : pub).push(u); });
+    // 家里（页面就是内网地址）→ 内网优先（快）；外网访问 → 直接跳过内网（必然不通）
+    return pageIsPrivate() ? priv.concat(pub) : pub;
+  }
+
+  // 连接器 TMDB 通道：当本机 enrich 服务不可用（例如普通用户只配了代理、没跑 enrich）时，
+  //   直接用 /tmdb/ 取数据，字段归一化与 enrich 服务保持一致（主人 2026-09-13 条目④）
+  function enrichViaConnector(tmdb, mtype) {
+    var b = connectorBase(); if (!b) return Promise.resolve(null);
+    var lang = (CFG.p2 && CFG.p2.enrichLang) || 'zh-CN';
+    var path = '/' + mtype + '/' + encodeURIComponent(tmdb) + '?language=' + encodeURIComponent(lang)
+      + '&append_to_response=images,credits,videos,recommendations,similar'
+      + '&include_image_language=' + encodeURIComponent(lang.split('-')[0] + ',en,null')
+      + '&include_video_language=' + encodeURIComponent(lang.split('-')[0] + ',en,null');
+    var IMG = 'https://image.tmdb.org/t/p/';
+    return fetch(tmdbViaConnector(path), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || d.success === false || !d.id) return null;
+        var stills = ((d.images || {}).backdrops || []).slice(0, 24).map(function (i) { return { url: IMG + 'w780' + i.file_path }; });
+        var cast = ((d.credits || {}).cast || []).slice(0, 20).map(function (c) {
+          return { id: c.id, name: c.name, character: c.character || '', profile: c.profile_path ? IMG + 'w185' + c.profile_path : '' };
+        });
+        var trs = ((d.videos || {}).results || []).filter(function (v) {
+          return String(v.site).toLowerCase() === 'youtube' && /Trailer|Teaser|Clip/.test(v.type || '');
+        }).slice(0, 8).map(function (v) {
+          return { name: v.name || '预告片', site: 'YouTube', key: v.key, url: 'https://www.youtube.com/watch?v=' + v.key, type: v.type, official: !!v.official };
+        });
+        var sim = [], seen = {};
+        ['recommendations', 'similar'].forEach(function (k) {
+          ((d[k] || {}).results || []).forEach(function (m) {
+            if (sim.length >= 18 || !m.id || seen[m.id]) return; seen[m.id] = 1;
+            sim.push({ tmdbId: m.id, title: m.title || m.name || '', year: (m.release_date || m.first_air_date || '').slice(0, 4),
+                       poster: m.poster_path ? IMG + 'w300' + m.poster_path : '', rating: m.vote_average });
+          });
+        });
+        return { ok: true, source: 'tmdb-connector', tmdbId: d.id, title: d.title || d.name || '',
+                 overview: d.overview || '', year: (d.release_date || d.first_air_date || '').slice(0, 4),
+                 rating: d.vote_average, stills: stills, cast: cast, trailers: trs, similar: sim };
+      })
+      .catch(function () { return null; });
   }
   function enrichCacheGet(key) {
     try {
@@ -1407,7 +1458,9 @@
 
   async function injectEnrich(view, item, jav) {
     if (!CFG.p2 || !CFG.p2.enrich) return false;
-    if (jav) return false;                       // R18 走 P1（AVDB 直连），本容器不接管
+    // ✅ 不再按 jav 二选一：只要有 TMDB id 就走 TMDB 增强。
+    //    R18 片若同时有 TMDB id，两边都显示（互补）；混合库里的正经片也不会被误伤
+    //    （旧版 `if (jav) return false` + 库名误判 → 正经片完全无增强，主人 2026-09-13）
     // ⚠️ 按 item.Id 记账：Emby 可能复用同一个 .itemView 元素承载不同条目，
     //    用布尔标记会把「下一个条目」直接挡掉。
     var st = view.__vdEnrich;
@@ -1417,6 +1470,8 @@
     var tmdb = tmdbIdOf(item), mt = tmdbTypeOf(item);
     if (!tmdb || !mt) return false;
     var d = await enrichFetch(tmdb, mt);
+    // 本机 enrich 服务不可用（普通用户只配了代理）→ 走连接器 TMDB 通道兜底
+    if (!d || !d.ok) { try { d = await enrichViaConnector(tmdb, mt); } catch (e) {} }
     if (!d || !d.ok) return false;
     var stills = CFG.p2.enrichStills !== false ? (d.stills || []) : [];
     var cast = CFG.p2.enrichCast !== false ? (d.cast || []) : [];
@@ -2115,6 +2170,74 @@
     return b + '/i?u=' + encodeURIComponent(u);
   }
 
+  // ── 连接器（img_proxy 服务）扩展通道 主人 2026-09-13 ──────────────
+  //   同一台服务除 /i 图床外还提供：/p?u= 通用透传（预告片直链）、/tmdb/ API 代理。
+  //   这样「用户只填一个 HTTP/SOCKS5 代理」即可让 图片/预告片/TMDB 全部可用，
+  //   不必让浏览器自身能出网。
+  // 连接器地址支持**多个**（逗号分隔）：内网一个、公网一个，前端自动挑可用的。
+  //   主人 2026-09-13：以前只支持单地址 → 在家填内网、出门就废；填公网又绕远。
+  var _connBase = null, _connProbing = null;
+  function connectorBases() {
+    var raw = (CFG.imgProxyBase || '').split(',').map(function (x) { return x.trim().replace(/\/$/, ''); }).filter(Boolean);
+    // 去重 + 外网优先（公网地址内外都可用；内网只在家里有用）
+    var pub = [], priv = [];
+    raw.forEach(function (u) { (isPrivateUrl(u) ? priv : pub).push(u); });
+    var list = (pageIsPrivate() ? priv.concat(pub) : pub.concat(priv));
+    return list;
+  }
+  function connectorBase() { return _connBase || connectorBases()[0] || ''; }
+  // 首次访问时探测一次，把「确实可用」的地址记住（sessionStorage），后续图片/透传/TMDB 都用它
+  function connectorEnsure() {
+    if (_connBase) return Promise.resolve(_connBase);
+    if (_connProbing) return _connProbing;
+    var list = connectorBases();
+    if (!list.length) return Promise.resolve('');
+    try { var c = sessionStorage.getItem('vanvy:connBase'); if (c && list.indexOf(c) >= 0) { _connBase = c; return Promise.resolve(c); } } catch (e) {}
+    var probe = function (u) {
+      var ctl = null, tm = null;
+      try { ctl = new AbortController(); tm = setTimeout(function () { try { ctl.abort(); } catch (e) {} }, 3000); } catch (e) {}
+      return fetch(u + '/healthz', { cache: 'no-store', signal: ctl ? ctl.signal : undefined })
+        .then(function (r) { return r.ok; }).catch(function () { return false; })
+        .then(function (ok) { if (tm) clearTimeout(tm); return ok; });
+    };
+    var i = 0;
+    var step = function () {
+      if (i >= list.length) { _connProbing = null; return ''; }
+      var u = list[i++];
+      return probe(u).then(function (ok) {
+        if (ok) {
+          _connBase = u;
+          try { sessionStorage.setItem('vanvy:connBase', u); } catch (e) {}
+          // 把此前用「旧地址」拼好的图片 URL 就地改写（避免已渲染的图一直破）
+          try {
+            var others = list.filter(function (x) { return x !== u; });
+            document.querySelectorAll('img').forEach(function (im) {
+              others.forEach(function (o) {
+                if (im.src && im.src.indexOf(o + '/') >= 0) im.src = im.src.split(o + '/').join(u + '/');
+              });
+            });
+          } catch (e) {}
+          _connProbing = null; return u;
+        }
+        return step();
+      });
+    };
+    _connProbing = step();
+    return _connProbing;
+  }
+  // 启动即探测（不阻塞渲染）
+  try { connectorEnsure(); } catch (e) {}
+  function viaConnector(u) {
+    if (!u) return u;
+    var b = connectorBase(); if (!b) return u;
+    try { if (String(u).indexOf(new URL(b, location.href).origin) === 0) return u; } catch (e) {}
+    return b + '/p?u=' + encodeURIComponent(u);
+  }
+  function tmdbViaConnector(path) {
+    var b = connectorBase(); if (!b) return '';
+    return b + '/tmdb' + path;
+  }
+
   function injectJav(host, item, prepend) {
     if (!CFG.showJav || $('.vd-jav', host)) return;
     var code = javCode(item);
@@ -2436,6 +2559,24 @@
     var pid = item.ProviderIds || {};
     var v = pid.MetaTube || pid.Metatube || '';
     return v ? String(v).split(':')[0] : '';
+  }
+
+  // ── 内容是否属于 R18（数据判据）主人 2026-09-13 ──────────────────
+  //   与「库」无关，只看内容本身：MetaTube 刮削 / 18+ 分级 / 明确番号。
+  //   为什么单独抽出来：混合库（同一库里正经片 + R18 片）里，
+  //   用「库名」判定会把正经片也拉进 JAV 分支 → TMDB 增强被跳过 → 什么都不显示。
+  //   现在数据源按**内容**各自决定，互不干扰。
+  var _EPWORD = /^(ep|episode|chapter|part|season|vol|volume|disc|track|stage|act|no|ova|oad|sp|op|ed)$/i;
+  function isAvItem(item) {
+    try {
+      var pid = item.ProviderIds || {};
+      if (pid.MetaTube || pid.Metatube) return true;
+      if (/JP-?18|18\+|R18/i.test(item.OfficialRating || '')) return true;
+      var nm = item.Name || '';
+      var m = nm.match(/^([A-Za-z]{2,10})[-_]\d{2,5}(\b|$)/) || nm.match(/\b([A-Za-z]{2,10})[-_]\d{2,5}\b/);
+      if (m && !_EPWORD.test(m[1])) return true;      // "IPZZ-789" ✅ / "Episode 094" ❌
+      return false;
+    } catch (e) { return false; }
   }
   function roleName(t) {
     return t === 'Director' ? '导演' : t === 'Writer' ? '编剧' : t === 'GuestStar' ? '嘉宾'
@@ -2829,7 +2970,8 @@
       //      → 一旦报错立刻换成「在 YouTube 打开」的兜底卡片，不再让用户对着黑屏干等
       inner = ytFrame(yt[1]);
     } else if (/\.(mp4|m4v|webm|mov|m3u8)(\?|$)/i.test(url)) {
-      inner = '<video src="' + esc(url) + '" controls autoplay playsinline></video>';
+      // 直链媒体经连接器透传 → 浏览器不必自己能出网（主人 2026-09-13 条目③）
+      inner = '<video src="' + esc(viaConnector(url)) + '" controls autoplay playsinline></video>';
     } else {
       inner = '<iframe src="' + esc(url) + '" frameborder="0" allowfullscreen></iframe>';
     }
@@ -2903,7 +3045,7 @@
     } catch (e) {}
     (CFG.avdbBases || []).forEach(push);
     try { if (window.VANVY_AVDB_BASE) push(window.VANVY_AVDB_BASE); } catch (e) {}
-    return out;
+    return preferReachable(out);
   }
   function avdbProbe(base) {
     var ctl = null, tm = null;
@@ -3093,7 +3235,27 @@
     r.setProperty('--vd-acc', p.a); r.setProperty('--vd-acc2', p.b); r.setProperty('--vd-bg', p.bg);
     r.setProperty('--vd-perrow', String(CFG.perRow || 6));
     r.setProperty('--vd-bg-blur', (CFG.bgBlur != null ? CFG.bgBlur : 6) + 'px');
+    measureBars();
     document.body.setAttribute('data-vd-theme', CFG.theme);
+  }
+
+  // 是否移动端布局（与 CSS 的 820 断点保持一致）
+  function isMobileLayout() {
+    try { return window.matchMedia('(max-width: 820px)').matches; } catch (e) { return false; }
+  }
+
+  // 量取 Emby 自身固定栏高度，供 CSS 预留空间（移动端底栏会盖住内容，主人 2026-09-13）
+  //   顶栏 .skinHeader / 底栏 .appfooter 的高度随版本与设备变化 → 用实测值而不是写死。
+  function measureBars() {
+    try {
+      var h = document.querySelector('.skinHeader');
+      var f = document.querySelector('.appfooter');
+      var hh = h ? Math.round(h.getBoundingClientRect().height) : 0;
+      var fh = f ? Math.round(f.getBoundingClientRect().height) : 0;
+      var st = document.documentElement.style;
+      st.setProperty('--vd-head-h', (hh > 4 ? hh : 64) + 'px');
+      st.setProperty('--vd-foot-h', (fh > 4 ? fh : 0) + 'px');
+    } catch (e) {}
   }
 
   // ── 主流程 ───────────────────────────────────────────────────
@@ -3156,9 +3318,11 @@
       if (!CFG.hero) applyFrost(view);
 
       var js = javScore(item, { libName: ($('.tabContent-active') || {}).textContent || '' });
-      var jav = js.hit;
+      var jav = js.hit;                       // 「内容本身是 R18」（数据判据，与库无关）
       document.body.setAttribute('data-vd-jav', jav ? '1' : '0');
-      log('路由:', jav ? 'JAV' : '正经库', 'score=' + js.score, js.why.join(','));
+      log('路由:', jav ? 'R18内容' : (js.libAv ? '正经内容(R18库内)' : '正经内容'),
+          '| 数据源: ' + (jav ? 'AVDB' : '—') + (tmdbIdOf(item) ? ' + TMDB' : ''),
+          '| ' + (js.why.join(',') || '-'));
 
       if (CFG.hero) {
         buildHero(view, item, jav);
@@ -3178,6 +3342,16 @@
       // JAV 资料卡：放在下滑区首位（首屏只到“当前设备”行）
       if (CFG.hero && jav && CFG.showJav) {
         try { injectJav(ensureSectionsHost(view), item, true); } catch (e) {}
+      }
+      // 移动端：第三方播放器下沉到下滑区**首位**（small 屏首屏放不下，见 buildHero 注释）
+      if (CFG.hero && CFG.showPlayers && isMobileLayout()) {
+        try {
+          var mhost = ensureSectionsHost(view);
+          var mp = document.createElement('div'); mp.className = 'vd-mplayers-slot';
+          mhost.insertBefore(mp, mhost.firstChild);
+          injectPlayers(mp, item);
+          mp.classList.add('vd-injected-section');
+        } catch (e) { log('移动端播放器下沉失败', e && e.message); }
       }
       // ── 二期增强（①③④⑤⑥⑧）────────────────
       try { p2Sync(view, item); } catch (e) { log('二期同步失败', e && e.message); }

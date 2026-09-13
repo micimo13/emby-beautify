@@ -24,6 +24,9 @@
     backdrop: '',         // 背景图 URL（留空 = 用服务器背景/渐变）
     blur: 22,             // 卡片毛玻璃强度(px)
     tint: 0.42,           // 背景压暗
+    // 外观风格（8 套，见 styles/<name>.css；'glass' = 内置毛玻璃黑金）
+    //   glass | aurora | cinema | minimal | split | neon | paper | orbital
+    style: 'glass',
     theme: 'blackgold'
   };
   try { if (window.VANVY_LOGIN_CONFIG) for (var k in window.VANVY_LOGIN_CONFIG) if (VANVY_LOGIN_CONFIG[k] !== undefined) CFG[k] = VANVY_LOGIN_CONFIG[k]; } catch (e) {}
@@ -66,6 +69,29 @@
     return 'Media Server';
   }
 
+  // 站点图标（浏览器标签 logo）：优先用页面已有的 favicon（用户可自行替换），
+  //   其次 Emby 原生 LOGO 元素。主人 2026-09-13：vl-logo 用「浏览器标签 logo」或原生 LOGO。
+  function siteIcon() {
+    try {
+      var links = document.querySelectorAll('link[rel*="icon"]');
+      // 倒序取最后一个非 svg 内联的（我们的 favicon 注入在靠后位置）
+      for (var i = links.length - 1; i >= 0; i--) {
+        var h = links[i].getAttribute('href') || '';
+        if (h && h.indexOf('data:') !== 0) return new URL(h, location.href).href;
+      }
+    } catch (e) {}
+    try {
+      var img = document.querySelector('.pageTitle img, .headerLogo img, .pageTitleWithLogo img');
+      if (img && img.src) return img.src;
+    } catch (e) {}
+    try {
+      if (window.ApiClient && ApiClient.serverAddress) {
+        return ApiClient.serverAddress().replace(/\/$/, '') + '/web/vanvy-loading/logo/favicon.png';
+      }
+    } catch (e) {}
+    return '';
+  }
+
   // 装饰层：只插入 pointer-events:none 的元素
   function decorate() {
     if (!IS_LOGIN.test(location.hash || '')) { undecorate(); return; }
@@ -82,6 +108,7 @@
     }
 
     var isPwd = /manuallogin/i.test(location.hash || '');
+    applyStyle();
     // 清理「上一次页面」留下的头部与类名（Emby 会把旧 view 留在 DOM 里）
     Array.prototype.forEach.call(document.querySelectorAll('.vl-head'), function (h) {
       if (!view.contains(h)) h.remove();
@@ -97,13 +124,52 @@
       head.className = 'vl-head';
       var nm = CFG.brand || serverName();
       var initial = (nm || 'V').trim().charAt(0).toUpperCase();
+      var logoSrc = CFG.logo || siteIcon();       // 用户配置 → 站点图标 → 文字首字母
       head.innerHTML = '<span class="vl-logo">'
-        + (CFG.logo ? '<img src="' + CFG.logo.replace(/"/g, '%22') + '" alt="">' : initial)
+        + (logoSrc ? '<img src="' + String(logoSrc).replace(/"/g, '%22') + '" alt="" onerror="this.remove()">' : initial)
         + '</span><span class="vl-txt"><b>' + esc(nm) + '</b><i>' + esc(CFG.subtitle || '') + '</i></span>';
       anchor.insertBefore(head, anchor.firstChild);
     }
     if (anchor.tagName === 'FORM') anchor.classList.add('vl-form');
     view.classList.add('vl-page');
+  }
+
+  // 外观风格：给 body 打 vl-style-<name> 并注入对应样式表（styles/<name>.css）
+  //   铁律不变：只改样式，不动任何原生控件结构与事件。
+  // 各风格需要的纯装饰层（pointer-events:none，绝不遮挡交互）
+  var STYLE_ORNAMENTS = {
+    cinema:  '<i class="vl-grain"></i>',
+    orbital: '<span class="vl-orb-rings"><i></i><i></i><i></i></span>'
+  };
+  function syncStyleOrnaments(st) {
+    var want = STYLE_ORNAMENTS[st] || '';
+    var cur = document.querySelector('.vl-orn-deco');
+    if (!want) { if (cur) cur.remove(); return; }
+    if (cur && cur.getAttribute('data-style') === st) return;
+    if (cur) cur.remove();
+    var d = document.createElement('div');
+    d.className = 'vl-orn-deco';
+    d.setAttribute('data-style', st);
+    d.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden';
+    d.innerHTML = want;
+    document.body.appendChild(d);
+  }
+
+  function applyStyle() {
+    var st = String(CFG.style || 'glass');
+    if (!/^[a-z0-9-]{1,24}$/.test(st)) st = 'glass';
+    syncStyleOrnaments(st);
+    Array.prototype.forEach.call(document.body.classList, function (c) {
+      if (/^vl-style-/.test(c) && c !== 'vl-style-' + st) document.body.classList.remove(c);
+    });
+    document.body.classList.add('vl-style-' + st);
+    if (st === 'glass') return;                    // glass = 内置样式，无需额外表
+    var id = 'vl-style-sheet-' + st;
+    if (document.getElementById(id)) return;
+    var lk = document.createElement('link');
+    lk.id = id; lk.rel = 'stylesheet';
+    lk.href = 'vanvy-login/styles/' + st + '.css';
+    document.head.appendChild(lk);
   }
 
   // 当前可见的 view（Emby 每个页面一个 .view，旧的会加 .hide 但仍在 DOM）
@@ -124,6 +190,10 @@
       document.querySelectorAll('.vl-head').forEach(function (e) { e.remove(); });
       document.querySelectorAll('.vl-page,.vl-form').forEach(function (e) { e.classList.remove('vl-page', 'vl-form'); });
       document.body.classList.remove('vl-users', 'vl-pwd');
+      Array.prototype.forEach.call(document.body.classList, function (c) {
+        if (/^vl-style-/.test(c)) document.body.classList.remove(c);
+      });
+      var dec = document.querySelector('.vl-orn-deco'); if (dec) dec.remove();
     } catch (e) {}
   }
 

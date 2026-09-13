@@ -33,7 +33,7 @@ err()  { printf '%s[X]%s %s\n' "$C_ERR" "$C_OFF" "$*"; }
 warn() { printf '%s[!]%s %s\n' "$C_WARN" "$C_OFF" "$*"; }
 info() { printf '\033[36m[i]\033[0m %s\n' "$*"; }
 
-MODE="check"; PROXY=""; PMODE=""; PORT=""; ALLOW=""
+MODE="check"; PROXY=""; PMODE=""; PORT=""; ALLOW=""; TMDBKEY=""
 
 # ── Python 运行器：宿主机有 python3 就用，否则用 docker 兜底 ──
 PY_IMG="python:3-alpine"
@@ -99,6 +99,7 @@ while [ $# -gt 0 ]; do
     --uninstall)  MODE="uninstall"; shift;;
     --proxy)      PROXY="$2"; shift 2;;
     --mode)       PMODE="$2"; shift 2;;
+    --tmdb-key)   TMDBKEY="$2"; shift 2;;      # TMDB API Key（开放 /tmdb/ 通道）
     --port)       PORT="$2"; shift 2;;
     --allow)      ALLOW="$2"; shift 2;;
     -h|--help)    sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'; exit 0;;
@@ -167,6 +168,7 @@ case "$MODE" in
         "$PYRUN" "$SRC_DIR/img_proxy.py" --gen-config > "$CONF_DIR/config.json"
         [ -n "$PORT" ]  && json_set "$CONF_DIR/config.json" port "$PORT"
         [ -n "$PMODE" ] && json_set "$CONF_DIR/config.json" proxy_mode "\"$PMODE\""
+        [ -n "$TMDBKEY" ] && json_set "$CONF_DIR/config.json" tmdb_key "\"$TMDBKEY\""
         if [ -n "$PROXY" ]; then
           _j=$(printf '%s' "$PROXY" | awk -F, '{n=split($0,a,",");printf "[";for(i=1;i<=n;i++){if(a[i]!=""){printf "%s\"%s\"",(i>1?",":""),a[i]}}printf "]"}')
           json_set "$CONF_DIR/config.json" proxies "$_j"

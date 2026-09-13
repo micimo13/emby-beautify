@@ -1,0 +1,51 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Login · CINEMA 影院
+   纯黑底 + 上下遮幅 + 轻胶片颗粒；表单像“银幕中央的字幕卡”。
+   ═══════════════════════════════════════════════════════════ */
+body.vl-style-cinema .vl-orn{
+  background:
+    radial-gradient(900px 460px at 50% 0%, color-mix(in srgb, var(--vanvy-accent) 10%, transparent), transparent 66%),
+    #050506 !important;
+}
+body.vl-style-cinema .vl-orn::after{ background: rgba(0,0,0, .28) !important; }
+/* 上下遮幅（黑边） */
+body.vl-style-cinema .vl-orn::before{
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, #000 0 7%, transparent 7% 93%, #000 93% 100%);
+  opacity: .85;
+}
+body.vl-style-cinema .vl-orn-glow{ display: none; }
+/* 胶片颗粒：细密噪点 */
+body.vl-style-cinema .vl-grain{
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .055;
+  background-image:
+    radial-gradient(circle at 20% 30%, #fff 0.5px, transparent 0.6px),
+    radial-gradient(circle at 70% 60%, #fff 0.5px, transparent 0.6px);
+  background-size: 3px 3px, 4px 4px;
+  animation: vlCineGrain 1.1s steps(3) infinite;
+}
+@keyframes vlCineGrain{ 0%{ transform: translate(0,0) } 33%{ transform: translate(-1px,1px) } 66%{ transform: translate(1px,-1px) } 100%{ transform: translate(0,0) } }
+@media (prefers-reduced-motion: reduce){ body.vl-style-cinema .vl-grain{ animation: none } }
+body.vl-style-cinema .vl-logo{
+  background: #111 !important; color: var(--vanvy-accent) !important;
+  border-radius: 6px !important; font-family: 'Courier New', monospace !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vanvy-accent) 45%, transparent);
+}
+body.vl-style-cinema .vl-head .vl-txt b{ letter-spacing: 2px; text-transform: uppercase; font-size: 15px; }
+body.vl-style-cinema .vl-head .vl-txt i{ letter-spacing: 3px; text-transform: uppercase; font-size: 10.5px; }
+body.vl-style-cinema .vl-form{
+  background: rgba(10,10,12,.72) !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  border-radius: 4px !important;                 /* 影院感：直角为主 */
+  box-shadow: 0 40px 90px rgba(0,0,0,.85) !important;
+}
+body.vl-style-cinema .vl-form .emby-input,
+body.vl-style-cinema .vl-form input[type=text],
+body.vl-style-cinema .vl-form input[type=password]{ border-radius: 3px !important; }
+body.vl-style-cinema .vl-form .paperSubmit{
+  border-radius: 3px !important; letter-spacing: 2px; text-transform: uppercase;
+  background: var(--vanvy-accent) !important; color: #100c04 !important;
+}
+body.vl-style-cinema .squareCard .cardBox{ border-radius: 6px !important; border-color: rgba(255,255,255,.16) !important; }
+body.vl-style-cinema .squareCard:hover .cardBox{ border-color: var(--vanvy-accent) !important; transform: translateY(-2px) !important; }

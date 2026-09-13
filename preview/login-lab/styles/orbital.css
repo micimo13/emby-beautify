@@ -1,0 +1,55 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Login · ORBITAL 轨道
+   与加载页 ORBIT 呼应：背景同心轨道环缓转，表单如悬浮核心。
+   ═══════════════════════════════════════════════════════════ */
+body.vl-style-orbital .vl-orn{
+  background:
+    radial-gradient(1000px 560px at 50% 44%, color-mix(in srgb, var(--vanvy-accent) 9%, transparent), transparent 70%),
+    #07080c !important;
+}
+body.vl-style-orbital .vl-orn::after{ background: rgba(6,7,10,.34) !important; }
+body.vl-style-orbital .vl-orn-glow{ filter: blur(96px); opacity: .38; }
+/* 同心轨道：用两层伪元素 + 动画旋转 */
+body.vl-style-orbital .vl-orn::before{
+  content: ""; position: absolute; left: 50%; top: 50%; width: 168vmin; height: 168vmin;
+  transform: translate(-50%,-50%); pointer-events: none; border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--vanvy-accent) 16%, transparent);
+  box-shadow:
+    0 0 0 14vmin color-mix(in srgb, transparent 0%, transparent),
+    inset 0 0 0 0 transparent;
+  animation: vlOrbSpin 46s linear infinite;
+}
+body.vl-style-orbital .vl-orb-rings{
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; display: grid; place-items: center;
+}
+body.vl-style-orbital .vl-orb-rings i{
+  position: absolute; border-radius: 50%; border: 1px dashed color-mix(in srgb, var(--vanvy-accent-2) 22%, transparent);
+}
+body.vl-style-orbital .vl-orb-rings i:nth-child(1){ width: 58vmin; height: 58vmin; animation: vlOrbSpin 34s linear infinite; }
+body.vl-style-orbital .vl-orb-rings i:nth-child(2){ width: 82vmin; height: 82vmin; animation: vlOrbSpin 52s linear infinite reverse; border-style: solid; opacity: .5; }
+body.vl-style-orbital .vl-orb-rings i:nth-child(3){ width: 110vmin; height: 110vmin; animation: vlOrbSpin 74s linear infinite; opacity: .35; }
+@keyframes vlOrbSpin{ to { transform: rotate(360deg) } }
+@media (prefers-reduced-motion: reduce){ body.vl-style-orbital .vl-orb-rings i, body.vl-style-orbital .vl-orn::before{ animation-duration: 300s } }
+body.vl-style-orbital .vl-logo{
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--vanvy-accent) 30%, #0b0d13), #0b0d13) !important;
+  color: var(--vanvy-accent) !important; border-radius: 50% !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vanvy-accent) 45%, transparent),
+              0 0 26px color-mix(in srgb, var(--vanvy-accent) 35%, transparent) !important;
+}
+body.vl-style-orbital .vl-form{
+  background: rgba(11,13,19,.6) !important;
+  border: 1px solid color-mix(in srgb, var(--vanvy-accent) 28%, transparent) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 34px 80px rgba(0,0,0,.72), 0 0 34px color-mix(in srgb, var(--vanvy-accent) 10%, transparent) !important;
+}
+body.vl-style-orbital .squareCard .cardBox{
+  border-color: color-mix(in srgb, var(--vanvy-accent) 24%, transparent) !important; border-radius: 14px !important;
+}
+body.vl-style-orbital .squareCard:hover .cardBox{
+  border-color: var(--vanvy-accent) !important;
+  box-shadow: 0 16px 38px rgba(0,0,0,.6), 0 0 24px color-mix(in srgb, var(--vanvy-accent) 24%, transparent) !important;
+}
+body.vl-style-orbital .vl-form .paperSubmit{
+  background: linear-gradient(135deg, var(--vanvy-accent), var(--vanvy-accent-2)) !important; color: #0b0d13 !important;
+  box-shadow: 0 10px 26px rgba(0,0,0,.5), 0 0 20px color-mix(in srgb, var(--vanvy-accent) 26%, transparent) !important;
+}

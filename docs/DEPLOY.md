@@ -298,3 +298,48 @@ emby-beautify/
 注入块若只用 `max-width` 收窄、不写 `width:100%`，会被 max-content 撑开并溢出被裁。
 项目已在 `.vd-sections-host` 等处显式声明 `width:100%`；
 防回归检查：`bash scripts/check-detail-width.sh`（非零退出即有问题）。
+
+---
+
+## 外部服务与代理（2026-09-13）
+
+### 连接器（components/imgproxy）—— 一个服务解决「图 / 预告片 / TMDB」
+除原有 `/i?u=` 图床外，新增两条通道（同一端口，同一上游代理链）：
+
+| 路由 | 用途 | 说明 |
+|---|---|---|
+| `GET /i?u=<url>` | 图片代理 | 图床/缩略图（带缓存 + 白名单） |
+| `GET /p?u=<url>` | 通用透传 | **直链媒体**（mp4/m3u8 预告片等）→ 浏览器不必自己能出网 |
+| `GET /tmdb/<path>` | TMDB API | **服务端持 Key** + 走上游代理 → 外网环境也能用 TMDB 资料增强 |
+
+配置项（`config.json` / 环境变量）：
+```jsonc
+{
+  "proxies": ["http://user:pass@host:port", "socks5h://user:pass@host:1080"],
+  "proxy_mode": "auto",             // none | auto(默认,仅 proxy_hosts) | all
+  "proxy_hosts": ["youtube.com","googlevideo.com","api.themoviedb.org","image.tmdb.org","dmm.co.jp"],
+  "passthrough_hosts": ["dmm.co.jp","spfcas.com","javdb.com"],   // /p 允许的域名
+  "tmdb_key": "<你的 TMDB API Key>",  // 配了才开放 /tmdb
+  "decoder_base": "http://<AVDB>:38000/api/v1/img-proxy/?url="   // 可选：JavDB 混淆图解码
+}
+```
+环境变量：`VANVY_PROXY_URL`(逗号分隔多个) · `VANVY_PROXY_MODE` · `VANVY_TMDB_KEY` · `VANVY_PASSTHROUGH_HOSTS`
+
+> **普通用户只需一个 HTTP 或 SOCKS5 代理**：填进 `proxies` 并把 `proxy_mode` 设为 `all`，
+> 图 / 预告片 / TMDB 就全部走它，浏览器自身不需要挂代理。
+
+### 一键配置（install-ves.sh）
+```bash
+bash install-ves.sh --container emby-302 \
+  --avdb http://192.168.1.10:38000 --avdb-key <KEY> \
+  --metatube http://192.168.1.10:28080 \
+  --img-proxy https://你的域名/vdimg \
+  --proxy "socks5h://user:pass@10.0.0.5:1080" --proxy-mode all \
+  --tmdb-key <TMDB_KEY>
+```
+交互式安装时也会依次询问：AVDB / MetaTube / 出网代理(HTTP/SOCKS5) / 监听端口 / TMDB Key。
+
+### ⚠️ 反向代理注意
+上游 img_proxy 自己会返回 `Access-Control-Allow-Origin: *` 并处理 OPTIONS 预检。
+**nginx 里不要再 `add_header` 同一个头**，否则响应会出现两个 ACAO → 浏览器直接拒绝
+（本项目曾因此导致 `/tmdb` 通道被拦）。

@@ -74,6 +74,32 @@
         '  <div class="vl-logo-wrap"><img class="vl-logo" alt="" src="{logo}" onerror="this.style.display=\'none\'"></div>',
         '  <div class="vl-brand">VANVY</div>',
         '</div>'
+      ].join(''),
+      // ── ORBIT 轨道（第 7 款）────────────────────────────────
+      orbit: [
+        '<div class="vl-bg"></div>',
+        '<div class="vl-inner">',
+        '  <div class="vl-orbit">',
+        '    <div class="vl-sweep"></div>',
+        '    <div class="vl-o vl-o-1"><i class="vl-sat"></i></div>',
+        '    <div class="vl-o vl-o-2"><i class="vl-sat"></i></div>',
+        '    <div class="vl-o vl-o-3"></div>',
+        '    <div class="vl-core"><img class="vl-logo" alt="" src="{logo}" onerror="this.style.display=\'none\'"></div>',
+        '  </div>',
+        '  <div class="vl-bar"><i></i></div>',
+        '  <div class="vl-brand">ORBIT</div>',
+        '</div>'
+      ].join(''),
+      // ── PULSE 声波（第 8 款）────────────────────────────────
+      pulse: [
+        '<div class="vl-bg"></div>',
+        '<div class="vl-inner">',
+        '  <div class="vl-logo-wrap"><div class="vl-halo"></div>',
+        '    <img class="vl-logo" alt="" src="{logo}" onerror="this.style.display=\'none\'"></div>',
+        '  <div class="vl-wave">' + (function () { var a = []; for (var i = 0; i < 16; i++) a.push('<i></i>'); return a.join(''); })() + '</div>',
+        '  <div class="vl-bar"><i></i></div>',
+        '  <div class="vl-brand">PULSE</div>',
+        '</div>'
       ].join('')
     },
     // ── 配色主题（与首页轮播 / 详情页 PRESETS 一致）──────────────

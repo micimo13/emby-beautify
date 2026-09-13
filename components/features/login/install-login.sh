@@ -37,15 +37,17 @@ docker exec "$CONTAINER" sh -c "mkdir -p $BK && cp $WEB/index.html $BK/"
 docker exec "$CONTAINER" sh -c "ls -dt $WEB/.bak-vanvy-* 2>/dev/null | tail -n +6 | xargs -r rm -rf" 2>/dev/null || true
 
 docker exec "$CONTAINER" sh -c "rm -rf $DIR && mkdir -p $DIR"
+docker exec "$CONTAINER" sh -c "mkdir -p $DIR/styles"
 docker cp "$SRC/vanvy-login.js"  "$CONTAINER:$DIR/vanvy-login.js"
 docker cp "$SRC/vanvy-login.css" "$CONTAINER:$DIR/vanvy-login.css"
+[ -d "$SRC/styles" ] && docker cp "$SRC/styles/." "$CONTAINER:$DIR/styles/"
 
 # 保留已有配置（只补缺省），避免重部署把用户设置冲掉
 if docker exec "$CONTAINER" sh -c "test -f $DIR/config.js" 2>/dev/null; then
   echo "ℹ️  已有 config.js → 保留现有设置"
 else
   docker exec "$CONTAINER" sh -c "cat > $DIR/config.js <<'EOF'
-window.VANVY_LOGIN_CONFIG = { enabled: true, subtitle: '欢迎回来', blur: 22, tint: 0.42 };
+window.VANVY_LOGIN_CONFIG = { enabled: true, subtitle: '欢迎回来', blur: 22, tint: 0.42, style: '${VANVY_LOGIN_STYLE:-glass}' };
 EOF"
 fi
 

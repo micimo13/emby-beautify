@@ -1,0 +1,84 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · ORBIT 轨道版
+   设计意图：以「轨道 + 卫星」表达「正在从多处取回数据」的秩序感。
+            三条同心轨道反向自转，卫星点沿轨运行；LOGO 居于中心。
+   适用：喜欢科幻/宇宙感、希望动效克制但有层次的场景。
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes orb-spin      { to { transform: rotate(360deg); } }
+@keyframes orb-spin-rev  { to { transform: rotate(-360deg); } }
+@keyframes orb-core      { 0%,100% { box-shadow: 0 0 22px color-mix(in srgb, var(--vl-acc) 34%, transparent), 0 0 48px color-mix(in srgb, var(--vl-acc2) 22%, transparent); }
+                           50%     { box-shadow: 0 0 40px color-mix(in srgb, var(--vl-acc) 62%, transparent), 0 0 90px color-mix(in srgb, var(--vl-acc2) 38%, transparent); } }
+@keyframes orb-sweep     { 0% { transform: rotate(0); opacity:.0 } 12% { opacity:.55 } 100% { transform: rotate(360deg); opacity:0 } }
+@keyframes orb-bar       { 0% { width: 0; } 55% { width: 52%; } 100% { width: 52%; } }
+@keyframes orb-fadeout   { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+@keyframes orb-brand     { 0%,100% { opacity:.62; } 50% { opacity:1; } }
+
+#vanvy-loading.vl-style-orbit {
+  position: fixed; inset: 0; z-index: 99999;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(1200px 620px at 50% 42%, color-mix(in srgb, var(--vl-acc) 9%, transparent), transparent 68%),
+    radial-gradient(900px 500px at 50% 50%, color-mix(in srgb, var(--vl-acc2) 7%, transparent), transparent 70%),
+    var(--vl-bg, #08080c);
+  transition: opacity .55s ease, visibility .55s ease;
+}
+#vanvy-loading.vl-style-orbit.vl-hide { opacity: 0; visibility: hidden; pointer-events: none; }
+/* 星尘：极淡的点阵，给纯色背景一点“深空”质感 */
+#vanvy-loading.vl-style-orbit .vl-bg{
+  position: absolute; inset: 0; opacity: .5;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--vl-acc) 40%, transparent) 1px, transparent 1px);
+  background-size: 58px 58px, 91px 91px;
+  background-position: 0 0, 29px 37px;
+  animation: orb-brand 6s ease-in-out infinite;
+}
+#vanvy-loading.vl-style-orbit .vl-inner{
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 26px;
+}
+/* 轨道系统：三层同心环，交替正/反转 */
+#vanvy-loading.vl-style-orbit .vl-orbit{ position: relative; width: 176px; height: 176px; display: grid; place-items: center; }
+#vanvy-loading.vl-style-orbit .vl-o{
+  position: absolute; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--vl-acc) 24%, transparent);
+}
+#vanvy-loading.vl-style-orbit .vl-o-1{ width: 176px; height: 176px; animation: orb-spin 14s linear infinite; }
+#vanvy-loading.vl-style-orbit .vl-o-2{ width: 132px; height: 132px; border-style: dashed; border-color: color-mix(in srgb, var(--vl-acc2) 38%, transparent); animation: orb-spin-rev 9s linear infinite; }
+#vanvy-loading.vl-style-orbit .vl-o-3{ width: 88px;  height: 88px;  border-color: color-mix(in srgb, var(--vl-acc) 46%, transparent); animation: orb-spin 6s linear infinite; }
+/* 卫星点：挂在轨道上，靠 rotate 保持在环的某一侧 */
+#vanvy-loading.vl-style-orbit .vl-sat{
+  position: absolute; top: -3px; left: calc(50% - 3px); width: 6px; height: 6px; border-radius: 50%;
+  background: var(--vl-acc); box-shadow: 0 0 10px var(--vl-acc), 0 0 22px color-mix(in srgb, var(--vl-acc) 55%, transparent);
+}
+#vanvy-loading.vl-style-orbit .vl-o-2 .vl-sat{ background: var(--vl-acc2); box-shadow: 0 0 10px var(--vl-acc2); top: auto; bottom: -3px; }
+#vanvy-loading.vl-style-orbit .vl-o-1 .vl-sat{ top: calc(50% - 3px); left: -3px; }
+/* 中心核心 + LOGO */
+#vanvy-loading.vl-style-orbit .vl-core{
+  position: relative; width: 66px; height: 66px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--vl-acc) 18%, transparent), transparent 72%);
+  animation: orb-core 3.2s ease-in-out infinite;
+}
+#vanvy-loading.vl-style-orbit .vl-logo{ width: 44px; height: 44px; object-fit: contain; position: relative; z-index: 1; }
+/* 扫掠光：模拟“扫描/取数” */
+#vanvy-loading.vl-style-orbit .vl-sweep{
+  position: absolute; width: 176px; height: 176px; border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0 78%, color-mix(in srgb, var(--vl-acc) 34%, transparent) 92%, transparent 100%);
+  -webkit-mask: radial-gradient(circle, transparent 46%, #000 47%);
+          mask: radial-gradient(circle, transparent 46%, #000 47%);
+  animation: orb-sweep 3.4s linear infinite; pointer-events: none;
+}
+#vanvy-loading.vl-style-orbit .vl-bar{ width: 210px; height: 2px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
+#vanvy-loading.vl-style-orbit .vl-bar i{ display: block; height: 100%; background: linear-gradient(90deg, var(--vl-acc), var(--vl-acc2)); animation: orb-bar 2.2s ease-in-out infinite; }
+#vanvy-loading.vl-style-orbit .vl-brand{
+  font-family: 'Plus Jakarta Sans','Microsoft YaHei',system-ui,sans-serif;
+  font-size: 12.5px; font-weight: 700; letter-spacing: 5px; text-transform: uppercase;
+  color: color-mix(in srgb, var(--vl-acc) 62%, #fff); animation: orb-brand 3.2s ease-in-out infinite;
+}
+#vanvy-loading.vl-style-orbit .vl-txt{ font-size: 12px; color: rgba(255,255,255,.42); letter-spacing: .5px; }
+#vanvy-loading.vl-style-orbit .vl-nologo .vl-core{ display: none; }
+#vanvy-loading.vl-style-orbit.hide-out { animation: orb-fadeout .55s ease forwards; }
+
+@media (prefers-reduced-motion: reduce){
+  #vanvy-loading.vl-style-orbit .vl-o,
+  #vanvy-loading.vl-style-orbit .vl-sweep,
+  #vanvy-loading.vl-style-orbit .vl-core { animation-duration: 26s; }
+}

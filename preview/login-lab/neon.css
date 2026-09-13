@@ -1,0 +1,58 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Login · NEON 霓虹赛博
+   近黑底 + 霓虹描边 + 扫描线；表单像一块发光的终端面板。
+   ═══════════════════════════════════════════════════════════ */
+body.vl-style-neon .vl-orn{
+  background:
+    radial-gradient(800px 500px at 50% 46%, color-mix(in srgb, var(--vanvy-accent) 10%, transparent), transparent 66%),
+    #05060a !important;
+}
+body.vl-style-neon .vl-orn::after{ background: rgba(3,4,8,.42) !important; }
+/* 扫描线 */
+body.vl-style-neon .vl-orn::before{
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background: repeating-linear-gradient(180deg, transparent 0 2px, rgba(255,255,255,.022) 2px 3px);
+}
+body.vl-style-neon .vl-orn-glow{ filter: blur(70px); opacity: .55; }
+body.vl-style-neon .vl-logo{
+  background: #08090f !important; color: var(--vanvy-accent) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 0 0 1px var(--vanvy-accent), 0 0 18px color-mix(in srgb, var(--vanvy-accent) 60%, transparent),
+              inset 0 0 14px color-mix(in srgb, var(--vanvy-accent) 22%, transparent) !important;
+}
+body.vl-style-neon .vl-head .vl-txt b{ color: #eaf6ff !important; text-shadow: 0 0 12px color-mix(in srgb, var(--vanvy-accent) 55%, transparent); }
+body.vl-style-neon .vl-form{
+  background: rgba(7,9,15,.66) !important;
+  border: 1px solid color-mix(in srgb, var(--vanvy-accent) 50%, transparent) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--vanvy-accent) 18%, transparent) inset,
+    0 0 28px color-mix(in srgb, var(--vanvy-accent) 22%, transparent),
+    0 30px 70px rgba(0,0,0,.8) !important;
+  border-radius: 12px !important;
+}
+body.vl-style-neon .vl-form .emby-input,
+body.vl-style-neon .vl-form input[type=text],
+body.vl-style-neon .vl-form input[type=password]{
+  background: rgba(255,255,255,.04) !important;
+  border-color: color-mix(in srgb, var(--vanvy-accent) 34%, transparent) !important;
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--vanvy-accent) 8%, transparent) !important;
+}
+body.vl-style-neon .vl-form input:focus{
+  border-color: var(--vanvy-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vanvy-accent) 20%, transparent), 0 0 18px color-mix(in srgb, var(--vanvy-accent) 30%, transparent) !important;
+}
+body.vl-style-neon .vl-form .paperSubmit{
+  background: transparent !important; color: var(--vanvy-accent) !important;
+  border: 1px solid var(--vanvy-accent) !important;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--vanvy-accent) 35%, transparent), inset 0 0 16px color-mix(in srgb, var(--vanvy-accent) 12%, transparent) !important;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--vanvy-accent) 70%, transparent);
+}
+body.vl-style-neon .vl-form .paperSubmit:hover{ background: color-mix(in srgb, var(--vanvy-accent) 16%, transparent) !important; }
+body.vl-style-neon .squareCard .cardBox{
+  border-color: color-mix(in srgb, var(--vanvy-accent) 40%, transparent) !important; border-radius: 12px !important;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--vanvy-accent) 18%, transparent) !important;
+}
+body.vl-style-neon .squareCard:hover .cardBox{
+  border-color: var(--vanvy-accent) !important;
+  box-shadow: 0 0 26px color-mix(in srgb, var(--vanvy-accent) 40%, transparent) !important;
+}

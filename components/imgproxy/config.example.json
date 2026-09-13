@@ -4,14 +4,12 @@
     "也可用环境变量覆盖（env 优先），变量名见 README.md",
     "命令行: python3 img_proxy.py -c /path/to/config.json"
   ],
-
   "port": 18098,
   "host": "0.0.0.0",
   "cache_dir": "/var/cache/vanvy-imgproxy",
   "cache_ttl": 604800,
   "max_bytes": 12582912,
   "timeout": 20,
-
   "_proxies_说明": [
     "可填多个，按序回退；留空数组 = 全部直连",
     "格式 scheme://[user:pass@]host:port",
@@ -22,7 +20,6 @@
     "带认证直接写进 URL：socks5h://用户名:密码@主机:端口"
   ],
   "proxies": [],
-
   "proxy_mode": "auto",
   "_proxy_mode_说明": "none=从不走代理 | auto=仅 proxy_hosts 命中时走代理 | all=全部走代理",
   "proxy_hosts": [
@@ -34,29 +31,60 @@
   ],
   "proxy_fallback_direct": true,
   "proxy_breaker_seconds": 60,
-
   "_allow_hosts_说明": [
     "允许代理的图床域名（含子域名）",
     "留空数组 = 允许任意域名 ⚠️ 有 SSRF 风险，仅内网可信环境使用",
     "前缀加 . 可只允许子域名，如 .example.com"
   ],
   "allow_hosts": [
-    "tp.spfcas.com", "spfcas.com",
-    "javdb.com", "cdn.javdb.com", "c0.jdbstatic.com", "jdbstatic.com",
-    "i.ytimg.com", "img.youtube.com", "ytimg.com",
-    "pics.dmm.co.jp", "awsimgsrc.dmm.co.jp",
+    "tp.spfcas.com",
+    "spfcas.com",
+    "javdb.com",
+    "cdn.javdb.com",
+    "c0.jdbstatic.com",
+    "jdbstatic.com",
+    "i.ytimg.com",
+    "img.youtube.com",
+    "ytimg.com",
+    "pics.dmm.co.jp",
+    "awsimgsrc.dmm.co.jp",
     "raw.githubusercontent.com",
-    "image.tmdb.org", "www.themoviedb.org"
+    "image.tmdb.org",
+    "www.themoviedb.org"
   ],
-
   "_decoder_base_说明": [
     "可选：上游解码引擎（能解 JavDB 的混淆图片）",
     "留空 = 跳过该步骤，普通图床照常工作",
     "格式: http://host:port/api/v1/img-proxy/?url="
   ],
   "decoder_base": "",
-
   "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
   "referer": "",
-  "allow_private_network": false
+  "allow_private_network": false,
+  "_tmdb_说明": [
+    "TMDB API Key —— 配了才开放 /tmdb/ 通道（详情页「资料增强」用）",
+    "请填【你自己申请】的 Key，不要共用别人的（有频率限制，也会影响对方账号）",
+    "免费申请：https://www.themoviedb.org/settings/api",
+    "留空 = 不做 TMDB 增强（页面仍显示 Emby 本地数据）"
+  ],
+  "tmdb_key": "",
+  "_passthrough_说明": [
+    "/p?u= 通用透传允许的域名（预告片等直链媒体）",
+    "浏览器不一定能出网 → 由本服务代取，这几个域名放行"
+  ],
+  "passthrough_hosts": [
+    "dmm.co.jp",
+    "dmm.com",
+    "awsimgsrc.dmm.co.jp",
+    "pics.dmm.co.jp",
+    "youtube.com",
+    "googlevideo.com",
+    "ytimg.com",
+    "javdb.com",
+    "cdn.javdb.com",
+    "jdbstatic.com",
+    "spfcas.com",
+    "tp.spfcas.com",
+    "api.themoviedb.org"
+  ]
 }

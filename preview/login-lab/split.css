@@ -1,0 +1,46 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Login · SPLIT 左右分屏
+   左：主题色品牌面板（大 LOGO + 站点名）｜右：表单区。
+   窄屏自动堆叠为上下。
+   ═══════════════════════════════════════════════════════════ */
+body.vl-style-split .vl-orn{
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--vanvy-accent) 14%, #0b0b10) 0 46%,
+      #0a0a0f 46% 100%) !important;
+}
+body.vl-style-split .vl-orn::after{ background: none !important; }
+body.vl-style-split .vl-orn-glow{ display: none; }
+/* 中缝：一条渐变分隔线 */
+body.vl-style-split .vl-orn::before{
+  content: ""; position: absolute; left: 46%; top: 0; bottom: 0; width: 1px; pointer-events: none;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--vanvy-accent) 60%, transparent), transparent);
+}
+/* 左半区的品牌块（由 CSS 伪元素承担，不动 DOM） */
+body.vl-style-split .vl-orn > .vl-split-brand{
+  position: absolute; left: 0; top: 0; bottom: 0; width: 46%;
+  display: none;   /* 真品牌信息仍由 .vl-head 提供；此处仅占位保持结构兼容 */
+}
+body.vl-style-split .vl-form{
+  margin-right: auto !important; margin-left: 52% !important;
+  max-width: min(430px, 44vw) !important;
+  background: rgba(14,14,20,.5) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 18px !important;
+}
+body.vl-style-split .vl-head{ justify-content: flex-start; }
+body.vl-style-split .vl-logo{
+  background: linear-gradient(135deg, var(--vanvy-accent), var(--vanvy-accent-2)) !important;
+  border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,.5);
+}
+body.vl-style-split .squareCard .cardBox{ border-color: rgba(255,255,255,.14) !important; }
+body.vl-style-split .squareCard:hover .cardBox{
+  border-color: var(--vanvy-accent) !important;
+  box-shadow: 0 16px 36px rgba(0,0,0,.6), 0 0 20px color-mix(in srgb, var(--vanvy-accent) 20%, transparent) !important;
+}
+@media (max-width: 900px){
+  body.vl-style-split .vl-orn{ background: linear-gradient(180deg, color-mix(in srgb, var(--vanvy-accent) 12%, #0b0b10) 0 34%, #0a0a0f 34% 100%) !important; }
+  body.vl-style-split .vl-orn::before{ left: 0; right: 0; top: 34%; bottom: auto; width: auto; height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--vanvy-accent) 60%, transparent), transparent); }
+  body.vl-style-split .vl-form{ margin: 4vh auto 0 !important; max-width: 460px !important; }
+}

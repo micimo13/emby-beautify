@@ -127,6 +127,12 @@ while [ $# -gt 0 ]; do
     --proxy-mode) VANVY_PROXY_MODE="$2"; export VANVY_PROXY_MODE; shift 2;;    # auto|all|none
     --proxy-port) VANVY_IMG_PORT="$2"; export VANVY_IMG_PORT; shift 2;;        # 图片代理监听端口
     --img-proxy) VANVY_IMG_PROXY="$2"; export VANVY_IMG_PROXY; shift 2;;      # 图片代理对外地址
+    --avdb)      VANVY_AVDB_BASE="$2"; export VANVY_AVDB_BASE; shift 2;;      # AVDB 引擎地址
+    --avdb-key)  VANVY_AVDB_KEY="$2"; export VANVY_AVDB_KEY; shift 2;;        # AVDB API Key
+    --metatube)  VANVY_METATUBE_BASE="$2"; export VANVY_METATUBE_BASE; shift 2;;  # MetaTube 后端地址
+    --tmdb-key)  VANVY_TMDB_KEY="$2"; export VANVY_TMDB_KEY; shift 2;;        # TMDB API Key（写入连接器配置）
+    --lstyle-login) VANVY_LOGIN_STYLE="$2"; export VANVY_LOGIN_STYLE; shift 2;;  # 登录页风格(glass/aurora/cinema/minimal/split/neon/paper/orbital)
+    --socks5)    VANVY_PROXY_URL="$2"; export VANVY_PROXY_URL; shift 2;;      # 上游 SOCKS5 代理（同 --proxy）
     --doc-url)   VANVY_DOC_URL="$2"; export VANVY_DOC_URL; shift 2;;  # 安装引导页地址
     --yes|-y)    ASSUME_YES=1; shift;;
     --uninstall) MODE="uninstall"; shift;;
@@ -151,9 +157,54 @@ banner() {
   echo ""
 }
 
-uread() { local __v="$1" __d="$2" __r=""; if [ -r /dev/tty ]; then read -r __r </dev/tty 2>/dev/null || __r=""; fi; eval "$__v=\"\${__r:-\$__d}\""; }
+# 是否具备可交互终端（有控制终端就能问问题）
+if [ -r /dev/tty ]; then HAS_TTY=1; else HAS_TTY=0; fi
+
+uread() {
+  # 只从控制终端读答案。
+  # 🔴 绝对不要读 stdin：`curl … | bash` 时 stdin 是脚本本体，
+  #    读它要么「吞掉后面的脚本」，要么在 EOF 处拿到空值 → 所有提问都取默认值
+  #    → 变成「不问自装」（2026-09-13 用户实测踩到，教训严重）。
+  #    无控制终端时本函数返回空串，由调用方决定「用默认值」还是「直接中止」。
+  local __v="$1" __d="$2" __r=""
+  if [ "$HAS_TTY" = "1" ]; then
+    read -r __r </dev/tty 2>/dev/null || __r=""
+  fi
+  eval "$__v=\"\${__r:-\$__d}\""
+}
+
+# 关键提问专用：拿不到用户答案（无终端 / 输入结束）→ **直接中止**，绝不用默认值蒙混。
+#   用于「装到哪个容器」「是否确认安装」这类一旦猜错就会改坏别人环境的提问。
+uread_req() {
+  local __v="$1" __d="$2" __why="$3" __r=""
+  if [ "$HAS_TTY" = "1" ]; then
+    read -r __r </dev/tty 2>/dev/null || __r=""
+  fi
+  if [ -z "$__r" ]; then
+    echo ""
+    err "无法获取你的选择（${__why:-需要确认}）——已中止，未做任何修改。"
+    echo "   ${C_DIM}非交互场景请显式传参，例如：${C_OFF}"
+    echo "     bash install-ves.sh --container <容器名> --features 1,2,3 --yes"
+    exit 2
+  fi
+  eval "$__v=\"\$__r\""
+}
 
 list_containers() { docker ps --format '{{.Names}}' 2>/dev/null | grep -i emby | sort; }
+
+# 判断某容器是否**真的是 Emby 服务**（而不是名字里带 emby 的其它容器，如 nginx/海报工具）
+#   判据：存在 /system/dashboard-ui/index.html 且其内容含 Emby 标记。
+#   ⚠️ 没有这道闸门时，名字里带 emby 的其它容器会被误装（2026-09-13 教训）。
+is_emby_container() {
+  local c="$1" wp
+  wp="$(docker exec "$c" sh -c '
+    for p in /system/dashboard-ui /app/emby/dashboard-ui /opt/emby-server/system/dashboard-ui \
+             /usr/lib/emby-server/system/dashboard-ui /config/dashboard-ui; do
+      [ -f "$p/index.html" ] && { echo "$p"; break; }
+    done' 2>/dev/null || true)"
+  [ -n "$wp" ] || return 1
+  docker exec "$c" sh -c "grep -qiE 'emby' '$wp/index.html'" >/dev/null 2>&1
+}
 
 banner
 
@@ -165,20 +216,43 @@ if [ "$LIST_ONLY" = "1" ]; then echo "emby 容器："; echo "$ALL" | sed 's/^/  
 # ① 选容器
 # ─────────────────────────────────────────────────────────────
 if [ -z "$CONTAINER" ]; then
+  # 🔴 无交互终端时**绝不自动挑容器**（否则会静默装到别人身上）
+  if [ "$HAS_TTY" != "1" ]; then
+    echo ""
+    err "当前没有可交互终端，无法询问「要装到哪个容器」。"
+    echo "   ${C_DIM}请显式指定，例如：${C_OFF}"
+    echo "     curl -sL <安装脚本> | bash -s -- --container <容器名> --features 1,2,3 --yes"
+    echo ""
+    echo "   本机检测到的 emby 容器："
+    echo "$ALL" | sed 's/^/     - /'
+    exit 2
+  fi
   echo "  ┌──────────────────────────────────────────────┐"
   echo "  │  🐳 选择目标容器                              │"
   i=1
   for c in $ALL; do
     img="$(docker ps --filter "name=^/${c}$" --format '{{.Image}}' 2>/dev/null | head -1)"
-    printf "  │    [%d] %-16s %s\n" "$i" "$c" "$img"
+    tag=""
+    is_emby_container "$c" || tag="  ${C_WARN}⚠ 非 Emby，会被拒绝${C_OFF}"
+    printf "  │    [%d] %-16s %s%s\n" "$i" "$c" "$img" "$tag"
     i=$((i+1))
   done
   echo "  └──────────────────────────────────────────────┘"
-  ask "选择 [1-$((i-1))]: "; uread CSEL ""
-  CONTAINER="$(echo "$ALL" | sed -n "${CSEL}p")"
+  ask "选择 [1-$((i-1))]: "; uread_req CSEL "" "选择目标容器"
+  # 校验为纯数字并夹在范围内（防 sed 打印全部行）
+  case "$CSEL" in ''|*[!0-9]*) err "请输入容器编号（1-$((i-1))）"; exit 2;; esac
+  [ "$CSEL" -lt 1 ] || [ "$CSEL" -gt "$((i-1))" ] && { err "编号超出范围（1-$((i-1))）"; exit 2; }
+  CONTAINER="$(echo "$ALL" | sed -n "${CSEL}p" | head -1)"
 fi
 [ -n "$CONTAINER" ] || { err "未选择容器"; exit 1; }
 docker ps --format '{{.Names}}' | grep -qx "$CONTAINER" || { err "容器不存在: $CONTAINER"; exit 1; }
+# 🔴 安全闸门：必须是真正的 Emby 服务，否则拒绝（防止误装到名字含 emby 的其它容器）
+if ! is_emby_container "$CONTAINER"; then
+  err "「$CONTAINER」看起来不是 Emby 服务（未找到含 Emby 标记的 dashboard-ui/index.html）。"
+  echo "   ${C_DIM}为避免改坏其它容器，已中止。若确要强制安装：VES_FORCE_CONTAINER=1 重跑。${C_OFF}"
+  [ "${VES_FORCE_CONTAINER:-0}" = "1" ] || exit 2
+  warn "VES_FORCE_CONTAINER=1 → 跳过检查继续"
+fi
 # ── 环境探测：皮肤路径 + Emby 版本（多路兜底）──────────────
 probe_env() {
   local c="$1"
@@ -431,6 +505,26 @@ if has loading && [ "${NOLOGO:-0}" = "0" ] && [ -z "${LOGOFILE:-}" ]; then
 fi
 
 # 浏览器标签图标 favicon（选装；与加载页 LOGO 相互独立）
+# 登录页外观风格（8 套）
+if has login && [ -z "${VANVY_LOGIN_STYLE:-}" ] && [ -f "$SRC_DIR/components/features/login/vanvy-login.js" ]; then
+  echo ""
+  echo "  🔐 登录页风格（字体/背景/卡片观感）"
+  echo "  ──────────────────────────────────────────────────────────────"
+  echo "     [0] 默认 · 黑金毛玻璃(glass)"
+  echo "     [1] 极光(aurora)   [2] 影院(cinema)   [3] 极简浅色(minimal)"
+  echo "     [4] 左右分屏(split) [5] 霓虹(neon)     [6] 纸感暖色(paper)"
+  echo "     [7] 轨道(orbital)"
+  echo "  ──────────────────────────────────────────────────────────────"
+  ask "选择 [默认 0]: "; uread LGSEL "0"
+  case "$LGSEL" in
+    1) VANVY_LOGIN_STYLE=aurora;;  2) VANVY_LOGIN_STYLE=cinema;;
+    3) VANVY_LOGIN_STYLE=minimal;; 4) VANVY_LOGIN_STYLE=split;;
+    5) VANVY_LOGIN_STYLE=neon;;    6) VANVY_LOGIN_STYLE=paper;;
+    7) VANVY_LOGIN_STYLE=orbital;; *) VANVY_LOGIN_STYLE=glass;;
+  esac
+  export VANVY_LOGIN_STYLE
+fi
+
 # 优先级: --favicon 文件 > --no-favicon > 交互选择
 if has loading && [ "${NOFAVICON:-0}" = "0" ] && [ -z "${FAVICONFILE:-}" ]; then
   echo ""
@@ -454,6 +548,8 @@ if has loading && [ -z "$LSTYLE" ]; then
     "split|分屏|左右异色面板 + 中缝分隔线"
     "minimal|极简|只有三点脉冲动画，最轻量"
     "logo|纯 LOGO|品牌 LOGO 呼吸发光"
+    "orbit|轨道|三层同心轨道反向自转 + 卫星点 + 扫描光"
+    "pulse|声波|16 根频谱音柱错峰起伏 + 中央光晕（影音感）"
   )
   LAVAIL=()
   for c in "${LCANDS[@]}"; do
@@ -524,14 +620,26 @@ deploy_imgproxy() {
     info "部署图片代理（$_imode）..."
     local -a _iargs=("$_imode" --mode "$VANVY_PROXY_MODE" --port "$VANVY_IMG_PORT")
     [ -n "${VANVY_PROXY_URL:-}" ] && _iargs+=(--proxy "$VANVY_PROXY_URL")
+    [ -n "${VANVY_TMDB_KEY:-}" ] && _iargs+=(--tmdb-key "$VANVY_TMDB_KEY")
     bash "$SRC_DIR/components/imgproxy/install-imgproxy.sh" "${_iargs[@]}" || warn "图片代理部署失败（不影响其它组件）"
   fi
+  # ④b TMDB API Key（可选）—— 让「正经库资料增强」在只配代理的机器上也能用
+  if [ -z "${VANVY_TMDB_KEY:-}" ]; then
+    echo "     TMDB API Key（可选，留空=正经库资料增强仅走本机 enrich 服务）"
+    echo "       获取：themoviedb.org → 设置 → API；填了才开放 /tmdb 通道"
+    ask "     粘贴 Key [留空跳过]: "; uread _tk ""
+    [ -n "$_tk" ] && VANVY_TMDB_KEY="$_tk"
+    _tk=""
+  fi
+  export VANVY_TMDB_KEY
+
   # ⑤ 对外访问地址（填进 Emby 前端）
   local _lanip _idef
   _lanip="$(hostname -I 2>/dev/null | awk '{print $1}')"; [ -n "$_lanip" ] || _lanip="<本机IP>"
   _idef="http://$_lanip:$VANVY_IMG_PORT"
-  vanvy_ask_env VANVY_IMG_PROXY "   图片代理对外地址（例 http://$_lanip:$VANVY_IMG_PORT 或 https://你的域名/vdimg）" "$_idef"
-  info "提示：若 Emby 走 HTTPS，图片地址也需 HTTPS（可 nginx 反代 /vdimg/，片段见 components/imgproxy/nginx-vdimg.conf）"
+  vanvy_ask_env VANVY_IMG_PROXY "   连接器对外地址（可填多个用逗号分隔，例 http://$_lanip:$VANVY_IMG_PORT,https://你的域名/vdimg）" "$_idef"
+  info "提示：填多个时前端会自动挑可用的 → 在家走内网、在外走公网。"
+  info "      若 Emby 走 HTTPS，公网地址也需 HTTPS（可 nginx 反代 /vdimg/，片段见 components/imgproxy/nginx-vdimg.conf）"
 }
 
 if has jav; then
@@ -559,8 +667,35 @@ if has jav; then
     ask "是否配置后端服务？[y/N]: "; uread USEBE "n"
     case "$USEBE" in
       y|Y|yes|YES)
-        vanvy_ask_env VANVY_METATUBE_BASE "① MetaTube 地址（例 http://192.168.1.10:28080；留空跳过）" ""
-        vanvy_ask_env VANVY_AVDB_BASE     "② AVDB 地址（例 http://192.168.1.10:38000；留空跳过）"     ""
+        # ① 先问：本机一键构建 还是 填已有地址（主人 2026-09-13）
+        echo "     ①/② 后端从哪来？"
+        echo "         [1] 本机一键构建（docker 自动拉起 AVDB + MetaTube，推荐）"
+        echo "         [2] 我已有这些服务 → 填地址"
+        echo "         [0] 跳过（自动降级，其它模块不受影响）"
+        ask "     选择 [默认 1]: "; uread EXTSEL "1"
+        case "$EXTSEL" in
+          1)
+            if [ -x "$SRC_DIR/components/external/install-external.sh" ] || [ -f "$SRC_DIR/components/external/install-external.sh" ]; then
+              _eip="$(hostname -I 2>/dev/null | awk '{print $1}')"; [ -n "$_eip" ] || _eip="<本机IP>"
+              info "开始构建外部服务（AVDB + MetaTube，含各自 PostgreSQL）..."
+              bash "$SRC_DIR/components/external/install-external.sh" --avdb --metatube \
+                   ${VANVY_PROXY_URL:+--proxy "$VANVY_PROXY_URL"} --yes || warn "外部服务构建出现问题（可稍后单独重跑）"
+              VANVY_METATUBE_BASE="${VANVY_METATUBE_BASE:-http://$_eip:28080}"
+              VANVY_AVDB_BASE="${VANVY_AVDB_BASE:-http://$_eip:38000}"
+              export VANVY_METATUBE_BASE VANVY_AVDB_BASE
+              info "已自动回填：MetaTube=$VANVY_METATUBE_BASE  AVDB=$VANVY_AVDB_BASE"
+            else
+              warn "未找到 components/external/install-external.sh（旧包？）→ 请手动填地址"
+              vanvy_ask_env VANVY_METATUBE_BASE "① MetaTube 地址" ""
+              vanvy_ask_env VANVY_AVDB_BASE     "② AVDB 地址"     ""
+            fi
+            ;;
+          2)
+            vanvy_ask_env VANVY_METATUBE_BASE "① MetaTube 地址（例 http://192.168.1.10:28080；留空跳过）" ""
+            vanvy_ask_env VANVY_AVDB_BASE     "② AVDB 地址（例 http://192.168.1.10:38000；留空跳过）"     ""
+            ;;
+          *) info "跳过外部后端（JAV 页仅显示 Emby 本地已有信息）";;
+        esac
         if [ -n "${VANVY_AVDB_BASE:-}" ]; then
           vanvy_ask_env VANVY_AVDB_KEY   "   AVDB API Key（该引擎后台查看）"                       ""
         fi
@@ -571,7 +706,7 @@ if has jav; then
           echo "     ③ 图片代理：[0] 跳过  [1] 已有服务填地址  [2] 本机一键部署"
           ask "     选择 [默认 0]: "; uread IMGSEL "0"
           case "$IMGSEL" in
-            1) vanvy_ask_env VANVY_IMG_PROXY "     图片代理地址（例 https://你的域名/vdimg）" "";;
+            1) vanvy_ask_env VANVY_IMG_PROXY "     连接器地址（可多个用逗号分隔：内网 http://IP:18098 与 公网 https://域名/vdimg）" "";;
             2) deploy_imgproxy;;
             *) info "跳过图片代理（JavDB 封面 / YouTube 缩略图可能不显示）";;
           esac
@@ -679,11 +814,20 @@ if has jav; then
   kv "后端依赖" "MetaTube = ${VANVY_METATUBE_BASE:-未配置（降级）}"
   kv ""         "AVDB     = ${VANVY_AVDB_BASE:-未配置（降级）}"
   kv ""         "图片代理 = ${VANVY_IMG_PROXY:-未配置（降级）}"
+  [ -n "${VANVY_LOGIN_STYLE:-}" ] && kv "" "登录页风格 = ${VANVY_LOGIN_STYLE}"
 fi
 echo "  ├──────────────────────────────────────────────────────────────"
 echo ""
 if [ "$ASSUME_YES" != "1" ]; then
-  ask "确认安装？[Y/n]: "; uread CFM "y"
+  # 🔴 无交互终端时不能「默认确认」（否则就是不问自装）
+  if [ "$HAS_TTY" != "1" ]; then
+    echo ""
+    err "当前没有可交互终端，无法确认安装。"
+    echo "   ${C_DIM}确认要装请显式加 --yes：${C_OFF}"
+    echo "     bash install-ves.sh --container $CONTAINER --features <...> --yes"
+    exit 2
+  fi
+  ask "确认安装？[Y/n]: "; uread_req CFM "" "确认安装"
   case "$CFM" in n|N|no|NO) err "已取消"; exit 0;; esac
 fi
 

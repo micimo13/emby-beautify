@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><title>登录页 8 套风格</title>
+<link rel="stylesheet" href="vanvy-login.css" id="base">
+<style>
+  html,body{margin:0;height:100%;font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif}
+  /* 预览用壳：复刻 Emby 登录页的必要结构（仅预览） */
+  .vl-orn{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+    background:radial-gradient(1200px 620px at 72% -12%, rgba(232,198,106,.16), transparent 62%),
+      radial-gradient(960px 520px at 8% 108%, rgba(232,198,106,.10), transparent 60%),
+      linear-gradient(160deg,#16130d 0%,#0a0a0d 52%,#07060a 100%)}
+  .vl-orn::after{content:"";position:absolute;inset:0;background:rgba(7,6,8,.42)}
+  .vl-orn-glow{position:absolute;width:46vw;height:46vw;border-radius:50%;filter:blur(90px);opacity:.34;
+    background:radial-gradient(circle,#e8c66a,transparent 66%);left:-10vw;top:-14vw}
+  .vl-orn-glow2{left:auto;right:-12vw;bottom:-18vw;top:auto;opacity:.22}
+  .view{position:relative;z-index:1}
+  .vl-head{display:flex;align-items:center;gap:13px;margin:0 0 18px}
+  .vl-head .vl-logo{flex:0 0 auto;width:46px;height:46px;border-radius:13px;overflow:hidden;display:grid;place-items:center;
+    font-weight:900;font-size:20px;color:#1a1408;background:linear-gradient(135deg,#e8c66a,#a8741a);box-shadow:0 8px 22px rgba(0,0,0,.5)}
+  .vl-head .vl-txt{display:flex;flex-direction:column;line-height:1.32}
+  .vl-head .vl-txt b{font-size:16px;font-weight:800;color:#f2f4f8}
+  .vl-head .vl-txt i{font-style:normal;font-size:11.5px;color:rgba(255,255,255,.45)}
+  /* 表单卡片 */
+  form.vl-form{max-width:460px;width:calc(100% - 32px);margin:6vh auto 0;padding:26px 26px 22px;border-radius:20px;
+    background:rgba(20,19,24,.62);border:1px solid rgba(255,255,255,.12);
+    backdrop-filter:blur(22px) saturate(135%);-webkit-backdrop-filter:blur(22px) saturate(135%);
+    box-shadow:0 30px 70px rgba(0,0,0,.66)}
+  form.vl-form h1{font-size:20px;font-weight:800;color:#f2f4f8;margin:0 0 14px}
+  .inputLabel{display:block;font-size:12.5px;color:rgba(255,255,255,.55);margin:10px 0 5px}
+  input[type=text],input[type=password]{width:100%;box-sizing:border-box;border-radius:11px;padding:9px 12px;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#f2f4f8;outline:none}
+  .toggleContainer{display:flex;align-items:center;gap:9px;margin:16px 0}
+  .toggleSwitch{width:38px;height:21px;border-radius:999px;background:#e8c66a;position:relative}
+  .toggleSwitch::before{content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:#1a1408;top:3px;left:20px}
+  .toggleLabel{font-size:12.5px;color:rgba(255,255,255,.72)}
+  .buttons{display:flex;gap:10px;align-items:center;margin-top:18px}
+  .paperSubmit{flex:1 1 auto;height:44px;border:0;border-radius:11px;font-weight:800;font-size:14px;cursor:pointer;
+    background:linear-gradient(135deg,#e8c66a,#a8741a);color:#1a1408}
+  .buttonCancel{height:44px;padding:0 18px;border-radius:11px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.66);cursor:pointer;font:inherit}
+  .button-link{margin-top:12px;display:inline-block;padding:8px 4px;font-size:12.5px;color:rgba(255,255,255,.62);text-decoration:none}
+  .grid{display:flex;gap:16px;margin-top:22px;flex-wrap:wrap}
+  .squareCard .cardBox{width:150px;border-radius:16px;overflow:hidden;background:rgba(22,20,26,.55);
+    border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(22px) saturate(130%)}
+  .squareCard .cardImageContainer{height:150px;background:linear-gradient(135deg,#2a2536,#161520)}
+  .squareCard .cardText-first{padding:8px 10px;font-size:12.5px;color:#eef0f4;font-weight:600;background:transparent}
+</style></head><body class="vl-users vl-pwd">
+<div class="vl-orn" id="orn"><i class="vl-orn-glow"></i><i class="vl-orn-glow vl-orn-glow2"></i></div>
+<div class="view">
+  <form class="vl-form" onsubmit="return false">
+    <div class="vl-head"><span class="vl-logo">V</span><span class="vl-txt"><b>VANVY EMBY</b><i>欢迎回来</i></span></div>
+    <h1>登录</h1>
+    <label class="inputLabel">用户名</label>
+    <input type="text" value="vanvy">
+    <label class="inputLabel">密码</label>
+    <input type="password" value="password">
+    <div class="toggleContainer"><span class="toggleSwitch"></span><span class="toggleLabel">记住我</span></div>
+    <div class="buttons">
+      <button class="paperSubmit" type="submit">登 录</button>
+      <button class="buttonCancel" type="button">取消</button>
+    </div>
+    <a class="button-link btnForgotPassword" href="#">忘记密码？</a>
+    <div class="grid">
+      <div class="squareCard"><div class="cardBox"><div class="cardImageContainer"></div><div class="cardText-first">Marnie</div></div></div>
+      <div class="squareCard"><div class="cardBox"><div class="cardImageContainer"></div><div class="cardText-first">Family</div></div></div>
+    </div>
+  </form>
+</div>
+<div class="vl-orn-deco" style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden"></div>
+<script>
+  var Q = new URLSearchParams(location.search);
+  var ST = Q.get('style') || 'glass';
+  document.body.classList.add('vl-style-' + ST);
+  if (ST === 'cinema') document.querySelector('.vl-orn-deco').innerHTML = '<i class="vl-grain"></i>';
+  if (ST === 'orbital') document.querySelector('.vl-orn-deco').innerHTML = '<span class="vl-orb-rings"><i></i><i></i><i></i></span>';
+  if (ST !== 'glass') {
+    var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'styles/' + ST + '.css'; document.head.appendChild(l);
+  }
+  document.title = '登录页 · ' + ST;
+</script>
+</body></html>
