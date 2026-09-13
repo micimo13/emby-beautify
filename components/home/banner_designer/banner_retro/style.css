@@ -1,0 +1,133 @@
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-carousel-banner_retro, .vanvy-carousel-banner_retro * { box-sizing: border-box; }
+
+.vanvy-carousel-banner_retro {
+  position:relative; width:100%; height:78vh; height:var(--vh-hero-h, 100dvh); min-height:420px; overflow:hidden;
+  border-radius:8px; font-family:'Courier New','Lucida Console',monospace;
+}
+
+
+
+
+.vanvy-carousel-banner_retro .retro {
+  position:relative; width:100vw; height:100%; overflow:hidden;
+  background:linear-gradient(180deg,#1a1410 0%, #2a2018 50%, #1a1410 100%);
+  filter:saturate(.85) sepia(.15) contrast(1.05);
+}
+/* 噪点 */
+.vanvy-carousel-banner_retro .retro::before {
+  content:""; position:absolute; inset:0; z-index:5; pointer-events:none; opacity:.5;
+  background:radial-gradient(rgba(255,255,255,.06) 1px, transparent 1.2px);
+  background-size:3px 3px;
+  animation:noise .5s steps(4) infinite;
+}
+@keyframes noise { 0%{transform:translate(0,0)} 25%{transform:translate(-2px,1px)} 50%{transform:translate(2px,-1px)} 75%{transform:translate(-1px,-2px)} 100%{transform:translate(1px,2px)} }
+/* 磁带水平线 */
+.vanvy-carousel-banner_retro .retro::after {
+  content:""; position:absolute; inset:0; z-index:4; pointer-events:none;
+  background:repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,0,0,.05) 3px 4px);
+}
+
+/* VHS 角标 */
+.vanvy-carousel-banner_retro .vhs-corner { position:absolute; top:20px; left:24px; z-index:6; color:#ffd54a; font-size:15px; letter-spacing:3px; text-shadow:2px 2px 0 #8b4513; }
+.vanvy-carousel-banner_retro .vhs-rec {
+  position:absolute; top:20px; right:24px; z-index:6; display:flex; align-items:center; gap:8px;
+  color:#ff5252; font-size:13px; letter-spacing:2px;
+}
+.vanvy-carousel-banner_retro .vhs-rec::before { content:""; width:12px; height:12px; border-radius:50%; background:#ff5252; animation:blink 1s steps(2) infinite; }
+@keyframes blink { 50%{opacity:0} }
+/* 日期戳 */
+.vanvy-carousel-banner_retro .vhs-date { position:absolute; bottom:18px; left:24px; z-index:6; color:rgba(255,255,255,.7); font-size:14px; letter-spacing:2px; text-shadow:1px 1px 0 #000; }
+
+.vanvy-carousel-banner_retro .retro-slide { position:absolute; inset:0; display:flex; align-items:center; padding:0 8%; gap:50px; z-index:3; }
+
+/* 海报 */
+.vanvy-carousel-banner_retro .retro-poster {
+  width:340px; height:500px; flex-shrink:0; position:relative;
+  background:linear-gradient(170deg,#5a2d1a,#3a1a0e);
+  border-radius:6px;
+  box-shadow:0 10px 30px rgba(0,0,0,.6), inset 0 0 30px rgba(0,0,0,.4);
+  border:3px solid #1a1410; outline:1px solid rgba(255,255,255,.15);
+}
+.vanvy-carousel-banner_retro .retro-poster::before {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.5));
+}
+.vanvy-carousel-banner_retro .retro-poster .vanvy-carousel-banner_retro .tape {
+  position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:70%; height:14px; background:var(--vanvy-accent, #d4a017); border-radius:2px;
+  box-shadow:0 2px 4px rgba(0,0,0,.4);
+}
+.vanvy-carousel-banner_retro .retro-poster .vanvy-carousel-banner_retro .tape::before,.vanvy-carousel-banner_retro .retro-poster .vanvy-carousel-banner_retro .tape::after {
+  content:""; position:absolute; top:2px; width:10px; height:10px; border-radius:50%;
+  background:var(--vanvy-accent-2, #8a6a10); border:1.5px solid #5a4510;
+}
+.vanvy-carousel-banner_retro .retro-poster .vanvy-carousel-banner_retro .tape::before { left:6px; } .vanvy-carousel-banner_retro .retro-poster .vanvy-carousel-banner_retro .tape::after { right:6px; }
+.vanvy-carousel-banner_retro .retro-poster .vanvy-carousel-banner_retro .label {
+  position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+  width:78%; padding:8px 10px; text-align:center; font-size:12px; letter-spacing:2px;
+  background:rgba(255,255,255,.85); color:#333; border-radius:2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+
+.vanvy-carousel-banner_retro .retro-info { flex:1; max-width:620px; }
+.vanvy-carousel-banner_retro .retro-title {
+  font-size:56px; font-weight:700; color:#e8d5b0; line-height:1.1; margin-bottom:8px;
+  font-family:'Courier New',monospace; letter-spacing:2px;
+  text-shadow:3px 3px 0 rgba(139,69,19,.6), 0 0 30px rgba(255,213,74,.15);
+}
+.vanvy-carousel-banner_retro .retro-sub { font-size:15px; color:#c9a86a; letter-spacing:4px; margin-bottom:18px; }
+.vanvy-carousel-banner_retro .retro-meta { display:flex; gap:10px; margin-bottom:18px; }
+.vanvy-carousel-banner_retro .retro-chip {
+  padding:3px 12px; font-size:12px; letter-spacing:1px; color:#e8d5b0;
+  background:rgba(0,0,0,.4); border:1px solid rgba(201,168,106,.4); border-radius:2px;
+}
+.vanvy-carousel-banner_retro .retro-desc {
+  font-size:15px; line-height:1.8; color:rgba(232,213,176,.8); margin-bottom:26px; max-width:520px;
+}
+.vanvy-carousel-banner_retro .retro-btns { display:flex; gap:14px; }
+.vanvy-carousel-banner_retro .retro-btn {
+  padding:12px 34px; font-size:14px; letter-spacing:3px; cursor:pointer; font-family:inherit;
+  transition:.2s;
+}
+.vanvy-carousel-banner_retro .retro-btn.play {
+  background:var(--vanvy-accent, #d4a017); color:#2a1a0a; border:2px solid var(--vanvy-accent-2, #8a6a10); font-weight:700;
+  box-shadow:3px 3px 0 var(--vanvy-accent-2, #8a6a10);
+}
+.vanvy-carousel-banner_retro .retro-btn.play:hover { background:#e8b52a; }
+.vanvy-carousel-banner_retro .retro-btn.detail {
+  background:transparent; color:#c9a86a; border:2px solid rgba(201,168,106,.5);
+  box-shadow:3px 3px 0 rgba(201,168,106,.2);
+}
+
+/* 底部胶片条 */
+.vanvy-carousel-banner_retro .retro-thumbs {
+  position:absolute; bottom:26px; left:50%; transform:translateX(-50%); display:flex; gap:0; z-index:6;
+}
+.vanvy-carousel-banner_retro .retro-thumb {
+  width:86px; height:56px; position:relative; cursor:pointer;
+  background:linear-gradient(170deg,#3a2412,#241407);
+  border:2px solid #1a1410;
+}
+.vanvy-carousel-banner_retro .retro-thumb::before,.vanvy-carousel-banner_retro .retro-thumb::after {
+  content:""; position:absolute; left:0; right:0; height:7px;
+  background:repeating-linear-gradient(90deg,var(--vanvy-accent, #d4a017) 0 6px, #1a1410 6px 12px);
+}
+.vanvy-carousel-banner_retro .retro-thumb::before { top:-7px; } .vanvy-carousel-banner_retro .retro-thumb::after { bottom:-7px; }
+.vanvy-carousel-banner_retro .retro-thumb.active { border-color:var(--vanvy-accent, #d4a017); box-shadow:0 0 16px rgba(var(--vanvy-accent-rgb, 212,160,23),.5); }
+
+.vanvy-carousel-banner_retro [data-poster] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_retro [data-thumb] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_retro [data-overlay] { position:absolute; inset:0; background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.55)); }
+
+
+/* ── 满屏背景图（Vanvy backdrop layer）────────────────────── */
+.vanvy-carousel-banner_retro .vbd-bd {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-size:cover; background-position:center 32%;
+  opacity:.48; transform:scale(1.04); transition:opacity .6s ease;
+}
+.vanvy-carousel-banner_retro .vbd-scrim {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(180deg, rgba(26,20,16,.76) 0%, rgba(42,32,24,.58) 50%, rgba(26,20,16,.86) 100%);
+}

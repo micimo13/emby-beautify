@@ -1,0 +1,118 @@
+/* =============================================================================
+   Vanvy Loading · vanvy-loading.css  (A 款 · 极简进度)
+   全部规则以 #vanvy-loading / .vl 作用域包裹，零全局污染。
+
+   配色跟随全站主题：--vl-acc / --vl-acc2 / --vl-bg
+   （由 vanvy-loading.js 按 config.js 的 theme 写入，与首页轮播/详情页一致）
+   ============================================================================= */
+#vanvy-loading.vl {
+  /* 主题变量（默认极光蓝，与 PRESETS.aurora 一致）*/
+  --vl-acc: #3ea6ff;
+  --vl-acc2: #7c5cff;
+  --vl-bg: #08080c;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vl-bg);
+  color: #f5f6f8;
+  font-family: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", -apple-system, "Segoe UI", Roboto, sans-serif;
+  opacity: 1;
+  transition: opacity .55s ease;
+  -webkit-font-smoothing: antialiased;
+}
+#vanvy-loading.vl.vl-hide { opacity: 0; pointer-events: none; }
+
+#vanvy-loading .vl-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+/* 品牌 LOGO */
+#vanvy-loading .vl-logo {
+  display: block;
+  height: auto;
+  max-width: 62vw;
+  /* LOGO 光晕跟随强调色 */
+  filter: drop-shadow(0 6px 30px color-mix(in srgb, var(--vl-acc2) 35%, transparent));
+  animation: vl-logo-in .9s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes vl-logo-in {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* 文案 */
+#vanvy-loading .vl-text {
+  font-size: clamp(13px, 1.15vw, 15px);
+  letter-spacing: 3px;
+  color: #aeb4c2;
+  font-weight: 500;
+}
+
+/* 进度线 */
+#vanvy-loading .vl-bar {
+  width: min(280px, 62vw);
+  height: 2.5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .12);
+  overflow: hidden;
+}
+#vanvy-loading .vl-bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--vl-acc), var(--vl-acc2));
+  animation: vl-load 2.4s cubic-bezier(.5, 0, .3, 1) infinite;
+}
+@keyframes vl-load {
+  0%   { width: 0; }
+  55%  { width: 72%; }
+  100% { width: 100%; }
+}
+
+/* 小字 */
+#vanvy-loading .vl-sub {
+  font-size: 10.5px;
+  letter-spacing: 6px;
+  color: #5c6373;
+  font-weight: 600;
+}
+
+/* 样式变体（aurora/cinema/...）下的服务器名文案浮层 */
+#vanvy-loading .vl-caption {
+  position: absolute;
+  left: 50%; bottom: 12%;
+  transform: translateX(-50%);
+  font-size: clamp(12px, 1.05vw, 14px);
+  letter-spacing: 2px;
+  color: color-mix(in srgb, var(--vl-acc) 55%, #d8dbe2);
+  font-weight: 500;
+  white-space: nowrap;
+  text-shadow: 0 2px 12px rgba(0,0,0,.85);
+  animation: vl-caption-in .8s ease both;
+}
+@keyframes vl-caption-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+@media (max-width: 480px) {
+  #vanvy-loading .vl-inner { gap: 24px; }
+  #vanvy-loading .vl-text { letter-spacing: 2px; }
+  #vanvy-loading .vl-sub { letter-spacing: 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #vanvy-loading .vl-logo { animation: none; }
+  #vanvy-loading .vl-bar i { animation-duration: 4s; }
+}
+
+/* ── 不使用 LOGO 时（--no-logo / 未提供图）：藏掉图片，保留文案与进度 ── */
+#vanvy-loading.vl-nologo .vl-logo,
+#vanvy-loading.vl-nologo .vl-logo-wrap,
+#vanvy-loading.vl-nologo .vl-glow { display: none !important; }
+#vanvy-loading.vl-nologo .vl-inner { gap: 18px; }

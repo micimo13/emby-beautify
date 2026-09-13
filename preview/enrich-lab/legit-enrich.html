@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>VES · 第三方资料增强容器（正经库）</title>
+<style>
+:root{--gold:#e8c66a;--gold2:#a8741a;--bg:#070608;--card:rgba(24,22,26,.55);--line:rgba(232,198,106,.18);--txt:#efe9df;--dim:#a49b8c;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1200px 600px at 70% -10%,#241d12 0%,#0b0a0d 55%,#070608 100%);color:var(--txt);
+font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;padding:34px 44px 46px;}
+.page-ctx{display:flex;gap:18px;align-items:flex-start;margin-bottom:26px;opacity:.92}
+.page-ctx .poster{width:118px;height:172px;border-radius:12px;object-fit:cover;box-shadow:0 12px 30px rgba(0,0,0,.6);border:1px solid var(--line)}
+.page-ctx .info h1{font-size:26px;font-weight:800;letter-spacing:.5px}
+.page-ctx .info h1 em{font-style:normal;color:var(--gold);font-size:18px;margin-left:8px}
+.page-ctx .info .sub{color:var(--dim);font-size:13px;margin-top:8px;line-height:1.8}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:var(--gold);background:rgba(232,198,106,.07)}
+.badge.tmdb{color:#8fd0ff;border-color:rgba(143,208,255,.25);background:rgba(143,208,255,.07)}
+.badge.emby{color:#b8f0c8;border-color:rgba(184,240,200,.22);background:rgba(184,240,200,.06)}
+
+/* ==== 新增容器 ==== */
+.enrich{margin-top:8px;border:1px solid var(--line);border-radius:20px;
+  background:linear-gradient(180deg,rgba(30,26,20,.62),rgba(16,15,18,.62));
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 24px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden}
+.enrich-hd{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(232,198,106,.10),transparent 60%)}
+.enrich-hd .logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;color:#1a1408;font-weight:900;font-size:15px}
+.enrich-hd h2{font-size:17px;font-weight:800;letter-spacing:.5px}
+.enrich-hd .spacer{flex:1}
+.src{display:flex;gap:8px;align-items:center}
+.mod{padding:20px 24px 22px;border-bottom:1px dashed rgba(232,198,106,.12)}
+.mod:last-child{border-bottom:0}
+.mod-h{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.mod-h h3{font-size:14.5px;font-weight:700;color:var(--gold)}
+.mod-h .n{font-size:12px;color:var(--dim)}
+.mod-h .spacer{flex:1}
+.mod-h .more{font-size:12px;color:var(--dim);cursor:pointer}
+
+.strip{display:flex;gap:12px;overflow:hidden}
+.still{flex:0 0 auto;width:238px;height:134px;border-radius:11px;overflow:hidden;border:1px solid var(--line);position:relative}
+.still img{width:100%;height:100%;object-fit:cover;display:block}
+.still::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55))}
+
+.cast{display:flex;gap:16px}
+.person{width:104px;text-align:center}
+.person .ava{width:104px;height:132px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#151016}
+.person .ava img{width:100%;height:100%;object-fit:cover;display:block}
+.person .nm{font-size:12.5px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .role{font-size:11px;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.trs{display:flex;gap:14px}
+.tr{width:262px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#100e12}
+.tr .th{height:148px;position:relative;background:#000}
+.tr .th img{width:100%;height:100%;object-fit:cover;opacity:.92}
+.tr .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;
+  background:rgba(10,9,12,.62);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center}
+.tr .play i{width:0;height:0;border-left:16px solid var(--gold);border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
+.tr .cap{padding:9px 12px;font-size:12.5px;display:flex;justify-content:space-between;color:var(--txt)}
+.tr .cap em{font-style:normal;color:var(--dim);font-size:11px}
+
+.grid{display:flex;gap:14px}
+.pcard{width:132px}
+.pcard .pc{width:132px;height:192px;border-radius:11px;overflow:hidden;border:1px solid var(--line);background:#151016}
+.pcard .pc img{width:100%;height:100%;object-fit:cover;display:block}
+.pcard .nm{font-size:12px;margin-top:8px;line-height:1.45;max-height:2.9em;overflow:hidden}
+.pcard .yr{font-size:11px;color:var(--dim);margin-top:3px}
+
+.foot{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:16px 24px;background:rgba(0,0,0,.25)}
+.chip{font-size:11.5px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--dim);background:rgba(255,255,255,.02)}
+.chip.on{color:var(--gold);border-color:rgba(232,198,106,.4);background:rgba(232,198,106,.08)}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5cd88a;margin-right:6px;vertical-align:1px}
+.chip.off .dot{background:#6b6470}
+.note{font-size:11.5px;color:var(--dim);margin-left:auto}
+</style></head>
+<body>
+<div class="page-ctx">
+  <img class="poster" src="img/legit_poster1.jpg">
+  <div class="info">
+    <h1>“骗骗”喜欢你 <em>2024</em></h1>
+    <div class="sub">喜剧 · 爱情 · 导演：苏彪 &nbsp;·&nbsp; <span class="badge emby">Emby 原生字段</span> <span class="badge tmdb">TMDB 补充</span></div>
+    <div class="sub" style="margin-top:6px">★ 7.1 &nbsp;|&nbsp; 片长 108 分钟 &nbsp;|&nbsp; 已播放 &nbsp;|&nbsp; 简中字幕</div>
+  </div>
+</div>
+
+<!-- ============ 新增容器：第三方资料增强 ============ -->
+<section class="enrich">
+  <div class="enrich-hd">
+    <div class="logo">V</div>
+    <h2>资料增强 · Extra Info</h2>
+    <div class="spacer"></div>
+    <div class="src">
+      <span class="badge emby">来源：Emby 原生</span>
+      <span class="badge tmdb">TMDB</span>
+    </div>
+  </div>
+
+  <div class="mod">
+    <div class="mod-h"><h3>剧照</h3><span class="n">Backdrop 12 张</span><span class="spacer"></span><span class="more">全部 ›</span></div>
+    <div class="strip">
+      <span class="still"><img src="img/legit_bd0.jpg"></span>
+      <span class="still"><img src="img/legit_bd0.jpg"></span>
+      <span class="still"><img src="img/legit_bd0.jpg"></span>
+      <span class="still"><img src="img/legit_bd0.jpg"></span>
+      <span class="still"><img src="img/legit_bd0.jpg"></span>
+    </div>
+  </div>
+
+  <div class="mod">
+    <div class="mod-h"><h3>演员 / 导演</h3><span class="n">6 位</span><span class="spacer"></span><span class="more">全部 ›</span></div>
+    <div class="cast">
+      <div class="person"><div class="ava"><img src="img/legit_actor1.jpg"></div><div class="nm">大喜</div><div class="role">饰 林晴</div></div>
+      <div class="person"><div class="ava"><img src="img/legit_actor2.jpg"></div><div class="nm">孙阳</div><div class="role">饰 陈默</div></div>
+      <div class="person"><div class="ava"><img src="img/legit_actor3.jpg"></div><div class="nm">李雪琴</div><div class="role">饰 闺蜜</div></div>
+      <div class="person"><div class="ava"><img src="img/legit_actor4.jpg"></div><div class="nm">王皓</div><div class="role">饰 男主</div></div>
+      <div class="person"><div class="ava"><img src="img/legit_actor5.jpg"></div><div class="nm">王耀庆</div><div class="role">饰 老板</div></div>
+      <div class="person"><div class="ava"><img src="img/legit_actor6.jpg"></div><div class="nm">柳岩</div><div class="role">饰 老板娘</div></div>
+    </div>
+  </div>
+
+  <div class="mod">
+    <div class="mod-h"><h3>预告片</h3><span class="n">RemoteTrailers（YouTube）</span><span class="spacer"></span><span class="more">1 条</span></div>
+    <div class="trs">
+      <div class="tr">
+        <div class="th"><img src="img/yt1.jpg"><span class="play"><i></i></span></div>
+        <div class="cap"><span>官方预告片</span><em>YouTube</em></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mod">
+    <div class="mod-h"><h3>更多类似</h3><span class="n">Emby /Similar</span><span class="spacer"></span><span class="more">查看全部 ›</span></div>
+    <div class="grid">
+      <div class="pcard"><div class="pc"><img src="img/legit_poster2.jpg"></div><div class="nm">“大”人物</div><div class="yr">2019 · ★6.5</div></div>
+      <div class="pcard"><div class="pc"><img src="img/legit_poster3.jpg"></div><div class="nm">“那个”所在的森林</div><div class="yr">2022 · ★6.2</div></div>
+      <div class="pcard"><div class="pc"><img src="img/legit_poster4.jpg"></div><div class="nm">#PTGF出租女友</div><div class="yr">2021 · ★5.8</div></div>
+      <div class="pcard"><div class="pc"><img src="img/legit_poster1.jpg"></div><div class="nm">同类喜剧推荐</div><div class="yr">2023 · ★7.0</div></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="chip on"><span class="dot"></span>模块·剧照</span>
+    <span class="chip on"><span class="dot"></span>模块·演员</span>
+    <span class="chip on"><span class="dot"></span>模块·预告片</span>
+    <span class="chip on"><span class="dot"></span>模块·更多类似</span>
+    <span class="chip off"><span class="dot"></span>模块·R18 资料（本库关闭）</span>
+    <span class="note">CFG.p2.enrich = true · 可整体关闭 / 逐模块关闭</span>
+  </div>
+</section>
+</body></html>

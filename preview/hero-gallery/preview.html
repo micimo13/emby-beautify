@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANVY · Hero 预览（含媒体库）</title>
+<style>
+  :root{ --bg:#08080c; --card:#14141d; --line:rgba(255,255,255,.09);
+         --fg:#f5f6f8; --dim:#9aa0ad; --vh-acc:#e8c66a; --vh-acc2:#a8741a; --vh-bg:#070608;
+         --pad:clamp(18px,4vw,48px); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--vh-bg);color:var(--fg);
+    font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  body{padding-bottom:60px}
+  #hero-slot{display:block}
+
+  /* ── 媒体库行（对齐设计稿的 .row/.strip/.card）── */
+  .libwrap{max-width:1560px;margin:0 auto;padding:0 var(--pad)}
+  .row{margin-top:44px}
+  .row-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+  .row-hd h2{margin:0;font-size:clamp(17px,1.7vw,23px);font-weight:800;letter-spacing:.3px}
+  .row-hd span{font-size:12.5px;color:var(--dim)}
+  .row-hd .more{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--vh-acc);cursor:pointer}
+  .strip{display:flex;gap:16px;overflow-x:auto;padding:6px 0 14px;scrollbar-width:none;scroll-snap-type:x proximity}
+  .strip::-webkit-scrollbar{display:none}
+  .card{flex:0 0 auto;width:clamp(132px,12.4vw,190px);border-radius:14px;position:relative;
+    transition:.25s;scroll-snap-align:start;cursor:pointer}
+  .card:hover{transform:translateY(-6px)}
+  .pv{position:relative;width:100%;aspect-ratio:2/3;border-radius:14px;overflow:hidden;
+    background:var(--card);box-shadow:0 10px 30px rgba(0,0,0,.55)}
+  .pv img{width:100%;height:100%;object-fit:cover;display:block}
+  .pv::after{content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 52%,rgba(0,0,0,.72));}
+  .prog{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.16);z-index:4}
+  .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--vh-acc),var(--vh-acc2))}
+  .cap{position:absolute;left:12px;right:12px;bottom:11px;z-index:3}
+  .cap b{display:block;font-size:12.8px;font-weight:600;color:#fff;line-height:1.35;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cap em{font-style:normal;font-size:11px;color:#9aa0ad}
+  .badge{position:absolute;left:8px;top:8px;z-index:4;font-size:10.5px;font-weight:700;
+    padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.6);color:#fff;backdrop-filter:blur(6px)}
+  .badge.acc{background:linear-gradient(135deg,var(--vh-acc),var(--vh-acc2));color:#17130a}
+  .wb{font-size:11.5px;color:var(--dim);margin-top:7px;text-align:center;display:none}
+
+  /* 底部提示 */
+  .footnote{max-width:1560px;margin:52px auto 0;padding:20px var(--pad) 0;
+    border-top:1px solid var(--line);color:var(--dim);font-size:12.5px;line-height:1.9}
+</style>
+</head>
+<body>
+
+<div id="hero-slot"></div>
+
+<div class="libwrap">
+  <div id="rows"></div>
+  <div class="footnote">
+    ↑ 以上为 <b style="color:#cfd5e4">演示用媒体库数据</b> —— 真实部署时这里是你自己的 Emby 媒体库行
+    （继续观看 / 最新添加 / 收藏 / 片单…），由 Emby 原生渲染，美化只接管最上方的 Hero 区。
+  </div>
+</div>
+
+<script>
+(function () {
+  var Q = new URLSearchParams(location.search);
+  var STYLE = Q.get('style') || 'classic';
+  var THEME = Q.get('theme') || 'blackgold';
+  var PRESETS = {
+    aurora:{a:'#3ea6ff',b:'#7c5cff',bg:'#08080c'}, blackgold:{a:'#e8c66a',b:'#a8741a',bg:'#070608'},
+    champagne:{a:'#f2dfa8',b:'#c9a86a',bg:'#08070a'}, emerald:{a:'#10d9a3',b:'#0ea5e9',bg:'#050b0a'},
+    sakura:{a:'#ff6b9d',b:'#c86dd7',bg:'#0c070c'}, sunset:{a:'#ff9a3d',b:'#ff4d6d',bg:'#0c0805'},
+    amber:{a:'#ffc93c',b:'#e08e2b',bg:'#0a0805'}, crimson:{a:'#ff4d5e',b:'#a1213f',bg:'#0c0507'},
+    violet:{a:'#a855f7',b:'#6366f1',bg:'#08060e'}, graphite:{a:'#cbd5e1',b:'#64748b',bg:'#0a0b0d'}
+  };
+  var p = PRESETS[THEME] || PRESETS.blackgold;
+  window.VANVY_HERO_CONFIG = { style: STYLE, theme: THEME };
+  var r = document.documentElement.style;
+  r.setProperty('--vh-acc', p.a); r.setProperty('--vh-acc2', p.b); r.setProperty('--vh-bg', p.bg);
+
+  function load(src, cb) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = function () { cb(); };
+    s.onerror = function () { cb(new Error('fail ' + src)); };
+    document.head.appendChild(s);
+  }
+  var css = document.createElement('link');
+  css.rel = 'stylesheet'; css.href = 'comps/hero_' + STYLE + '/style.css';
+  document.head.appendChild(css);
+
+  function pv(i) { return 'img/primary' + i + '.jpg'; }
+  function bd(i) { return 'img/backdrop' + i + '.jpg'; }
+
+  // 媒体库行（用 mock 数据渲染，模拟真实 Emby 首页）
+  function renderRows() {
+    var items = window.VANVY_PREVIEW_ITEMS || [];
+    if (!items.length) return;
+    var rows = [
+      { t: '继续观看', s: '3 部未看完', prog: true },
+      { t: '最近添加', s: '' },
+      { t: '我的片单 · 经典科幻', s: '' },
+      { t: '高分电影', s: '' }
+    ];
+    var html = '';
+    rows.forEach(function (row, ri) {
+      html += '<div class="row"><div class="row-hd"><h2>' + row.t + '</h2>';
+      if (row.s) html += '<span>' + row.s + '</span>';
+      html += '<span class="more">全部 ›</span></div><div class="strip">';
+      var n = 8;
+      for (var k = 0; k < n; k++) {
+        var it = items[(ri * 3 + k) % items.length];
+        var idx = (ri * 3 + k) % items.length + 1;
+        html += '<div class="card"><div class="pv">';
+        html += '<img src="' + pv(idx) + '" alt="" loading="lazy">';
+        if (row.prog) html += '<div class="prog"><i style="width:' + (20 + ((k * 17) % 72)) + '%"></i></div>';
+        if (ri === 1 && k < 2) html += '<span class="badge acc">NEW</span>';
+        if (ri === 3) html += '<span class="badge">★ ' + (it.CommunityRating || '-') + '</span>';
+        html += '<div class="cap"><b>' + (it.Name || '') + '</b>';
+        html += '<em>' + (row.prog ? ('还剩 ' + (18 + k * 11) + ' 分钟') : ((it.ProductionYear || '') + ' · ' + ((it.Genres || [])[0] || ''))) + '</em>';
+        html += '</div></div></div>';
+      }
+      html += '</div></div>';
+    });
+    document.getElementById('rows').innerHTML = html;
+  }
+
+  load('mock-data.js', function () {
+    load('mock-api.js', function () {
+      load('comps/vanvy-hero-core.js', function () {
+        load('comps/hero_' + STYLE + '/hero-' + STYLE + '.js', function (err) {
+          if (err) { document.getElementById('hero-slot').innerHTML =
+            '<pre style="color:#f66;padding:20px;font:13px monospace">' + err.message + '</pre>'; return; }
+          var slot = document.getElementById('hero-slot');
+          slot.className = 'vanvy-hero-' + STYLE;
+          window.VanvyHero.mount(STYLE, slot).then(function (api) {
+            window.__heroApi = api;
+            renderRows();
+            setTimeout(function () { try { parent.postMessage({ ready: 1, style: STYLE }, '*'); } catch (e) {} }, 1400);
+          }).catch(function (e) {
+            slot.innerHTML = '<pre style="color:#f66;padding:20px;font:13px monospace">' + (e && e.message) + '</pre>';
+          });
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

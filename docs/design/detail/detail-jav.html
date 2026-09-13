@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VANVY · JAV 详情页设计稿</title>
+<style>
+  :root{--acc:#e8c66a;--acc2:#a8741a;--bg:#070608;--fg:#f3f4f6;--dim:#9aa0ad;
+    --card:rgba(255,255,255,.055);--line:rgba(255,255,255,.1);--r:14px;--pad:clamp(18px,4vw,56px);
+    --bd-op:.85; --frost-blur:10px; --frost-tint:.42}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;
+    font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",Roboto,sans-serif}
+  img{display:block;max-width:100%}
+  .top3{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;font-size:12px;
+    padding:7px 14px;border-radius:999px;background:rgba(18,18,26,.9);border:1px solid var(--line);color:#9aa0ad;backdrop-filter:blur(14px)}
+  .hero{position:relative;min-height:100svh;overflow:hidden}
+  .bd{position:absolute;inset:0;opacity:var(--bd-op)}
+  /* 毛玻璃层：模糊背景 + 半透明压暗，让上层文字清晰、画面不再"花" */
+  .frost{position:absolute;inset:0;backdrop-filter:blur(var(--frost-blur)) saturate(115%);
+    -webkit-backdrop-filter:blur(var(--frost-blur)) saturate(115%);
+    background:rgba(7,6,8,var(--frost-tint));transition:backdrop-filter .4s, background .4s}
+  .bd img{width:100%;height:100%;object-fit:cover;object-position:center 24%}
+  .veil{position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(7,6,8,.93) 9%,rgba(7,6,8,.6) 28%,rgba(7,6,8,.14) 54%,rgba(7,6,8,.5) 100%)}
+  .hero-in{position:relative;z-index:5;max-width:1500px;margin:0 auto;min-height:100svh;
+    padding:calc(var(--pad) + 44px) var(--pad) 0;display:flex;flex-direction:column;justify-content:center;gap:clamp(16px,2.6vh,30px)}
+  .top{display:flex;gap:clamp(18px,3vw,40px);align-items:flex-end}
+  .poster{flex:0 0 auto;width:clamp(140px,15vw,230px);border-radius:16px;overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.75);border:1px solid rgba(255,255,255,.12)}
+  .poster img{width:100%;aspect-ratio:2/3;object-fit:cover}
+  .info{flex:1 1 auto;min-width:0;padding-bottom:6px}
+  .crumb{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--acc);letter-spacing:3px;font-weight:700;margin-bottom:12px}
+  .crumb::before{content:"";width:28px;height:2px;background:var(--acc);border-radius:2px}
+  .code{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+  .code b{font-size:clamp(20px,2.2vw,30px);font-weight:800;letter-spacing:2px;color:var(--acc);
+    text-shadow:0 2px 14px rgba(0,0,0,.9)}
+  .badge{font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;
+    background:rgba(232,198,106,.16);border:1px solid rgba(232,198,106,.4);color:#f0d68c}
+  .badge.dim{background:rgba(255,255,255,.08);border-color:var(--line);color:#c9ced8}
+  h1{font-size:clamp(20px,3.2vw,44px);line-height:1.15;font-weight:800;letter-spacing:-.3px;
+    text-shadow:0 6px 30px rgba(0,0,0,.85);max-width:26ch}
+  .meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;font-size:13.5px;color:#f0f2f5;
+    text-shadow:0 1px 3px rgba(0,0,0,1),0 3px 14px rgba(0,0,0,.95)}
+  .star{color:var(--acc);font-weight:800}
+  .chip{padding:5px 12px;border-radius:8px;background:rgba(255,255,255,.09);border:1px solid var(--line);
+    font-size:12.5px;color:#eef0f4;backdrop-filter:blur(6px)}
+  .chip.gold{background:rgba(232,198,106,.16);border-color:rgba(232,198,106,.45);color:#f0d68c;font-weight:700}
+  .syn{margin-top:14px;max-width:64ch;color:#d6dae1;line-height:1.8;font-size:14.5px;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 2px 10px rgba(0,0,0,.85)}
+  .cta{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+  .btn{display:flex;align-items:center;gap:9px;height:48px;padding:0 26px;border-radius:12px;font-size:14.5px;
+    font-weight:700;cursor:pointer;border:1px solid transparent;transition:.22s;white-space:nowrap}
+  .btn.play{background:#fff;color:#0a0a0f}
+  .btn.play:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(255,255,255,.2)}
+  .btn.ghost{background:rgba(255,255,255,.1);color:#fff;border-color:var(--line);backdrop-filter:blur(8px)}
+  .btn.ghost:hover{background:rgba(255,255,255,.18)}
+  /* 播放器 */
+  .sec-label{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:2.5px;color:var(--dim);
+    font-weight:700;margin-bottom:11px;text-transform:uppercase}
+  .sec-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .ptool{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px}
+  .tk{display:flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:8px;font-size:12px;
+    font-weight:600;cursor:pointer;color:#b9bec9;background:rgba(255,255,255,.05);border:1px solid var(--line);transition:.18s;user-select:none}
+  .tk:hover{background:rgba(255,255,255,.12);color:#fff}
+  .tk.on{background:rgba(232,198,106,.16);border-color:rgba(232,198,106,.45);color:#f0d68c}
+  .tk .d{width:24px;height:14px;border-radius:8px;background:rgba(255,255,255,.18);position:relative;transition:.2s}
+  .tk .d::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff;transition:.2s}
+  .tk.on .d{background:var(--acc)} .tk.on .d::after{left:12px}
+  .prow{display:flex;gap:10px;flex-wrap:wrap}
+  .pbtn{position:relative;display:flex;align-items:center;gap:10px;height:46px;padding:0 15px 0 10px;border-radius:12px;
+    font-size:13.5px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid var(--line);
+    color:#eef0f4;backdrop-filter:blur(10px);transition:.2s}
+  .pbtn:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
+  .pbtn.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset,0 8px 24px rgba(232,198,106,.18)}
+  .pbtn .ico{width:28px;height:28px;border-radius:8px;background-size:contain;background-repeat:no-repeat;
+    background-position:center;background-color:rgba(0,0,0,.35);flex:0 0 auto}
+  .prow.icononly .pbtn>span:not(.ico):not(.last){display:none}
+  .prow.icononly .pbtn{padding:0 10px;gap:0}
+  .pbtn .last{position:absolute;top:-7px;right:8px;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:6px;
+    background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1408}
+  /* JAV 信息卡 */
+  .jav{border:1px solid rgba(232,198,106,.28);border-radius:16px;padding:18px 20px;
+    background:linear-gradient(135deg,rgba(232,198,106,.08),rgba(255,255,255,.03));backdrop-filter:blur(12px)}
+  .jav-hd{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .jav-hd .t{font-size:13px;font-weight:800;letter-spacing:2px;color:var(--acc)}
+  .jav-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:13px}
+  .kv{display:flex;flex-direction:column;gap:4px}
+  .kv .k{font-size:11px;color:var(--dim);letter-spacing:1px}
+  .kv .v{font-size:14px;font-weight:600}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+  .tag{font-size:12px;padding:5px 11px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid var(--line);color:#dfe3ea;cursor:pointer;transition:.18s}
+  .tag:hover{background:rgba(232,198,106,.16);border-color:rgba(232,198,106,.45);color:#f0d68c}
+  .acard1{display:flex;align-items:center;gap:14px;margin-top:15px;padding:12px;border-radius:14px;
+    background:rgba(0,0,0,.34);border:1px solid var(--line);cursor:pointer;transition:.2s;max-width:420px}
+  .acard1:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .acard1 img{width:74px;height:74px;border-radius:12px;object-fit:cover;background:#1a1a22}
+  .acard1 .nm{font-size:17px;font-weight:800}
+  .acard1 .sub{font-size:12px;color:var(--dim);margin-top:4px}
+  /* 下方 */
+  .wrap{max-width:1500px;margin:0 auto;padding:46px var(--pad) 90px;position:relative;z-index:6;margin-top:-40px}
+  .row{margin-top:42px}
+  .row-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+  .row-hd h2{font-size:clamp(17px,1.4vw,21px);font-weight:700}
+  .row-hd span{font-size:12.5px;color:var(--dim)}
+  .row-hd .more{margin-left:auto;font-size:13px;color:var(--acc);cursor:pointer}
+  .strip{display:flex;gap:14px;overflow-x:auto;padding:6px 0 12px;scrollbar-width:none}
+  .strip::-webkit-scrollbar{display:none}
+  .still{flex:0 0 auto;width:clamp(200px,20vw,320px);aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+    cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.55)}
+  .still img{width:100%;height:100%;object-fit:cover;transition:.35s}
+  .still:hover img{transform:scale(1.06)}
+  .mcard{flex:0 0 auto;width:clamp(126px,11.5vw,178px);cursor:pointer;transition:.25s}
+  .mcard .pv{position:relative;aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:#14141d;box-shadow:0 10px 28px rgba(0,0,0,.55)}
+  .mcard .pv img{width:100%;height:100%;object-fit:cover}
+  .mcard:hover{transform:translateY(-8px) scale(1.03)}
+  .mcard .cap{position:absolute;left:11px;right:11px;bottom:10px;z-index:3}
+  .mcard .cap b{display:block;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mcard .cap em{font-style:normal;font-size:11px;color:#b6bcc8}
+  .mcard .pv::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent 48%)}
+
+  /* 动作条 */
+  .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .act{display:flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:9px;font-size:12.5px;
+    font-weight:600;cursor:pointer;color:#dfe3ea;background:rgba(255,255,255,.07);border:1px solid var(--line);transition:.18s}
+  .act:hover{background:rgba(255,255,255,.16);color:#fff;transform:translateY(-1px)}
+  .act.gold{background:rgba(232,198,106,.16);border-color:rgba(232,198,106,.45);color:#f0d68c}
+  .act.gold:hover{background:rgba(232,198,106,.26)}
+  /* 外链矩阵 */
+  .links{display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:8px;margin-top:12px}
+  .lnk{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:10px;font-size:12.5px;
+    font-weight:600;cursor:pointer;color:#cfd4dd;background:rgba(255,255,255,.05);border:1px solid var(--line);
+    transition:.18s;white-space:nowrap;overflow:hidden}
+  .lnk:hover{background:rgba(232,198,106,.14);border-color:rgba(232,198,106,.4);color:#f0d68c}
+  .lnk .dot2{width:7px;height:7px;border-radius:50%;background:var(--acc);flex:0 0 auto;opacity:.85}
+  .lnk.mz .dot2{background:#7cd98a} /* 中字站高亮 */
+  /* 短评 */
+  .revs{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+  .rev{display:flex;gap:11px;padding:9px 0;border-bottom:1px dashed rgba(255,255,255,.07)}
+  .rev:last-child{border-bottom:0}
+  .rev .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));
+    flex:0 0 auto;display:grid;place-items:center;font-size:12px;font-weight:800;color:#1a1408}
+  .rev .bd2{flex:1;min-width:0}
+  .rev .hd2{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);margin-bottom:3px}
+  .rev .sc2{color:var(--acc);font-weight:800}
+  .rev p{font-size:13px;color:#dfe3ea;line-height:1.6;margin:0}
+  .rev .sub2{font-size:11.5px;color:var(--dim);margin-top:5px}
+  /* 分区小标题 */
+  .sub-h{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;letter-spacing:1.5px;
+    color:var(--dim);margin:16px 0 9px;text-transform:uppercase}
+  .sub-h::after{content:"";flex:1;height:1px;background:var(--line)}
+  .sub-h .tip{font-weight:500;letter-spacing:0;text-transform:none;color:#6f7686}
+  .note{position:fixed;left:16px;bottom:16px;z-index:900;font-size:11.5px;color:#8b919d;background:rgba(20,20,28,.88);
+    border:1px solid var(--line);padding:7px 13px;border-radius:999px;backdrop-filter:blur(8px)}
+  @media(max-width:820px){
+    .hero-in{gap:14px;padding-top:calc(var(--pad) + 40px)}
+    .top{display:grid;grid-template-columns:30vw 1fr;gap:14px;align-items:start}
+    .poster{width:30vw}
+    h1{font-size:clamp(16px,4.4vw,22px)}
+    .syn{-webkit-line-clamp:2;font-size:13px}
+    .cta{margin-top:12px} .btn{height:42px;font-size:13px;flex:1 1 auto;justify-content:center;padding:0 12px}
+    .pbtn{height:38px;padding:0 10px 0 7px;font-size:12px;gap:7px}
+    .pbtn .ico{width:24px;height:24px}
+    .jav{padding:14px 15px} .jav-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .acard1{max-width:none} .acard1 img{width:60px;height:60px}
+  }
+</style>
+</head>
+<body>
+<div class="top3">🎨 JAV 详情页设计稿 · 真实数据（emby-18「小姐姐·Emby」/ SSIS-910）
+    <span style="margin-left:10px">毛玻璃：</span>
+    <a href="?frost=0" style="color:#c9ced8">关</a> ·
+    <a href="?frost=10" style="color:#c9ced8">弱(默认)</a> ·
+    <a href="?frost=18" style="color:#c9ced8">中</a> ·
+    <a href="?frost=32" style="color:#c9ced8">强</a>
+  </div>
+
+<section class="hero">
+  <div class="bd"><img src="img/backdrop.jpg" alt=""></div>
+  <div class="frost"></div>
+  <div class="veil"></div>
+  <div class="hero-in">
+    <div class="top">
+      <div class="poster"><img src="img/poster.jpg" alt=""></div>
+      <div class="info">
+        <div class="crumb">🔞 JAV · AV 影片</div>
+        <div class="code">
+          <b id="code">SSIS-910</b>
+          <span class="badge">番号已识别</span>
+          <span class="badge dim" id="src">数据源：JavBus</span>
+          <span class="badge dim">JP-18+</span>
+        </div>
+        <h1 id="title">—</h1>
+        <div class="meta" id="meta"></div>
+        <p class="syn" id="syn"></p>
+        <div class="cta">
+          <div class="btn play">▶&nbsp; 立即播放</div>
+          <div class="btn ghost">＋&nbsp; 收藏</div>
+          <div class="btn ghost">ⓘ&nbsp; 更多</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第三方播放器 -->
+    <div class="players">
+      <div class="sec-label">第三方播放器 · 直接串流</div>
+      <div class="ptool" id="ptool">
+        <span class="tk on" data-k="onlyOS"><i class="d"></i>仅显示本机可用</span>
+        <span class="tk" data-k="iconOnly"><i class="d"></i>图标模式</span>
+        <span class="tk" data-k="multiPot"><i class="d"></i>多开 PotPlayer</span>
+        <span class="tk" data-k="strm"><i class="d"></i>STRM 直通</span>
+        <span class="tk" data-k="seek"><i class="d"></i>断点续播</span>
+      </div>
+      <div class="prow" id="prow"></div>
+    </div>
+
+    <!-- JAV 专属信息区（EDE 功能全集）-->
+    <div class="jav">
+      <div class="jav-hd">
+        <span class="t">🔞 AV 资料</span>
+        <span class="badge dim" id="srcBadge">JavBus 已匹配</span>
+        <span class="badge dim">番号已识别</span>
+        <span class="badge dim" style="margin-left:auto">数据：本地库 · MetaTube</span>
+      </div>
+
+      <!-- 动作条：EDE 的实用操作 -->
+      <div class="acts">
+        <span class="act gold" onclick="copyIt('SSIS-910','番号')">⧉ 复制番号</span>
+        <span class="act" onclick="copyIt('/media/『有码』/SSIS-910/SSIS-910.strm','路径')">⧉ 复制路径</span>
+        <span class="act" onclick="toast('已跳转 Emby 原始详情页')">↗ 跳转 Emby</span>
+        <span class="act" onclick="toast('标题已翻译')">文 翻译标题</span>
+        <span class="act" onclick="toast('详情已翻译')">文 翻译详情</span>
+        <span class="act" onclick="toast('已刷新 JavDB 数据')">⟳ 刷新数据</span>
+        <span class="act" onclick="toast('已加入合集')">＋ 加入合集</span>
+      </div>
+
+      <div class="jav-grid">
+        <div class="kv"><span class="k">番号</span><span class="v" id="jCode">—</span></div>
+        <div class="kv"><span class="k">发行日期</span><span class="v" id="jDate">—</span></div>
+        <div class="kv"><span class="k">片长</span><span class="v" id="jLen">—</span></div>
+        <div class="kv"><span class="k">片商</span><span class="v" id="jMaker">—</span></div>
+        <div class="kv"><span class="k">系列</span><span class="v" id="jSeries">—</span></div>
+        <div class="kv"><span class="k">评分</span><span class="v" id="jScore" style="color:var(--acc)">—</span></div>
+        <div class="kv"><span class="k">类型</span><span class="v" id="jType">单体作品</span></div>
+        <div class="kv"><span class="k">导演</span><span class="v" id="jDir">—</span></div>
+      </div>
+
+      <div class="sub-h">内容标签</div>
+      <div class="tags" id="tags"></div>
+
+      <div class="sub-h">演员</div>
+      <div class="acard1" id="actressCard">
+        <img src="img/actress.jpg" onerror="this.style.visibility='hidden'">
+        <div>
+          <div class="nm" id="aName">—</div>
+          <div class="sub" id="aSub">—</div>
+        </div>
+      </div>
+
+      <div class="sub-h">外部站点 <span class="tip">点击直接搜索此番号（含中字站）</span></div>
+      <div class="links" id="links"></div>
+
+      <div class="sub-h">JavDB 短评 <span class="tip">需登录 · 数据来自 JavDB</span></div>
+      <div class="revs" id="revs"></div>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="row">
+    <div class="row-hd"><h2>剧照</h2><span>Production Stills</span><span class="more">全部 ›</span></div>
+    <div class="strip" id="stills"></div>
+  </section>
+  <section class="row">
+    <div class="row-hd"><h2 id="workTitle">演员作品</h2><span>Actress Works</span><span class="more">全部 ›</span></div>
+    <div class="strip" id="works"></div>
+  </section>
+  <section class="row">
+    <div class="row-hd"><h2>更多类似</h2><span>同系列 / 同标签</span><span class="more">全部 ›</span></div>
+    <div class="strip" id="more"></div>
+  </section>
+</main>
+
+<div class="note">🎨 设计稿 · 真实数据源：emby-18「小姐姐·Emby」4.8.11 · 纯视觉</div>
+
+<script>
+// 毛玻璃强度：?frost=0|8|18|32（默认18）
+(function(){
+  var q=new URLSearchParams(location.search).get('frost');
+  if(q===null) return;
+  var v=parseInt(q,10); if(isNaN(v)) return;
+  var r=document.documentElement.style;
+  if(v<=0){ r.setProperty('--frost-blur','0px'); r.setProperty('--frost-tint','0'); }
+  else { r.setProperty('--frost-blur',v+'px'); r.setProperty('--frost-tint',String(Math.min(.72,0.30+v/45))); }
+})();
+
+// ── EDE 功能：外链站点矩阵（含中字站）──
+var SITES=[
+ {n:'JavDB',u:'https://javdb.com/search?q=',mz:0},
+ {n:'JavBus',u:'https://www.javbus.com/search/',mz:0},
+ {n:'JavLibrary',u:'https://www.javlibrary.com/cn/vl_searchbyid.php?keyword=',mz:0},
+ {n:'MissAV',u:'https://missav.ws/cn/search/',mz:1},
+ {n:'7mmtv',u:'https://7mmtv.sx/zh/searchform_search/all/index.html?key=',mz:1},
+ {n:'DMM',u:'https://www.dmm.co.jp/digital/videoa/-/list/search/?searchstr=',mz:0},
+ {n:'MGStage',u:'https://www.mgstage.com/search/cSearch.php?search',mz:0},
+ {n:'Tokyo-Hot',u:'https://my.tokyo-hot.com/product/?q=',mz:0},
+ {n:'Caribbean',u:'https://www.caribbeancom.com/moviepages/',mz:0},
+ {n:'1Pondo',u:'https://www.1pondo.tv/movies/',mz:0},
+ {n:'Heyzo',u:'https://www.heyzo.com/search/?searchstr=',mz:0},
+ {n:'JVR Library',u:'https://jvrlibrary.com/jvr/search/',mz:1},
+ {n:'TKTUBE',u:'https://tktube.com/search/',mz:1},
+ {n:'JavSubtitle',u:'https://javsubtitled.com/zh/search?q=',mz:1},
+ {n:'JanTrailers',u:'https://javtrailers.com/search/',mz:0},
+ {n:'SubtitleCat',u:'https://www.subtitlecat.com/index.php?search=',mz:1}
+];
+var REVIEWS=[
+ {u:'影迷甲',s:5,t:'剧情推进很自然，女主的演技在线，前戏部分拍得很好。',d:'2024-01-12',like:36},
+ {u:'老司机',s:4,t:'S1 的画质一如既往的稳，4K 版本细节拉满。就是剧情稍显套路。',d:'2024-02-03',like:21},
+ {u:'ASD***',s:5,t:'服装和场景布置很用心，实习社员的设定代入感强。',d:'2024-03-18',like:14},
+ {u:'路人乙',s:3,t:'中段节奏有点拖，快进看完的。不过封面不错。',d:'2024-04-02',like:9}
+];
+function copyIt(txt,what){ try{navigator.clipboard.writeText(txt);}catch(e){} toast(what+'已复制'); }
+function toast(msg){
+  var d=document.getElementById('_toast');
+  if(!d){ d=document.createElement('div'); d.id='_toast';
+    d.style.cssText='position:fixed;left:50%;bottom:34px;transform:translateX(-50%);z-index:99999;background:rgba(20,20,28,.96);border:1px solid rgba(232,198,106,.4);color:#f0d68c;padding:11px 20px;border-radius:12px;font-size:13.5px;font-weight:600;backdrop-filter:blur(10px);transition:.25s;opacity:0';
+    document.body.appendChild(d);}
+  d.textContent=msg; d.style.opacity='1';
+  clearTimeout(d._t); d._t=setTimeout(function(){d.style.opacity='0';},1600);
+}
+
+var OS='Windows';
+var PLAYERS=[
+ {n:'PotPlayer',i:'icon-PotPlayer.webp',os:['Windows'],last:1},
+ {n:'VLC',i:'icon-VLC.webp',os:['Windows','macOS','Android','iOS']},
+ {n:'IINA',i:'icon-IINA.webp',os:['macOS']},
+ {n:'Infuse',i:'icon-infuse.webp',os:['macOS','iOS']},
+ {n:'nPlayer',i:'icon-NPlayer.webp',os:['iOS','Android']},
+ {n:'MX Player',i:'icon-MXPlayer.webp',os:['Android']},
+ {n:'恒星播放器',i:'icon-StellarPlayer.webp',os:['Windows','macOS','Android']},
+ {n:'MPV',i:'icon-MPV.webp',os:['Windows','macOS','Android']},
+ {n:'弹弹Play',i:'icon-DDPlay.webp',os:['Windows','Android']},
+ {n:'复制串流地址',i:'icon-Copy.webp',os:null}];
+var T={onlyOS:1};
+function esc(s){return String(s==null?'':s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+function renderP(){
+  var list=PLAYERS.filter(p=>!(T.onlyOS && p.os && p.os.indexOf(OS)<0));
+  var prow=document.getElementById('prow');
+  prow.classList.toggle('icononly',!!T.iconOnly);
+  prow.innerHTML=list.map(p=>
+    '<div class="pbtn '+(p.last?'on':'')+'">'+(p.last?'<span class="last">上次</span>':'')
+    +'<span class="ico" style="background-image:url(icons/'+p.i+')"></span><span>'+esc(p.n)+'</span></div>').join('');
+}
+document.getElementById('ptool').addEventListener('click',e=>{
+  var tk=e.target.closest('.tk'); if(!tk)return;
+  var k=tk.dataset.k; T[k]=T[k]?0:1; tk.classList.toggle('on',!!T[k]); renderP();
+});
+
+fetch('data.json').then(r=>r.json()).then(function(d){
+  document.getElementById('code').textContent=d.code;
+  document.getElementById('title').textContent=d.title;
+  var rt=d.runtime?Math.floor(d.runtime/60)+'h '+(d.runtime%60)+'m':'';
+  document.getElementById('meta').innerHTML='<span class="star">★ '+d.rating+'</span>'
+    +'<span>'+d.year+'</span><span>·</span><span>'+d.premiere+'</span>'
+    +(rt?'<span>·</span><span>'+rt+'</span>':'')
+    +'<span class="chip gold">4K</span><span class="chip">中文字幕</span>';
+  document.getElementById('syn').textContent=d.overview;
+  document.getElementById('src').textContent='数据源：'+(d.provider[0]||'JavBus').split(':')[0];
+  document.getElementById('jCode').textContent=d.code;
+  document.getElementById('jDate').textContent=d.premiere;
+  document.getElementById('jLen').textContent=d.runtime+' 分钟';
+  document.getElementById('jMaker').textContent=d.maker;
+  document.getElementById('jSeries').textContent=d.series;
+  document.getElementById('jScore').textContent='★ '+d.rating+' / 10';
+  document.getElementById('tags').innerHTML=d.genres.map(g=>'<span class="tag">'+esc(g)+'</span>').join('');
+  document.getElementById('aName').textContent=d.actress;
+  document.getElementById('aSub').textContent='共 '+(d.works||0)+' 部作品 · 点击查看演员页';
+  document.getElementById('workTitle').textContent=d.actress+' 的作品';
+  renderP();
+
+  // 外链矩阵
+  document.getElementById('links').innerHTML=SITES.map(function(x){
+    var url=x.u+encodeURIComponent(d.code);
+    return '<a class="lnk'+(x.mz?' mz':'')+'" target="_blank" rel="noopener" href="'+url+'">'
+      +'<span class="dot2"></span>'+x.n+(x.mz?' <span style="font-size:10px;color:#7cd98a">中字</span>':'')+'</a>';
+  }).join('');
+  // 短评
+  document.getElementById('revs').innerHTML=REVIEWS.map(function(r){
+    var star='★'.repeat(r.s)+'☆'.repeat(5-r.s);
+    return '<div class="rev"><div class="av">'+r.u.slice(0,1)+'</div><div class="bd2">'
+      +'<div class="hd2"><b style="color:#dfe3ea">'+r.u+'</b><span class="sc2">'+star+'</span><span>'+r.d+'</span></div>'
+      +'<p>'+r.t+'</p><div class="sub2">👍 '+r.like+' 有用</div></div></div>';
+  }).join('');
+
+  document.getElementById('stills').innerHTML=[1,2,3,4,5,6].map(i=>
+    '<div class="still"><img src="img/bd'+i+'.jpg" onerror="this.parentNode.style.display=\'none\'"></div>').join('');
+  document.getElementById('works').innerHTML=(d.worksList||[]).map((w,k)=>
+    '<div class="mcard"><div class="pv"><img src="img/w'+k+'.jpg" onerror="this.parentNode.style.background=\'#1a1a22\'">'
+    +'<div class="cap"><b>'+esc(w.t)+'</b><em>'+(w.y||'')+'</em></div></div></div>').join('');
+  document.getElementById('more').innerHTML=(d.worksList||[]).slice(0,6).map((w,k)=>
+    '<div class="mcard"><div class="pv"><img src="img/w'+k+'.jpg" onerror="this.parentNode.style.background=\'#1a1a22\'">'
+    +'<div class="cap"><b>'+esc(w.t)+'</b><em>'+(w.y||'')+'</em></div></div></div>').join('');
+});
+</script>
+</body>
+</html>

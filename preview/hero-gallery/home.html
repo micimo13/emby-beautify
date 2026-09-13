@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANVY · 生产版轮播预览</title>
+<style>html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}
+  /* 生产版组件需要这些容器结构 */
+  .sections{display:block}</style>
+</head>
+<body>
+<script>
+(function () {
+  var THEME = new URLSearchParams(location.search).get('theme') || 'blackgold';
+  var PRESETS = {
+    aurora:{a:'#3ea6ff',b:'#7c5cff',bg:'#08080c'}, blackgold:{a:'#e8c66a',b:'#a8741a',bg:'#070608'},
+    champagne:{a:'#f2dfa8',b:'#c9a86a',bg:'#08070a'}, emerald:{a:'#10d9a3',b:'#0ea5e9',bg:'#050b0a'},
+    sakura:{a:'#ff6b9d',b:'#c86dd7',bg:'#0c070c'}, sunset:{a:'#ff9a3d',b:'#ff4d6d',bg:'#0c0805'},
+    amber:{a:'#ffc93c',b:'#e08e2b',bg:'#0a0805'}, crimson:{a:'#ff4d5e',b:'#a1213f',bg:'#0c0507'},
+    violet:{a:'#a855f7',b:'#6366f1',bg:'#08060e'}, graphite:{a:'#cbd5e1',b:'#64748b',bg:'#0a0b0d'}
+  };
+  var p = PRESETS[THEME] || PRESETS.blackgold;
+  window.VANVY_HOME_CONFIG = { theme: THEME };
+  var r = document.documentElement.style;
+  r.setProperty('--vh-acc', p.a); r.setProperty('--vh-acc2', p.b); r.setProperty('--vh-bg', p.bg);
+
+  function load(src, cb) {
+    var s = document.createElement('script');
+    s.src = src; s.onload = function(){cb();}; s.onerror = function(){cb(new Error('fail '+src));};
+    document.head.appendChild(s);
+  }
+  var lk = document.createElement('link');
+  lk.rel = 'stylesheet'; lk.href = 'comps/hero_home/vanvy-home.css';
+  document.head.appendChild(lk);
+
+  load('mock-data.js', function () {
+    load('mock-api.js', function () {
+      // 生产版组件靠这个容器挂载
+      var c = document.createElement('div');
+      c.className = 'homeSectionsContainer';
+      document.body.appendChild(c);
+      load('comps/hero_home/vanvy-home.js', function (err) {
+        if (err) { document.body.innerHTML = '<pre style="color:#f66;padding:20px">'+err.message+'</pre>'; return; }
+        setTimeout(function () {
+          try { parent.postMessage({ ready: 1, style: 'home' }, '*'); } catch (e) {}
+        }, 2200);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

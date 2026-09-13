@@ -1,0 +1,94 @@
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-carousel-banner_minimal, .vanvy-carousel-banner_minimal * { box-sizing: border-box; }
+
+.vanvy-carousel-banner_minimal {
+  position:relative; width:100%; height:78vh; height:var(--vh-hero-h, 100dvh); min-height:420px; overflow:hidden;
+  border-radius:8px; font-family:'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;
+}
+
+
+
+
+.vanvy-carousel-banner_minimal .minimal {
+  position:relative; width:100vw; height:100%; overflow:hidden;
+  background:#f5f4f0;
+}
+/* 细网格 */
+.vanvy-carousel-banner_minimal .minimal::before {
+  content:""; position:absolute; inset:0; opacity:.5;
+  background:
+    linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size:80px 80px;
+}
+/* 装饰竖线 */
+.vanvy-carousel-banner_minimal .minimal-line { position:absolute; top:0; bottom:0; width:1px; background:rgba(0,0,0,.08); z-index:0; }
+.vanvy-carousel-banner_minimal .minimal-line.l1 { left:25%; } .vanvy-carousel-banner_minimal .minimal-line.l2 { left:50%; } .vanvy-carousel-banner_minimal .minimal-line.l3 { left:75%; }
+
+/* 顶部导航极简 */
+.vanvy-carousel-banner_minimal .minimal-nav {
+  position:absolute; top:0; left:0; right:0; z-index:5;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:26px 5%; border-bottom:1px solid rgba(0,0,0,.08);
+}
+.vanvy-carousel-banner_minimal .minimal-logo { font-size:13px; font-weight:700; letter-spacing:6px; color:#111; }
+.vanvy-carousel-banner_minimal .minimal-navlink { font-size:11px; letter-spacing:3px; color:#666; }
+.vanvy-carousel-banner_minimal .minimal-navlink b { color:#111; }
+
+.vanvy-carousel-banner_minimal .minimal-slide { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; justify-content:center; padding:0 8%; }
+
+/* 超大排版 */
+.vanvy-carousel-banner_minimal .minimal-kicker {
+  font-size:12px; letter-spacing:8px; color:#999; margin-bottom:24px;
+  display:flex; align-items:center; gap:14px;
+}
+.vanvy-carousel-banner_minimal .minimal-kicker::before { content:""; width:48px; height:1px; background:#ccc; }
+.vanvy-carousel-banner_minimal .minimal-title {
+  font-size:clamp(64px, 8vw, 130px); font-weight:200; line-height:1.02; color:#111;
+  letter-spacing:-2px; margin-bottom:12px;
+}
+.vanvy-carousel-banner_minimal .minimal-title em { font-style:normal; font-weight:700; }
+.vanvy-carousel-banner_minimal .minimal-sub {
+  font-size:16px; font-weight:300; letter-spacing:10px; color:#888; margin-bottom:36px;
+}
+.vanvy-carousel-banner_minimal .minimal-row { display:flex; align-items:flex-end; justify-content:space-between; gap:40px; }
+.vanvy-carousel-banner_minimal .minimal-desc {
+  font-size:14px; line-height:2; color:#666; max-width:380px; letter-spacing:1px; font-weight:300;
+}
+.vanvy-carousel-banner_minimal .minimal-meta { display:flex; flex-direction:column; gap:6px; text-align:right; }
+.vanvy-carousel-banner_minimal .minimal-meta .vanvy-carousel-banner_minimal .num { font-size:44px; font-weight:200; color:#111; line-height:1; }
+.vanvy-carousel-banner_minimal .minimal-meta .vanvy-carousel-banner_minimal .lbl { font-size:10px; letter-spacing:4px; color:#999; }
+.vanvy-carousel-banner_minimal .minimal-btns { display:flex; gap:0; margin-top:40px; }
+.vanvy-carousel-banner_minimal .minimal-btn {
+  padding:14px 40px; font-size:12px; letter-spacing:4px; cursor:pointer;
+  background:none; border:none; transition:.2s;
+}
+.vanvy-carousel-banner_minimal .minimal-btn.play { background:#111; color:#f5f4f0; }
+.vanvy-carousel-banner_minimal .minimal-btn.play:hover { background:#333; }
+.vanvy-carousel-banner_minimal .minimal-btn.detail { color:#111; border-bottom:1px solid #111; padding-left:0; padding-right:0; margin-left:30px; }
+.vanvy-carousel-banner_minimal .minimal-btn.detail:hover { color:#666; border-color:#666; }
+
+/* 底部页码 */
+.vanvy-carousel-banner_minimal .minimal-pages { position:absolute; bottom:26px; right:8%; z-index:5; font-size:12px; letter-spacing:6px; color:#bbb; }
+.vanvy-carousel-banner_minimal .minimal-pages b { color:#111; }
+/* 底部缩略点 */
+.vanvy-carousel-banner_minimal .minimal-dots { position:absolute; bottom:30px; left:8%; z-index:5; display:flex; gap:24px; }
+.vanvy-carousel-banner_minimal .minimal-dot { font-size:10px; letter-spacing:3px; color:#bbb; cursor:pointer; }
+.vanvy-carousel-banner_minimal .minimal-dot.active { color:#111; font-weight:700; }
+.vanvy-carousel-banner_minimal .minimal-dot.active::after { content:""; display:block; width:100%; height:1px; background:#111; margin-top:4px; }
+
+.vanvy-carousel-banner_minimal [data-poster] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_minimal [data-thumb] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_minimal [data-overlay] { position:absolute; inset:0; background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.55)); }
+
+
+/* ── 满屏背景图（Vanvy backdrop layer）────────────────────── */
+.vanvy-carousel-banner_minimal .vbd-bd {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-size:cover; background-position:center 32%;
+  opacity:.30; transform:scale(1.04); transition:opacity .6s ease;
+}
+.vanvy-carousel-banner_minimal .vbd-scrim {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(180deg, rgba(245,244,240,.92) 0%, rgba(240,238,232,.88) 60%, rgba(232,229,222,.94) 100%);
+}

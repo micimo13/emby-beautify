@@ -1,0 +1,163 @@
+/* ═══════════════════════════════════════════════════════════
+   Hero Studio · CINEMA 电影感满屏 · 样式
+   作用域：.vanvy-hero-cinema
+   ═══════════════════════════════════════════════════════════ */
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-hero-cinema, .vanvy-hero-cinema * { box-sizing: border-box; }
+
+.vanvy-hero-cinema { display: block; margin: 0; }
+
+.vanvy-hero-cinema .vhc {
+  position: relative; width: 100%; height: var(--vh-hero-h, 100svh); min-height: 520px;
+  overflow: hidden; background: #08080c;
+  font-family: "PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  color: #fff; isolation: isolate;
+}
+
+/* ── 背景层 ── */
+.vanvy-hero-cinema .vhc-bgs { position: absolute; inset: 0; z-index: 0; }
+.vanvy-hero-cinema .vhc-bg {
+  position: absolute; inset: -3%;
+  background-size: cover; background-position: center 32%;
+  opacity: 0; will-change: transform, opacity;
+  transition: opacity 1s ease, transform 9s ease-out;
+}
+/* 底部渐隐，保证文字可读 */
+.vanvy-hero-cinema .vhc-veil {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(4,4,8,.86) 0%, rgba(4,4,8,.58) 32%, rgba(4,4,8,.1) 60%, rgba(4,4,8,.34) 100%),
+    linear-gradient(180deg, rgba(4,4,8,.22) 0%, transparent 24%, transparent 62%, rgba(4,4,8,.7) 100%);
+}
+/* 胶片颗粒 */
+.vanvy-hero-cinema .vhc-grain {
+  position: absolute; inset: -10%; z-index: 4; pointer-events: none; opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: vhc-grain 1.2s steps(3) infinite;
+}
+@keyframes vhc-grain {
+  0%   { transform: translate(0,0) }
+  33%  { transform: translate(-2%,1%) }
+  66%  { transform: translate(1%,-2%) }
+  100% { transform: translate(0,0) }
+}
+
+/* ── 内容 ── */
+.vanvy-hero-cinema .vhc-inner {
+  position: relative; z-index: 6; height: 100%;
+  max-width: 1560px; margin: 0 auto;
+  padding: clamp(28px,5vh,72px) clamp(20px,4.5vw,64px) clamp(88px,12vh,120px);
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
+}
+.vanvy-hero-cinema .vhc-left { max-width: min(58%, 760px); }
+
+.vanvy-hero-cinema .vhc-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 700; letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--vh-acc), var(--vh-acc2)); color: #1a1405;
+  box-shadow: 0 6px 26px color-mix(in srgb, var(--vh-acc) .32);
+  animation: vhc-up .6s cubic-bezier(.22,.7,.24,1) both;
+}
+
+.vanvy-hero-cinema .vhc-title {
+  margin: 18px 0 0; font-size: clamp(38px, 5.6vw, 88px); font-weight: 900;
+  line-height: 1.04; letter-spacing: -1px;
+  text-shadow: 0 6px 40px rgba(0,0,0,.8);
+  min-height: 1.1em;
+}
+.vanvy-hero-cinema .vhc-title::after {
+  content: ''; display: inline-block; width: 3px; height: .82em; margin-left: 6px;
+  background: var(--vh-acc); vertical-align: -.06em;
+  animation: vhc-caret .9s steps(1) infinite;
+}
+@keyframes vhc-caret { 0%,50%{opacity:1} 51%,100%{opacity:0} }
+
+.vanvy-hero-cinema .vhc-meta {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-top: 16px; font-size: 14.5px; color: #cfd4de;
+  animation: vhc-up .6s .1s cubic-bezier(.22,.7,.24,1) both;
+}
+.vanvy-hero-cinema .vhc-score { display: inline-flex; align-items: baseline; gap: 3px; color: var(--vh-acc); font-weight: 800; font-size: 19px; }
+.vanvy-hero-cinema .vhc-score i { font-style: normal; font-size: 11.5px; font-weight: 600; opacity: .8; }
+.vanvy-hero-cinema .vhc-dot { width: 3px; height: 3px; border-radius: 50%; background: #6b7280; }
+
+.vanvy-hero-cinema .vhc-desc {
+  margin: 18px 0 0; max-width: 60ch; font-size: 15px; line-height: 1.78; color: #b9c0cc;
+  text-shadow: 0 2px 14px rgba(0,0,0,.8);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  animation: vhc-up .6s .18s cubic-bezier(.22,.7,.24,1) both;
+}
+
+.vanvy-hero-cinema .vhc-cta { display: flex; gap: 12px; margin-top: 26px; animation: vhc-up .6s .26s cubic-bezier(.22,.7,.24,1) both; }
+.vanvy-hero-cinema .vhc-btn {
+  height: 46px; padding: 0 26px; border-radius: 11px; border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.09); color: #fff; font-size: 14.5px; font-weight: 700;
+  cursor: pointer; transition: .18s; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.vanvy-hero-cinema .vhc-btn:hover { background: rgba(255,255,255,.2); transform: translateY(-1px); }
+.vanvy-hero-cinema .vhc-btn.pri {
+  background: linear-gradient(135deg,var(--vh-acc),var(--vh-acc2)); color: #1a1405; border-color: transparent;
+  box-shadow: 0 10px 34px color-mix(in srgb, var(--vh-acc) .34);
+}
+.vanvy-hero-cinema .vhc-btn.pri:hover { box-shadow: 0 14px 44px color-mix(in srgb, var(--vh-acc) .5); }
+
+/* ── 缩略图轨（右侧竖排）── */
+.vanvy-hero-cinema .vhc-rail {
+  display: flex; flex-direction: column; gap: 9px; flex: 0 0 auto;
+  max-height: 62vh; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px;
+  scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--vh-acc) 45%, transparent) transparent;
+  animation: vhc-up .6s .34s cubic-bezier(.22,.7,.24,1) both;
+}
+.vanvy-hero-cinema .vhc-thumb {
+  position: relative; width: 128px; height: 72px; border-radius: 9px; overflow: hidden;
+  border: 1.5px solid rgba(255,255,255,.16); background-size: cover; background-position: center;
+  cursor: pointer; padding: 0; opacity: .52; transition: .22s; filter: saturate(.8);
+}
+.vanvy-hero-cinema .vhc-thumb:hover { opacity: .86; transform: translateX(-4px); }
+.vanvy-hero-cinema .vhc-thumb.on {
+  opacity: 1; filter: none; border-color: var(--vh-acc);
+  box-shadow: 0 0 0 1px var(--vh-acc), 0 8px 26px rgba(0,0,0,.5); transform: translateX(-8px);
+}
+.vanvy-hero-cinema .vhc-bar {
+  position: absolute; left: 0; bottom: 0; height: 2.5px; width: 0;
+  background: linear-gradient(90deg,var(--vh-acc),var(--vh-acc2));
+}
+
+.vanvy-hero-cinema .vhc-hint {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 7;
+  font-size: 11.5px; letter-spacing: 1px; color: rgba(255,255,255,.3);
+}
+
+@keyframes vhc-up { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: none } }
+
+/* ── 响应式 ── */
+@media (max-width: 1100px) {
+  .vanvy-hero-cinema .vhc-rail { display: none; }
+  .vanvy-hero-cinema .vhc-left { max-width: 100%; }
+}
+@media (max-width: 760px) {
+  .vanvy-hero-cinema .vhc { height: 78vh; height: var(--vh-hero-h, 100dvh); min-height: 460px; }
+  .vanvy-hero-cinema .vhc-inner { padding: 24px 18px 76px; }
+  .vanvy-hero-cinema .vhc-desc { -webkit-line-clamp: 2; }
+  .vanvy-hero-cinema .vhc-btn { height: 42px; padding: 0 18px; font-size: 13.5px; }
+  .vanvy-hero-cinema .vhc-hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vanvy-hero-cinema .vhc-bg { transition: opacity .3s ease; }
+  .vanvy-hero-cinema .vhc-grain { animation: none; }
+  .vanvy-hero-cinema .vhc-title::after { animation: none; }
+}
+
+
+/* 切换箭头 */
+.vanvy-hero-cinema .vhc-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 8;
+  width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.2); color: #fff;
+  font-size: 20px; line-height: 1; cursor: pointer; transition: .2s;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.vanvy-hero-cinema .vhc-arrow:hover { background: rgba(0,0,0,.72); border-color: var(--vh-acc); transform: translateY(-50%) scale(1.06); }
+.vanvy-hero-cinema .vhc-arrow.l { left: clamp(8px,1.4vw,20px); }
+.vanvy-hero-cinema .vhc-arrow.r { right: clamp(8px,1.4vw,20px); }
+@media (max-width: 900px) { .vanvy-hero-cinema .vhc-arrow { display: none; } }

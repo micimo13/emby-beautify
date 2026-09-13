@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANVY · 首页轮播 HERO 工作室</title>
+<style>
+  :root{ --bg:#08080c; --card:#13131b; --line:rgba(255,255,255,.09);
+         --fg:#eef0f4; --dim:#8a90a0; --acc:#e8c66a; --pad:clamp(16px,3vw,40px); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--fg);
+    font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  header{position:sticky;top:0;z-index:50;background:rgba(8,8,12,.92);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);padding:13px var(--pad)}
+  .hd{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16.5px;letter-spacing:1.5px}
+  .brand i{width:10px;height:10px;border-radius:50%;background:var(--acc);box-shadow:0 0 16px var(--acc)}
+  .sub{font-size:12.5px;color:var(--dim)}
+  .grow{flex:1 1 auto}
+  .themes{display:flex;gap:7px;flex-wrap:wrap}
+  .tbtn{display:inline-flex;align-items:center;gap:6px;height:29px;padding:0 11px;border-radius:999px;
+    border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:12px;cursor:pointer;color:var(--fg);transition:.18s}
+  .tbtn:hover{background:rgba(255,255,255,.11)}
+  .tbtn.on{border-color:var(--acc);background:rgba(255,255,255,.12);font-weight:700}
+  .tbtn .sw{width:12px;height:12px;border-radius:50%}
+  main{padding:var(--pad)}
+  .wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .stage{position:relative;width:100%;height:min(64vh,640px);background:#000;overflow:hidden}
+  .stage iframe{position:absolute;top:0;left:0;width:1500px;height:900px;border:0;transform-origin:top left}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;padding:13px 15px;border-top:1px solid var(--line)}
+  .tab{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 15px;border-radius:9px;
+    border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--fg);
+    font-size:13px;font-weight:600;cursor:pointer;transition:.18s}
+  .tab:hover{background:rgba(255,255,255,.12)}
+  .tab.on{background:var(--acc);color:#17130a;border-color:transparent}
+  .tab em{font-style:normal;font-size:11px;opacity:.6;font-family:ui-monospace,Menlo,monospace}
+  .meta{padding:13px 16px;border-top:1px solid var(--line);font-size:13px;color:var(--dim);line-height:1.8}
+  .meta b{color:#d3d9e4}
+  .meta .fx{display:block;margin-top:5px;color:#9aa2b0;font-size:12.5px}
+  .meta .fx i{font-style:normal;color:var(--acc)}
+  footer{padding:20px var(--pad) 46px;color:var(--dim);font-size:12.5px;line-height:1.9}
+  code{font-family:ui-monospace,Menlo,monospace;background:rgba(255,255,255,.07);
+    padding:2px 6px;border-radius:5px;font-size:12px;color:#cfd5e2}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .btn{display:inline-flex;align-items:center;height:34px;padding:0 15px;border-radius:9px;font-size:13px;
+    font-weight:600;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--fg);transition:.18s}
+  .btn:hover{background:rgba(255,255,255,.14)}
+  .btn.pri{background:var(--acc);color:#17130a;border-color:transparent}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <div class="brand"><i></i>VANVY · HERO 工作室</div>
+    <span class="sub">全新开发 · 动态效果 + 布局多样性 · 含媒体库行</span>
+    <div class="grow"></div>
+    <div class="themes" id="themes"></div>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="stage"><iframe id="fr" scrolling="no"></iframe></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="meta" id="meta"></div>
+  </div>
+</main>
+<footer>
+  <div><b style="color:#c9cfdb">说明</b>：这些是<b>全新开发</b>的轮播布局（不是旧样式改造），
+  引擎内置运动系统 —— Ken Burns 推拉 / 视差 / 逐字标题 / 数字滚动 / 3D 透视 / 光斑跟随。</div>
+  <div style="margin-top:8px">部署：<code id="cmd"></code></div>
+  <div class="bar">
+    <a class="btn" href="../banner-gallery/">旧版 7 款（历史产物）</a>
+    <a class="btn" href="../loading-gallery/">加载页预览</a>
+  </div>
+</footer>
+<script>
+(function () {
+  var STYLES = [
+    { k:'classic', n:'CLASSIC 经典满屏', t:'原始默认样式',
+      d:'底部对齐文案 + 左右箭头 + 分页点。<b>就是最初设计稿那个默认样式</b>。',
+      fx:'背景缓慢推拉 · 文案逐层上浮 · 左右箭头切换 · 悬停显箭头' },
+    { k:'cinema', n:'CINEMA 电影感', t:'满屏沉浸',
+      d:'满屏背景 + 右侧竖排缩略图轨（<b>可滚动</b>）。最像影院预告片。',
+      fx:'KenBurns 推拉 · 三层鼠标视差 · 标题逐字 · 评分数字滚动 · 缩略图轨可滚' },
+    { k:'spotlight', n:'SPOTLIGHT 聚光', t:'暗场聚焦',
+      d:'暗背景 + 鼠标跟随光斑揭示 + 右侧 3D 倾斜海报。',
+      fx:'光斑跟随鼠标 · 中央呼吸光晕 · 海报悬停浮起发光 · 左右箭头' },
+    { k:'gallery', n:'GALLERY 画廊', t:'横向浏览',
+      d:'横向 snap 滚动大图廊，<b>可滚轮/拖拽/触屏滑动</b>，中央卡片放大发光。',
+      fx:'原生横向滚动 · snap 居中放大 · 背景虚化换图 · 拖拽 · 箭头' },
+    { k:'wave', n:'WAVE 波浪', t:'设计师款（替代 3D）',
+      d:'海报沿正弦曲线起伏排布，当前卡挺立发光，邻卡依次下沉倾斜。<b>优雅的动态浏览</b>。',
+      fx:'正弦波排布 · 弹性过渡 · 拖拽/滚轮/箭头/键盘 ← → · 全屏虚化背景跟随' },
+    { k:'mosaic', n:'MOSAIC 马赛克墙', t:'一屏多看',
+      d:'左大图 + 右 4 瓦片，<b>全屏背景铺满</b>。信息密度最高。',
+      fx:'全屏虚化背景 · 瓦片依次翻入 · 主图 KenBurns · 悬停放大 · 左右箭头' }
+  ];
+  var THEMES = [
+    {k:'aurora',n:'极光蓝',a:'#3ea6ff'},{k:'blackgold',n:'黑金',a:'#e8c66a'},
+    {k:'champagne',n:'香槟金',a:'#f2dfa8'},{k:'emerald',n:'翡翠绿',a:'#10d9a3'},
+    {k:'sakura',n:'樱花粉',a:'#ff6b9d'},{k:'sunset',n:'落日橙',a:'#ff9a3d'},
+    {k:'amber',n:'琥珀金',a:'#ffc93c'},{k:'crimson',n:'赤霞红',a:'#ff4d5e'},
+    {k:'violet',n:'幻紫',a:'#a855f7'},{k:'graphite',n:'石墨灰',a:'#cbd5e1'}
+  ];
+  var qs = new URLSearchParams(location.search);
+  var cur = qs.get('style') || 'cinema', th = qs.get('theme') || 'blackgold';
+  var fr=document.getElementById('fr'), tabs=document.getElementById('tabs'),
+      meta=document.getElementById('meta'), cmd=document.getElementById('cmd'),
+      stage=document.querySelector('.stage'), themesEl=document.getElementById('themes');
+  function by(k){ for(var i=0;i<STYLES.length;i++) if(STYLES[i].k===k) return STYLES[i]; return STYLES[0]; }
+  function tobj(k){ for(var i=0;i<THEMES.length;i++) if(THEMES[i].k===k) return THEMES[i]; return THEMES[1]; }
+  function renderThemes(){
+    themesEl.innerHTML='';
+    THEMES.forEach(function(t){
+      var b=document.createElement('span');
+      b.className='tbtn'+(t.k===th?' on':'');
+      b.innerHTML='<i class="sw" style="background:'+t.a+'"></i>'+t.n;
+      b.onclick=function(){ th=t.k; document.documentElement.style.setProperty('--acc',t.a); history.replaceState(null,'','?style='+cur+'&theme='+th); render(); };
+      themesEl.appendChild(b);
+    });
+  }
+  function renderTabs(){
+    tabs.innerHTML='';
+    STYLES.forEach(function(s){
+      var b=document.createElement('button');
+      b.className='tab'+(s.k===cur?' on':'');
+      b.innerHTML=s.n+' <em>'+s.k+'</em>';
+      b.onclick=function(){ cur=s.k; history.replaceState(null,'','?style='+cur+'&theme='+th); render(); };
+      tabs.appendChild(b);
+    });
+  }
+  function render(){
+    var s=by(cur);
+    renderThemes(); renderTabs();
+    document.documentElement.style.setProperty('--acc', tobj(th).a);
+    fr.src='preview.html?style='+cur+'&theme='+th+'&t='+Date.now();
+    meta.innerHTML='<div><b>'+s.n+'</b> · '+s.t+'<br>'+s.d+
+      '<span class="fx">动态：<i>'+s.fx+'</i></span></div>';
+    cmd.textContent='bash install-ves.sh --container emby --features 2 --bstyle '+cur+' --theme '+th+' --yes';
+    setTimeout(fit,80);
+  }
+  function fit(){
+    var w=stage.clientWidth,h=stage.clientHeight,sc=Math.max(w/1500,h/900);
+    fr.style.transform='scale('+sc+')';
+    fr.style.left=((w-1500*sc)/2)+'px'; fr.style.top=((h-900*sc)/2)+'px';
+  }
+  render();
+  window.addEventListener('resize',fit);
+  setTimeout(fit,700); setTimeout(fit,2000);
+})();
+</script>
+</body>
+</html>

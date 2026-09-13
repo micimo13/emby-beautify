@@ -1,0 +1,11 @@
+{
+  "port": 18097,
+  "host": "0.0.0.0",
+  "tmdb_key": "",
+  "proxies": [],
+  "proxy_fallback_direct": true,
+  "ttl": 604800,
+  "timeout": 20,
+  "cache_dir": "",
+  "lang": "zh-CN"
+}

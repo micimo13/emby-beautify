@@ -1,0 +1,151 @@
+
+.vanvy-carousel-banner_neo, .vanvy-carousel-banner_neo * { margin:0; padding:0; box-sizing:border-box; font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif; }
+.vanvy-carousel-banner_neo { position:relative; width:100%; height:78vh; height:var(--vh-hero-h, 100dvh); min-height:420px; overflow:hidden; }
+
+/* ── 赛博背景 ── */
+.vanvy-carousel-banner_neo .neo {
+  position:relative; width:100vw; height:100%; overflow:hidden;
+  background:
+    radial-gradient(900px 500px at 75% 30%, rgba(var(--vanvy-accent2-rgb, 255,0,255),.10), transparent 60%),
+    radial-gradient(700px 500px at 20% 70%, rgba(var(--vanvy-accent-rgb, 0,255,255),.08), transparent 60%),
+    linear-gradient(180deg,#0a0118 0%, #12042e 50%, #05010f 100%);
+}
+/* 网格地面 */
+.vanvy-carousel-banner_neo .neo::before {
+  content:""; position:absolute; inset:0;
+  background:
+    linear-gradient(rgba(var(--vanvy-accent-rgb, 0,255,255),.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--vanvy-accent-rgb, 0,255,255),.07) 1px, transparent 1px);
+  background-size:60px 60px;
+  transform:perspective(400px) rotateX(60deg) scale(2.2) translateY(40%);
+  transform-origin:bottom center;
+  mask-image:linear-gradient(transparent, #000 60%);
+  animation:gridmove 3s linear infinite;
+}
+@keyframes gridmove { from{background-position:0 0,0 0} to{background-position:0 60px,60px 0} }
+
+/* 扫描线 */
+.vanvy-carousel-banner_neo .neo::after {
+  content:""; position:absolute; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,transparent,rgba(var(--vanvy-accent-rgb, 0,255,255),.4),transparent);
+  animation:scan 4s linear infinite;
+}
+@keyframes scan { 0%{top:-5%} 100%{top:105%} }
+
+/* ── 轮播内容 ── */
+.vanvy-carousel-banner_neo .neo-slide { position:absolute; inset:0; display:flex; align-items:center; padding:0 8%; gap:60px; }
+.vanvy-carousel-banner_neo .neo-poster {
+  width:340px; height:500px; flex-shrink:0; position:relative;
+  border-radius:12px; overflow:hidden;
+  background:linear-gradient(160deg,#1a0b2e,#0d0520);
+  box-shadow:
+    0 0 0 2px rgba(var(--vanvy-accent-rgb, 0,255,255),.5),
+    0 0 24px rgba(var(--vanvy-accent-rgb, 0,255,255),.35),
+    0 0 80px rgba(var(--vanvy-accent-rgb, 0,255,255),.15),
+    inset 0 0 40px rgba(var(--vanvy-accent2-rgb, 255,0,255),.1);
+  animation:neonpulse 2.5s ease-in-out infinite;
+}
+@keyframes neonpulse { 0%,100%{box-shadow:0 0 0 2px rgba(var(--vanvy-accent-rgb, 0,255,255),.5),0 0 24px rgba(var(--vanvy-accent-rgb, 0,255,255),.35),0 0 80px rgba(var(--vanvy-accent-rgb, 0,255,255),.15)} 50%{box-shadow:0 0 0 2px rgba(var(--vanvy-accent2-rgb, 255,0,255),.6),0 0 30px rgba(var(--vanvy-accent2-rgb, 255,0,255),.4),0 0 90px rgba(var(--vanvy-accent2-rgb, 255,0,255),.2)} }
+.vanvy-carousel-banner_neo .neo-poster::after {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.6));
+}
+.vanvy-carousel-banner_neo .neo-poster img { width:100%; height:100%; object-fit:cover; opacity:.85; }
+
+.vanvy-carousel-banner_neo .neo-info { flex:1; max-width:640px; position:relative; z-index:2; }
+.vanvy-carousel-banner_neo .neo-tag {
+  display:inline-block; padding:4px 14px; margin-bottom:16px;
+  font-size:12px; letter-spacing:3px; color:var(--vanvy-accent, #0ff); border:1px solid rgba(var(--vanvy-accent-rgb, 0,255,255),.5);
+  background:rgba(var(--vanvy-accent-rgb, 0,255,255),.06); text-shadow:0 0 8px rgba(var(--vanvy-accent-rgb, 0,255,255),.8);
+  box-shadow:0 0 12px rgba(var(--vanvy-accent-rgb, 0,255,255),.2), inset 0 0 12px rgba(var(--vanvy-accent-rgb, 0,255,255),.1);
+  animation:glitch 3s infinite;
+}
+@keyframes glitch {
+  0%,92%,100%{transform:translate(0)} 93%{transform:translate(-2px,1px)} 95%{transform:translate(2px,-1px)} 97%{transform:translate(-1px,2px)}
+}
+.vanvy-carousel-banner_neo .neo-title {
+  font-size:64px; font-weight:900; line-height:1.05; color:#fff; margin-bottom:8px;
+  text-shadow:
+    0 0 10px rgba(var(--vanvy-accent-rgb, 0,255,255),.7),
+    0 0 40px rgba(var(--vanvy-accent-rgb, 0,255,255),.4),
+    3px 3px 0 rgba(var(--vanvy-accent2-rgb, 255,0,255),.5);
+  letter-spacing:2px;
+}
+.vanvy-carousel-banner_neo .neo-sub {
+  font-size:20px; color:var(--vanvy-accent, #0ff); letter-spacing:6px; margin-bottom:18px;
+  text-shadow:0 0 12px rgba(var(--vanvy-accent-rgb, 0,255,255),.8); font-weight:300;
+}
+.vanvy-carousel-banner_neo .neo-meta { display:flex; gap:12px; margin-bottom:18px; }
+.vanvy-carousel-banner_neo .neo-chip {
+  padding:3px 12px; font-size:12px; border-radius:3px;
+  background:rgba(var(--vanvy-accent2-rgb, 255,0,255),.12); border:1px solid rgba(var(--vanvy-accent2-rgb, 255,0,255),.4);
+  color:var(--vanvy-accent-2, #f0f); text-shadow:0 0 6px rgba(var(--vanvy-accent2-rgb, 255,0,255),.7);
+}
+.vanvy-carousel-banner_neo .neo-chip.cyan { background:rgba(var(--vanvy-accent-rgb, 0,255,255),.1); border-color:rgba(var(--vanvy-accent-rgb, 0,255,255),.4); color:var(--vanvy-accent, #0ff); text-shadow:0 0 6px rgba(var(--vanvy-accent-rgb, 0,255,255),.7); }
+.vanvy-carousel-banner_neo .neo-desc {
+  font-size:15px; line-height:1.7; color:rgba(255,255,255,.72); margin-bottom:24px;
+  max-width:540px; letter-spacing:.5px;
+}
+.vanvy-carousel-banner_neo .neo-btns { display:flex; gap:14px; }
+.vanvy-carousel-banner_neo .neo-btn {
+  padding:12px 34px; font-size:15px; letter-spacing:2px; cursor:pointer; border:none;
+  font-weight:700; transition:.2s;
+}
+.vanvy-carousel-banner_neo .neo-btn.play {
+  background:transparent; color:var(--vanvy-accent, #0ff); border:2px solid var(--vanvy-accent, #0ff);
+  box-shadow:0 0 16px rgba(var(--vanvy-accent-rgb, 0,255,255),.4), inset 0 0 16px rgba(var(--vanvy-accent-rgb, 0,255,255),.1);
+  text-shadow:0 0 8px rgba(var(--vanvy-accent-rgb, 0,255,255),.8);
+}
+.vanvy-carousel-banner_neo .neo-btn.play:hover { background:rgba(var(--vanvy-accent-rgb, 0,255,255),.15); box-shadow:0 0 30px rgba(var(--vanvy-accent-rgb, 0,255,255),.6); }
+.vanvy-carousel-banner_neo .neo-btn.detail {
+  background:transparent; color:var(--vanvy-accent-2, #f0f); border:2px solid rgba(var(--vanvy-accent2-rgb, 255,0,255),.6);
+  box-shadow:0 0 16px rgba(var(--vanvy-accent2-rgb, 255,0,255),.3);
+  text-shadow:0 0 8px rgba(var(--vanvy-accent2-rgb, 255,0,255),.8);
+}
+
+/* 侧边霓虹竖字 */
+.vanvy-carousel-banner_neo .neo-side {
+  position:absolute; right:24px; top:50%; transform:translateY(-50%) rotate(180deg);
+  writing-mode:vertical-rl; font-size:14px; letter-spacing:10px; color:rgba(var(--vanvy-accent-rgb, 0,255,255),.25);
+  text-shadow:0 0 20px rgba(var(--vanvy-accent-rgb, 0,255,255),.3);
+}
+/* 角标 */
+.vanvy-carousel-banner_neo .neo-corner { position:absolute; top:24px; left:30px; font-size:12px; letter-spacing:4px; color:rgba(var(--vanvy-accent-rgb, 0,255,255),.5); text-shadow:0 0 10px rgba(var(--vanvy-accent-rgb, 0,255,255),.5); }
+.vanvy-carousel-banner_neo .neo-corner b { color:var(--vanvy-accent-2, #f0f); }
+/* 故障装饰条 */
+.vanvy-carousel-banner_neo .neo-bar { position:absolute; height:2px; background:linear-gradient(90deg,transparent,var(--vanvy-accent, #0ff),transparent); opacity:.5; }
+.vanvy-carousel-banner_neo .neo-bar.b1 { top:18%; left:0; right:60%; animation:barjitter 2s infinite; }
+.vanvy-carousel-banner_neo .neo-bar.b2 { bottom:22%; right:0; left:55%; animation:barjitter 2.5s infinite reverse; }
+@keyframes barjitter { 0%,100%{opacity:.3; transform:translateX(0)} 50%{opacity:.7; transform:translateX(10px)} }
+/* 底部缩略图条 */
+.vanvy-carousel-banner_neo .neo-thumbs { position:absolute; bottom:26px; left:50%; transform:translateX(-50%); display:flex; gap:10px; }
+.vanvy-carousel-banner_neo .neo-thumb { width:110px; height:62px; border-radius:6px; background:rgba(255,255,255,.05); border:1.5px solid rgba(var(--vanvy-accent-rgb, 0,255,255),.25); cursor:pointer; position:relative; overflow:hidden; }
+.vanvy-carousel-banner_neo .neo-thumb.active { border-color:var(--vanvy-accent, #0ff); box-shadow:0 0 14px rgba(var(--vanvy-accent-rgb, 0,255,255),.5); }
+.vanvy-carousel-banner_neo .neo-thumb.active::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(var(--vanvy-accent-rgb, 0,255,255),.15),transparent); animation:thumbscan 2s infinite; }
+@keyframes thumbscan { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
+
+.vanvy-carousel-banner_neo .neo-poster-img {
+  position:absolute; inset:0; background-size:cover; background-position:center;
+}
+.vanvy-carousel-banner_neo .neo-poster-glow {
+  position:absolute; inset:0;
+  background:linear-gradient(180deg,transparent 55%,rgba(5,1,15,.7));
+}
+.vanvy-carousel-banner_neo .neo-thumb {
+  background-size:cover; background-position:center;
+}
+.vanvy-carousel-banner_neo .neo-side {
+  writing-mode:vertical-rl;
+}
+
+
+/* ── 满屏背景图（Vanvy backdrop layer）────────────────────── */
+.vanvy-carousel-banner_neo .vbd-bd {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-size:cover; background-position:center 32%;
+  opacity:.52; transform:scale(1.04); transition:opacity .6s ease;
+}
+.vanvy-carousel-banner_neo .vbd-scrim {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(180deg, rgba(10,1,24,.74) 0%, rgba(18,4,46,.58) 50%, rgba(5,1,15,.86) 100%);
+}

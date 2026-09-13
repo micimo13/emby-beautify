@@ -1,0 +1,116 @@
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-carousel-banner_paper, .vanvy-carousel-banner_paper * { box-sizing: border-box; }
+
+.vanvy-carousel-banner_paper {
+  position:relative; width:100%; height:78vh; height:var(--vh-hero-h, 100dvh); min-height:420px; overflow:hidden;
+  border-radius:8px; font-family:'Hiragino Mincho ProN','Songti SC','Noto Serif SC',serif;
+}
+
+
+
+
+.vanvy-carousel-banner_paper .paper {
+  position:relative; width:100vw; height:100%; overflow:hidden;
+  background:linear-gradient(160deg,#efe9df 0%, #e8e0d2 45%, #ddd2bf 100%);
+}
+/* 纸纹噪点 */
+.vanvy-carousel-banner_paper .paper::before {
+  content:""; position:absolute; inset:0; opacity:.4;
+  background:radial-gradient(rgba(0,0,0,.025) 1px, transparent 1px);
+  background-size:4px 4px;
+}
+/* 纸层装饰 */
+.vanvy-carousel-banner_paper .paper-layer { position:absolute; border-radius:50%; background:rgba(255,255,255,.4); box-shadow:0 6px 20px rgba(0,0,0,.06); }
+.vanvy-carousel-banner_paper .paper-layer.l1 { width:420px; height:420px; top:-120px; right:-80px; }
+.vanvy-carousel-banner_paper .paper-layer.l2 { width:260px; height:260px; bottom:-60px; left:15%; }
+
+.vanvy-carousel-banner_paper .paper-slide { position:absolute; inset:0; display:flex; align-items:center; padding:0 10%; gap:70px; z-index:2; }
+
+/* 海报 — 纸片层次 */
+.vanvy-carousel-banner_paper .paper-poster {
+  width:330px; height:490px; flex-shrink:0; position:relative;
+  background:linear-gradient(170deg,#c9b8a3,#b7a48d);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.7),
+    0 8px 24px rgba(120,100,70,.25),
+    0 2px 0 #a8957e,
+    0 3px 0 #9d8a73,
+    0 4px 0 #94816a;
+  border-radius:4px;
+}
+.vanvy-carousel-banner_paper .paper-poster::before {
+  content:""; position:absolute; inset:8px; border:1px solid rgba(255,255,255,.35); border-radius:2px;
+}
+.vanvy-carousel-banner_paper .paper-poster::after {
+  content:""; position:absolute; left:50%; top:0; bottom:0; width:1px;
+  background:rgba(255,255,255,.3);
+}
+.vanvy-carousel-banner_paper .paper-poster .vanvy-carousel-banner_paper .stamp {
+  position:absolute; bottom:26px; right:24px; width:64px; height:64px;
+  border:2.5px solid rgba(150,70,50,.55); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(150,70,50,.6); font-size:11px; letter-spacing:2px; transform:rotate(-12deg);
+}
+.vanvy-carousel-banner_paper .paper-poster .vanvy-carousel-banner_paper .vert {
+  position:absolute; top:20px; right:14px; writing-mode:vertical-rl;
+  font-size:13px; letter-spacing:8px; color:rgba(255,255,255,.6);
+}
+
+.vanvy-carousel-banner_paper .paper-info { flex:1; max-width:600px; position:relative; }
+.vanvy-carousel-banner_paper .paper-kicker {
+  font-size:13px; letter-spacing:8px; color:#a8957e; margin-bottom:20px;
+  display:flex; align-items:center; gap:12px;
+}
+.vanvy-carousel-banner_paper .paper-kicker::before { content:""; width:40px; height:1px; background:#c4b49a; }
+.vanvy-carousel-banner_paper .paper-title {
+  font-size:58px; font-weight:600; line-height:1.2; color:#4a4238;
+  letter-spacing:6px; margin-bottom:6px;
+}
+.vanvy-carousel-banner_paper .paper-title-en {
+  font-family:Georgia,serif; font-size:17px; color:#a8957e; letter-spacing:4px; margin-bottom:20px;
+}
+.vanvy-carousel-banner_paper .paper-meta { display:flex; gap:10px; margin-bottom:20px; }
+.vanvy-carousel-banner_paper .paper-chip {
+  padding:3px 14px; font-size:12px; color:#6b6153;
+  background:rgba(255,255,255,.5); border:1px solid #d8ccb8; border-radius:20px; letter-spacing:1px;
+}
+.vanvy-carousel-banner_paper .paper-desc {
+  font-size:15px; line-height:2; color:#6b6153; margin-bottom:28px; max-width:500px;
+  letter-spacing:1.5px;
+}
+.vanvy-carousel-banner_paper .paper-btns { display:flex; gap:14px; }
+.vanvy-carousel-banner_paper .paper-btn {
+  padding:11px 32px; font-size:14px; letter-spacing:3px; cursor:pointer;
+  font-family:inherit; transition:.2s;
+}
+.vanvy-carousel-banner_paper .paper-btn.play { background:#4a4238; color:#f5efe4; border:none; border-radius:3px; box-shadow:0 3px 0 #2f2a23; }
+.vanvy-carousel-banner_paper .paper-btn.play:hover { background:#5a5145; }
+.vanvy-carousel-banner_paper .paper-btn.detail { background:transparent; color:#4a4238; border:1px solid #b7a48d; border-radius:3px; }
+.vanvy-carousel-banner_paper .paper-btn.detail:hover { background:rgba(255,255,255,.4); }
+
+/* 顶部留白标记 */
+.vanvy-carousel-banner_paper .paper-header { position:absolute; top:30px; left:10%; z-index:3; display:flex; align-items:center; gap:14px; }
+.vanvy-carousel-banner_paper .paper-logo { font-size:15px; letter-spacing:4px; color:#8a7a63; font-weight:600; }
+.vanvy-carousel-banner_paper .paper-header .vanvy-carousel-banner_paper .rule { width:60px; height:1px; background:#c4b49a; }
+
+/* 底部缩略图 */
+.vanvy-carousel-banner_paper .paper-thumbs { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); display:flex; gap:12px; z-index:3; }
+.vanvy-carousel-banner_paper .paper-thumb { width:96px; height:56px; background:#e0d5c2; border-radius:3px; box-shadow:0 2px 0 rgba(120,100,70,.15), 0 3px 8px rgba(120,100,70,.12); position:relative; }
+.vanvy-carousel-banner_paper .paper-thumb.active { outline:2px solid #b7a48d; outline-offset:3px; }
+.vanvy-carousel-banner_paper .paper-thumb.active::after { content:"●"; position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:8px; color:#b7a48d; }
+
+.vanvy-carousel-banner_paper [data-poster] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_paper [data-thumb] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_paper [data-overlay] { position:absolute; inset:0; background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.55)); }
+
+
+/* ── 满屏背景图（Vanvy backdrop layer）────────────────────── */
+.vanvy-carousel-banner_paper .vbd-bd {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-size:cover; background-position:center 32%;
+  opacity:.40; transform:scale(1.04); transition:opacity .6s ease;
+}
+.vanvy-carousel-banner_paper .vbd-scrim {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(160deg, rgba(239,233,223,.90) 0%, rgba(232,224,210,.86) 45%, rgba(221,210,191,.93) 100%);
+}

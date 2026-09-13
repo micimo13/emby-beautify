@@ -1,0 +1,36 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · AURORA 极光版
+   原创: 极光粒子效果 + 光晕 + 动态圆环
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes aurora-pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.1); } }
+@keyframes aurora-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes aurora-glow { 0%, 100% { box-shadow: 0 0 20px color-mix(in srgb, var(--vl-acc) calc(0.3 * 100%), transparent), 0 0 40px color-mix(in srgb, var(--vl-acc2) calc(0.2 * 100%), transparent); } 50% { box-shadow: 0 0 40px color-mix(in srgb, var(--vl-acc) calc(0.6 * 100%), transparent), 0 0 80px color-mix(in srgb, var(--vl-acc2) calc(0.4 * 100%), transparent); } }
+@keyframes aurora-bar { 0% { width: 0; opacity: 1; } 80% { width: 60%; opacity: 1; } 100% { width: 60%; opacity: 0; } }
+@keyframes aurora-float { 0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; } 50% { transform: translateY(-20px) scale(1.2); opacity: 1; } }
+@keyframes aurora-fadeout { 0% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }
+
+#vanvy-loading.vl-style-aurora { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, color-mix(in srgb, var(--vl-acc2) 20%, var(--vl-bg)) 0%, color-mix(in srgb, var(--vl-acc) 11%, var(--vl-bg)) 50%, color-mix(in srgb, var(--vl-acc2) 24%, var(--vl-bg)) 100%); transition: opacity 0.5s ease, visibility 0.5s ease; }
+#vanvy-loading.vl-style-aurora.vl-hide { opacity: 0; visibility: hidden; pointer-events: none; }
+#vanvy-loading.vl-style-aurora .vl-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 80%, color-mix(in srgb, var(--vl-acc) calc(0.15 * 100%), transparent) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, color-mix(in srgb, var(--vl-acc2) calc(0.15 * 100%), transparent) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--vl-acc) calc(0.1 * 100%), transparent) 0%, transparent 70%); animation: aurora-pulse 4s ease-in-out infinite; }
+#vanvy-loading.vl-style-aurora .vl-particles { position: absolute; inset: 0; overflow: hidden; }
+#vanvy-loading.vl-style-aurora .vp { position: absolute; width: 4px; height: 4px; background: linear-gradient(90deg, var(--vl-acc), var(--vl-acc)); border-radius: 50%; box-shadow: 0 0 6px var(--vl-acc), 0 0 12px var(--vl-acc); animation: aurora-float 3s ease-in-out infinite; }
+#vanvy-loading.vl-style-aurora .vp-1 { left: 12%; top: 70%; animation-delay: 0s; }
+#vanvy-loading.vl-style-aurora .vp-2 { left: 24%; top: 30%; animation-delay: 0.5s; width: 3px; height: 3px; }
+#vanvy-loading.vl-style-aurora .vp-3 { left: 38%; top: 80%; animation-delay: 1s; }
+#vanvy-loading.vl-style-aurora .vp-4 { left: 55%; top: 22%; animation-delay: 1.4s; width: 5px; height: 5px; }
+#vanvy-loading.vl-style-aurora .vp-5 { left: 68%; top: 65%; animation-delay: 1.8s; width: 3px; height: 3px; }
+#vanvy-loading.vl-style-aurora .vp-6 { left: 82%; top: 40%; animation-delay: 2.2s; }
+#vanvy-loading.vl-style-aurora .vp-7 { left: 90%; top: 75%; animation-delay: 2.6s; width: 3px; height: 3px; }
+#vanvy-loading.vl-style-aurora .vp-8 { left: 45%; top: 55%; animation-delay: 3s; width: 2px; height: 2px; }
+#vanvy-loading.vl-style-aurora .vl-inner { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+#vanvy-loading.vl-style-aurora .vl-logo-wrap { position: relative; width: 132px; height: 132px; display: flex; align-items: center; justify-content: center; /* 圆形裁剪：否则 box-shadow 会渲染成方形光斑 */ border-radius: 50%; animation: aurora-glow 3s ease-in-out infinite; }
+#vanvy-loading.vl-style-aurora .vl-glow { position: absolute; inset: -20px; background: radial-gradient(circle, color-mix(in srgb, var(--vl-acc) calc(0.3 * 100%), transparent) 0%, transparent 70%); filter: blur(20px); }
+#vanvy-loading.vl-style-aurora .vl-ring { position: absolute; width: 80px; height: 80px; border: 2px solid transparent; border-top-color: var(--vl-acc); border-radius: 50%; animation: aurora-rotate 2s linear infinite; }
+#vanvy-loading.vl-style-aurora .vl-ring::before { content: ''; position: absolute; inset: 8px; border: 2px solid transparent; border-top-color: var(--vl-acc2); border-radius: 50%; animation: aurora-rotate 1.5s linear infinite reverse; }
+#vanvy-loading.vl-style-aurora .vl-ring-2 { width: 100px; height: 100px; border-color: color-mix(in srgb, var(--vl-acc) calc(0.2 * 100%), transparent); border-top-color: color-mix(in srgb, var(--vl-acc) calc(0.5 * 100%), transparent); animation: aurora-rotate 3s linear infinite reverse; }
+#vanvy-loading.vl-style-aurora .vl-logo { width: 50px; height: 50px; object-fit: contain; position: relative; z-index: 1; }
+#vanvy-loading.vl-style-aurora .vl-bar { width: 200px; height: 3px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; }
+#vanvy-loading.vl-style-aurora .vl-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--vl-acc), var(--vl-acc2)); border-radius: 2px; animation: aurora-bar 2s ease-in-out infinite; }
+#vanvy-loading.vl-style-aurora .vl-brand { font-family: 'Plus Jakarta Sans', 'Microsoft YaHei', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 4px; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; }
+#vanvy-loading.vl-style-aurora.hide-out { animation: aurora-fadeout 0.5s ease forwards; }

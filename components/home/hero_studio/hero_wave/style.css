@@ -1,0 +1,113 @@
+/* ═══════════════════════════════════════════════════════════
+   Hero Studio · WAVE 波浪 · 样式
+   ═══════════════════════════════════════════════════════════ */
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-hero-wave, .vanvy-hero-wave * { box-sizing: border-box; }
+
+.vanvy-hero-wave { display: block; margin: 0; }
+
+.vanvy-hero-wave .vhw {
+  position: relative; width: 100%; height: var(--vh-hero-h, 100svh); min-height: 540px; overflow: hidden;
+  background: var(--vh-bg, #08080c); color: #fff; isolation: isolate;
+  font-family: "PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
+}
+.vanvy-hero-wave .vhw-bg {
+  position: absolute; inset: -4%; background-size: cover; background-position: center 30%;
+  opacity: .62; filter: blur(14px) saturate(1.1) brightness(.74);
+  transition: opacity .8s ease, transform 10s ease-out;
+}
+.vanvy-hero-wave .vhw-veil {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 58% 50% at 50% 58%, rgba(0,0,0,.03) 0%, transparent 62%),
+    linear-gradient(180deg, rgba(5,5,10,.7) 0%, rgba(5,5,10,.14) 24%, rgba(5,5,10,.18) 60%, rgba(5,5,10,.86) 100%);
+}
+
+/* 顶部标题 */
+.vanvy-hero-wave .vhw-top {
+  position: absolute; left: 0; right: 0; top: clamp(18px,3.2vh,40px); z-index: 6;
+  text-align: center; padding: 0 20px; pointer-events: none;
+}
+.vanvy-hero-wave .vhw-k { font-size: 11px; letter-spacing: 4.5px; font-weight: 700; color: var(--vh-acc); }
+.vanvy-hero-wave .vhw-title {
+  margin: 9px 0 0; font-size: clamp(24px, 3.2vw, 46px); font-weight: 900; letter-spacing: -.6px;
+  text-shadow: 0 4px 34px rgba(0,0,0,.9);
+}
+.vanvy-hero-wave .vhw-meta {
+  display: flex; align-items: center; justify-content: center; gap: 9px; flex-wrap: wrap;
+  margin-top: 9px; font-size: 13px; color: #aab2c0;
+}
+.vanvy-hero-wave .vhw-meta b { color: var(--vh-acc); }
+.vanvy-hero-wave .vhw-meta i { font-style: normal; color: #4b5563; }
+.vanvy-hero-wave .vhw-meta span { white-space: nowrap; }
+
+/* 波浪舞台 */
+.vanvy-hero-wave .vhw-stage {
+  position: absolute; left: 0; right: 0; top: 54%; height: 0; z-index: 4;
+  cursor: grab; 
+}
+.vanvy-hero-wave .vhw-stage.drag { cursor: grabbing; }
+.vanvy-hero-wave .vhw-track { position: absolute; left: 50%; top: 0; }
+.vanvy-hero-wave .vhw-card {
+  position: absolute; left: 0; top: 0;
+  width: clamp(124px, 13.4vw, 206px);
+  border: 0; padding: 0; background: none; cursor: pointer;
+  transform-origin: center center;
+  transition: transform .62s cubic-bezier(.22,.78,.24,1), opacity .5s ease;
+}
+.vanvy-hero-wave .vhw-poster {
+  display: block; width: 100%; aspect-ratio: 2/3; border-radius: 14px;
+  background-size: cover; background-position: center;
+  box-shadow: 0 20px 48px rgba(0,0,0,.72), 0 0 0 1px rgba(255,255,255,.08);
+  transition: box-shadow .5s ease, filter .5s ease;
+  filter: brightness(.82) saturate(.95);
+}
+.vanvy-hero-wave .vhw-card.on .vhw-poster {
+  filter: none;
+  box-shadow: 0 34px 84px rgba(0,0,0,.86), 0 0 0 2px var(--vh-acc),
+              0 0 72px color-mix(in srgb, var(--vh-acc) 26%, transparent);
+}
+.vanvy-hero-wave .vhw-cap {
+  display: block; margin-top: 11px; text-align: center; opacity: 0; transition: opacity .4s ease;
+}
+.vanvy-hero-wave .vhw-card.on .vhw-cap { opacity: 1; }
+.vanvy-hero-wave .vhw-cap b { display: block; font-size: 13.5px; font-weight: 700; color: #fff; }
+.vanvy-hero-wave .vhw-cap i { font-style: normal; font-size: 11.5px; color: #98a0ae; }
+
+/* 箭头 */
+.vanvy-hero-wave .vhw-arrow {
+  position: absolute; top: 54%; transform: translateY(-50%); z-index: 8;
+  width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.2); color: #fff;
+  font-size: 20px; line-height: 1; cursor: pointer; transition: .2s;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.vanvy-hero-wave .vhw-arrow:hover { background: rgba(0,0,0,.72); border-color: var(--vh-acc); transform: translateY(-50%) scale(1.06); }
+.vanvy-hero-wave .vhw-arrow.l { left: clamp(10px,1.8vw,26px); }
+.vanvy-hero-wave .vhw-arrow.r { right: clamp(10px,1.8vw,26px); }
+
+/* 分页点 */
+.vanvy-hero-wave .vhw-dots {
+  position: absolute; left: 0; right: 0; bottom: clamp(34px,6vh,60px); z-index: 6;
+  display: flex; justify-content: center; gap: 7px;
+}
+.vanvy-hero-wave .vhw-dot {
+  width: 7px; height: 7px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+  background: rgba(255,255,255,.22); transition: .22s;
+}
+.vanvy-hero-wave .vhw-dot.on { width: 26px; border-radius: 4px; background: linear-gradient(90deg, var(--vh-acc), var(--vh-acc2)); }
+.vanvy-hero-wave .vhw-hint {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 6;
+  font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,.26); white-space: nowrap;
+}
+
+@media (max-width: 820px) {
+  .vanvy-hero-wave .vhw { height: 78vh; height: var(--vh-hero-h, 100dvh); min-height: 480px; }
+  .vanvy-hero-wave .vhw-card { width: clamp(112px, 30vw, 160px); }
+  .vanvy-hero-wave .vhw-arrow { display: none; }
+  .vanvy-hero-wave .vhw-hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vanvy-hero-wave .vhw-card { transition: opacity .3s ease; }
+  .vanvy-hero-wave .vhw-bg { transition: opacity .4s ease; }
+}

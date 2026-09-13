@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>VES · 第三方资料增强容器（R18）</title>
+<style>
+:root{--gold:#e8c66a;--gold2:#a8741a;--card:rgba(24,22,26,.55);--line:rgba(232,198,106,.18);--txt:#efe9df;--dim:#a49b8c;--pink:#ff7fa8;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1200px 620px at 25% -10%,#2a1c14 0%,#0c0a0d 55%,#070608 100%);color:var(--txt);
+font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;padding:34px 44px 46px;}
+.page-ctx{display:flex;gap:20px;align-items:flex-start;margin-bottom:24px}
+.page-ctx .poster{width:126px;height:184px;border-radius:12px;object-fit:cover;box-shadow:0 12px 30px rgba(0,0,0,.65);border:1px solid var(--line)}
+.page-ctx h1{font-size:24px;font-weight:800;line-height:1.35;max-width:760px}
+.page-ctx h1 b{color:var(--gold)}
+.page-ctx .sub{color:var(--dim);font-size:13px;margin-top:9px;line-height:1.9}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:var(--gold);background:rgba(232,198,106,.07)}
+.badge.avdb{color:#ffd37a;border-color:rgba(255,211,122,.3);background:rgba(255,211,122,.08)}
+.badge.emby{color:#b8f0c8;border-color:rgba(184,240,200,.22);background:rgba(184,240,200,.06)}
+.badge.dmm{color:#9fd8ff;border-color:rgba(159,216,255,.25);background:rgba(159,216,255,.07)}
+
+.enrich{margin-top:8px;border:1px solid var(--line);border-radius:20px;
+  background:linear-gradient(180deg,rgba(32,26,20,.66),rgba(15,14,17,.66));
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 24px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden}
+.enrich-hd{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(232,198,106,.12),transparent 62%)}
+.enrich-hd .logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;color:#1a1408;font-weight:900;font-size:14px}
+.enrich-hd h2{font-size:17px;font-weight:800;letter-spacing:.5px}
+.enrich-hd .spacer{flex:1}
+.src{display:flex;gap:8px;align-items:center}
+
+.top{display:flex;gap:22px;padding:20px 24px;border-bottom:1px dashed rgba(232,198,106,.12)}
+.top .cover{width:150px;height:214px;border-radius:12px;overflow:hidden;border:1px solid var(--line);flex:0 0 auto}
+.top .cover img{width:100%;height:100%;object-fit:cover}
+.meta{flex:1;min-width:0}
+.meta .row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.kv{font-size:12.5px;color:var(--dim);line-height:2}
+.kv b{color:var(--txt);font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.tag{font-size:11.5px;padding:3px 10px;border-radius:8px;background:rgba(232,198,106,.08);border:1px solid var(--line);color:var(--gold)}
+.score{font-size:34px;font-weight:900;color:var(--gold);line-height:1}
+.score em{font-size:13px;font-style:normal;color:var(--dim);font-weight:500;display:block;margin-top:3px}
+
+.mod{padding:20px 24px 22px;border-bottom:1px dashed rgba(232,198,106,.12)}
+.mod:last-of-type{border-bottom:0}
+.mod-h{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.mod-h h3{font-size:14.5px;font-weight:700;color:var(--gold)}
+.mod-h .n{font-size:12px;color:var(--dim)}
+.mod-h .spacer{flex:1}
+.mod-h .more{font-size:12px;color:var(--dim)}
+
+.wall{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:118px;gap:11px}
+.wall .it{position:relative;border-radius:11px;overflow:hidden;border:1px solid var(--line);background:#151016}
+.wall .it img{width:100%;height:100%;object-fit:cover;display:block}
+.wall .it.span2{grid-column:span 2;grid-row:span 2}
+.wall .it .badge2{position:absolute;right:7px;top:7px;font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(0,0,0,.6);color:var(--gold);border:1px solid var(--line)}
+
+.trs{display:flex;gap:14px}
+.tr{width:300px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#100e12}
+.tr .th{height:158px;position:relative;background:#000}
+.tr .th img{width:100%;height:100%;object-fit:cover;opacity:.94}
+.tr .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;
+  background:rgba(10,9,12,.6);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center}
+.tr .play i{width:0;height:0;border-left:17px solid var(--gold);border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
+.tr .cap{padding:9px 12px;font-size:12.5px;display:flex;justify-content:space-between;align-items:center}
+.tr .cap em{font-style:normal;font-size:10.5px}
+
+.act{display:flex;gap:16px;align-items:center}
+.act .ava{width:104px;height:104px;border-radius:50%;overflow:hidden;border:2px solid rgba(232,198,106,.5);flex:0 0 auto;box-shadow:0 0 0 4px rgba(232,198,106,.08)}
+.act .ava img{width:100%;height:100%;object-fit:cover}
+.act .bio .nm{font-size:17px;font-weight:800}
+.act .bio .alias{font-size:12px;color:var(--dim);margin-top:3px}
+.act .bio .stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.stat{font-size:11.5px;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--txt)}
+.stat b{color:var(--gold)}
+.works{display:flex;gap:12px;margin-top:16px}
+.wk{width:110px}
+.wk .pc{width:110px;height:158px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.wk .pc img{width:100%;height:100%;object-fit:cover;display:block}
+.wk .nm{font-size:11px;color:var(--dim);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.rail{display:flex;gap:13px}
+.rc{width:136px}
+.rc .pc{width:136px;height:196px;border-radius:11px;overflow:hidden;border:1px solid var(--line);position:relative}
+.rc .pc img{width:100%;height:100%;object-fit:cover;display:block}
+.rc .pc .num{position:absolute;left:7px;bottom:7px;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;background:rgba(0,0,0,.66);color:var(--gold);border:1px solid var(--line)}
+.rc .nm{font-size:11.5px;margin-top:7px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.foot{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:16px 24px;background:rgba(0,0,0,.28)}
+.chip{font-size:11.5px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--dim);background:rgba(255,255,255,.02)}
+.chip.on{color:var(--gold);border-color:rgba(232,198,106,.4);background:rgba(232,198,106,.08)}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5cd88a;margin-right:6px;vertical-align:1px}
+.note{font-size:11.5px;color:var(--dim);margin-left:auto}
+.mag{font-size:12px;color:#8ff0b8;border-color:rgba(143,240,184,.35);background:rgba(143,240,184,.08)}
+</style></head>
+<body>
+<div class="page-ctx">
+  <img class="poster" src="img/r18_cover.jpg">
+  <div>
+    <h1><b>PRED-750</b> 与大嫂出差同行途中突然下起了豪雨变成住同房…</h1>
+    <div class="sub"><span class="badge avdb">R18 资料增强 · 本地 AVDB 引擎</span> &nbsp;<span class="badge emby">Emby 原生</span> &nbsp;<span class="badge dmm">DMM 预告</span></div>
+    <div class="sub" style="margin-top:6px">正义 / 有码破解 · 2025 · 片商 PREMIUM · 发行 エレガンス · 白峰美羽 主演</div>
+  </div>
+</div>
+
+<section class="enrich">
+  <div class="enrich-hd">
+    <div class="logo">V</div>
+    <h2>R18 资料增强 · AVDB</h2>
+    <div class="spacer"></div>
+    <div class="src"><span class="badge avdb">来源：本地 AVDB 引擎</span><span class="badge emby">Emby 兜底</span></div>
+  </div>
+
+  <!-- 顶部：封面 + 元数据 -->
+  <div class="top">
+    <div class="cover"><img src="img/r18_cover.jpg"></div>
+    <div class="meta">
+      <div class="row"><span class="badge avdb">番号 PRED-750</span><span class="badge">磁力 19 条</span><span class="badge">中文字幕</span><span class="badge dmm">可播放</span></div>
+      <div class="score">4.63<em>JavDB 评分</em></div>
+      <div class="kv" style="margin-top:12px">
+        时长 <b>170 分钟</b> &nbsp;·&nbsp; 发行日期 <b>2025-01-24</b> &nbsp;·&nbsp; 系列 <b>—（单体）</b><br>
+        片商 <b>PREMIUM</b> &nbsp;·&nbsp; 导演 <b>—</b> &nbsp;·&nbsp; 剧照 <b>11 张</b> &nbsp;·&nbsp; 预告 <b>1 段</b>
+      </div>
+      <div class="tags">
+        <span class="tag">不伦</span><span class="tag">人妻</span><span class="tag">中出</span><span class="tag">酒店</span>
+        <span class="tag">无码破解</span><span class="tag">1080P</span><span class="tag">中文字幕</span><span class="tag">白峰美羽</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 剧照墙 -->
+  <div class="mod">
+    <div class="mod-h"><h3>剧照墙</h3><span class="n">javdb-gallery · 11 张</span><span class="spacer"></span><span class="more">全部 ›</span></div>
+    <div class="wall">
+      <div class="it span2"><img src="img/r18_still1.jpg"><span class="badge2">1 / 11</span></div>
+      <div class="it"><img src="img/r18_still2.jpg"></div>
+      <div class="it"><img src="img/r18_still3.jpg"></div>
+      <div class="it"><img src="img/r18_still4.jpg"></div>
+      <div class="it"><img src="img/r18_still5.jpg"></div>
+      <div class="it"><img src="img/r18_still6.jpg"></div>
+      <div class="it"><img src="img/r18_still1.jpg"></div>
+    </div>
+  </div>
+
+  <!-- 预告片 -->
+  <div class="mod">
+    <div class="mod-h"><h3>预告片</h3><span class="n">Emby RemoteTrailers（DMM）+ AVDB preview</span><span class="spacer"></span><span class="more">2 段</span></div>
+    <div class="trs">
+      <div class="tr">
+        <div class="th"><img src="img/r18_still1.jpg"><span class="play"><i></i></span></div>
+        <div class="cap"><span>DMM 官方预览</span><em style="color:#9fd8ff">RemoteTrailers</em></div>
+      </div>
+      <div class="tr">
+        <div class="th"><img src="img/r18_still4.jpg"><span class="play"><i></i></span></div>
+        <div class="cap"><span>AVDB 本地代理预览</span><em style="color:#ffd37a">preview/assets</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 演员 -->
+  <div class="mod">
+    <div class="mod-h"><h3>演员资料</h3><span class="n">AVDB actors · 含三围 / 生日</span><span class="spacer"></span><span class="more">全部作品 ›</span></div>
+    <div class="act">
+      <div class="ava"><img src="img/actor1.jpg"></div>
+      <div class="bio" style="flex:1">
+        <div class="nm">三上悠亜</div>
+        <div class="alias">别名：三上悠亞 · 鬼头桃菜</div>
+        <div class="stats">
+          <span class="stat">生日 <b>1993-08-16</b></span>
+          <span class="stat">身高 <b>159cm</b></span>
+          <span class="stat">三围 <b>84 / 58 / 88</b></span>
+          <span class="stat">罩杯 <b>F</b></span>
+          <span class="stat">作品 <b>323</b></span>
+          <span class="stat">Twitter <b>@yua_mikami</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="works">
+      <div class="wk"><div class="pc"><img src="img/rel2.jpg"></div><div class="nm">SSIS-698</div></div>
+      <div class="wk"><div class="pc"><img src="img/rel3.jpg"></div><div class="nm">OAE-101</div></div>
+      <div class="wk"><div class="pc"><img src="img/rel4.jpg"></div><div class="nm">TEK-071</div></div>
+      <div class="wk"><div class="pc"><img src="img/rel1.jpg"></div><div class="nm">SSIS-160</div></div>
+      <div class="wk"><div class="pc"><img src="img/r18_cover.jpg"></div><div class="nm">更多作品 ›</div></div>
+    </div>
+  </div>
+
+  <!-- 同系列 / 相关 -->
+  <div class="mod">
+    <div class="mod-h"><h3>同系列 / 相关影片</h3><span class="n">relative_movies · 9 部</span><span class="spacer"></span><span class="more">全部 ›</span></div>
+    <div class="rail">
+      <div class="rc"><div class="pc"><img src="img/rel1.jpg"><span class="num">SSIS-160</span></div><div class="nm">三上悠亜 共演</div></div>
+      <div class="rc"><div class="pc"><img src="img/rel2.jpg"><span class="num">SSIS-698</span></div><div class="nm">三人共演特别篇</div></div>
+      <div class="rc"><div class="pc"><img src="img/rel3.jpg"><span class="num">OAE-101</span></div><div class="nm">全裸正妹 三上悠亞</div></div>
+      <div class="rc"><div class="pc"><img src="img/rel4.jpg"><span class="num">TEK-071</span></div><div class="nm">前国民偶像回归</div></div>
+      <div class="rc"><div class="pc"><img src="img/r18_cover.jpg"><span class="num">PRED-043</span></div><div class="nm">同片商推荐</div></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="chip on"><span class="dot"></span>模块·剧照墙</span>
+    <span class="chip on"><span class="dot"></span>模块·预告片</span>
+    <span class="chip on"><span class="dot"></span>模块·演员资料</span>
+    <span class="chip on"><span class="dot"></span>模块·同系列</span>
+    <span class="chip on mag">磁力 19 · 一键转存</span>
+    <span class="note">CFG.p2.enrich · 数据来自内网 AVDB，不外泄；AVDB 不可达时自动隐藏</span>
+  </div>
+</section>
+</body></html>

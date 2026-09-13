@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>VES · 增强架构与数据流</title>
+<style>
+:root{--gold:#e8c66a;--gold2:#a8741a;--line:rgba(232,198,106,.22);--txt:#efe9df;--dim:#a49b8c;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1200px 600px at 50% -10%,#241d12 0%,#0b0a0d 55%,#070608 100%);color:var(--txt);
+font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;padding:36px 46px 44px 46px;}
+h1{font-size:26px;font-weight:900;letter-spacing:.6px}
+h1 em{font-style:normal;color:var(--gold)}
+.sub{color:var(--dim);font-size:13px;margin-top:8px;margin-bottom:26px}
+.layer{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(30,26,20,.6),rgba(15,14,17,.6));
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 20px 50px rgba(0,0,0,.5);padding:18px 22px}
+.layer-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.layer-h .idx{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1408;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center}
+.layer-h h2{font-size:16px;font-weight:800}
+.layer-h .tag{font-size:11.5px;color:var(--dim);margin-left:6px}
+
+.arrow{display:flex;flex-direction:column;align-items:center;color:var(--gold);margin:10px 0;font-size:13px;gap:2px}
+.arrow .ln{width:2px;height:16px;background:linear-gradient(180deg,rgba(232,198,106,.1),var(--gold))}
+.arrow .hd{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid var(--gold)}
+.arrow .lb{font-size:11.5px;color:var(--dim);margin-top:3px}
+
+.browser{border:1px solid rgba(232,198,106,.35);border-radius:14px;background:rgba(232,198,106,.05);padding:14px 16px}
+.browser .ttl{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:11px}
+.steps{display:flex;gap:11px}
+.step{flex:1;border:1px solid var(--line);border-radius:11px;padding:11px 12px;background:rgba(0,0,0,.22)}
+.step b{display:block;font-size:12.5px;color:var(--txt);margin-bottom:5px}
+.step span{font-size:11.5px;color:var(--dim);line-height:1.6}
+.step .no{display:inline-block;width:17px;height:17px;border-radius:5px;background:rgba(232,198,106,.16);color:var(--gold);font-size:11px;font-weight:800;text-align:center;line-height:17px;margin-right:6px}
+
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.src{border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:rgba(0,0,0,.22);position:relative}
+.src h3{font-size:13px;font-weight:750;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.src h3 .d{width:8px;height:8px;border-radius:50%}
+.src .u{font-size:11px;color:var(--gold);margin-bottom:8px;font-family:"SFMono-Regular",Consolas,monospace;word-break:break-all}
+.src ul{list-style:none}
+.src li{font-size:11.5px;color:var(--dim);line-height:1.85;padding-left:12px;position:relative}
+.src li::before{content:"·";position:absolute;left:2px;color:var(--gold)}
+.src.cors{border-color:rgba(232,198,106,.45);background:rgba(232,198,106,.05)}
+.src.cors .ok{position:absolute;right:11px;top:11px;font-size:10px;color:#8ff0b8}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:13px}
+.box{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:rgba(0,0,0,.22)}
+.box h3{font-size:13px;font-weight:750;color:var(--gold);margin-bottom:9px}
+.box li{font-size:12px;color:var(--dim);line-height:1.95;padding-left:14px;position:relative;list-style:none}
+.box li::before{content:"›";position:absolute;left:2px;color:var(--gold)}
+.box li b{color:var(--txt);font-weight:600}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:10.5px;border:1px solid var(--line);color:var(--gold);background:rgba(232,198,106,.07)}
+.badge.g{color:#8ff0b8;border-color:rgba(143,240,184,.3)}
+.badge.r{color:#ff9a9a;border-color:rgba(255,154,154,.3)}
+.foot{margin-top:16px;font-size:11.5px;color:var(--dim);text-align:center}
+</style></head>
+<body>
+<h1>VES · 第三方资料增强 <em>架构与数据流</em></h1>
+<div class="sub">已落地（P0）：浏览器端增强 + 本机资料聚合服务 · TMDB 走服务端（含出网代理/缓存），AVDB 由浏览器直连 · 可整体/分模块开关 · 任一源不可达均优雅降级</div>
+
+<div class="layer">
+  <div class="layer-h"><span class="idx">1</span><h2>浏览器端：Emby Web 详情页</h2><span class="tag">VES detail 增强模块（单文件 JS 注入）</span></div>
+  <div class="browser">
+    <div class="ttl">详情页「资料增强」容器 · 渲染流程</div>
+    <div class="steps">
+      <div class="step"><b><span class="no">1</span>识别</b><span>读 item：Name 番号 / 库名 / OfficialRating / ProviderIds.MetaTube → javScore 判定走 R18 还是正经库</span></div>
+      <div class="step"><b><span class="no">2</span>取数</b><span>正经库 → 本机 enrich 服务（TMDB 聚合，单次请求拿全套）；R18 → AVDB 直连；多地址逐个回退</span></div>
+      <div class="step"><b><span class="no">3</span>缓存</b><span>内存 Map + localStorage（TTL 6h~7d）；首屏只允许 1 次网络请求</span></div>
+      <div class="step"><b><span class="no">4</span>渲染</b><span>毛玻璃容器 · HTML 全量转义 · 模块可独立开关 · 失败静默</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow"><div class="ln"></div><div class="hd"></div><div class="lb">fetch（同源直连 / 跨源带 X-API-Key，CORS 已放行）</div></div>
+
+<div class="layer">
+  <div class="layer-h"><span class="idx">2</span><h2>数据源层</h2><span class="tag">全部内网 · 无外发</span></div>
+  <div class="cols">
+    <div class="src">
+      <h3><span class="d" style="background:#8ff0b8"></span>Emby 原生 API</h3>
+      <div class="u">同源 · 8097 / 8096 / 18088</div>
+      <ul>
+        <li>Users/{u}/Items/{id}</li>
+        <li>Images/Backdrop/{i} · Images/Thumb</li>
+        <li>People（演员/导演）</li>
+        <li>Items/{id}/Similar</li>
+        <li>RemoteTrailers · LocalTrailers</li>
+      </ul>
+    </div>
+    <div class="src cors">
+      <span class="ok">OPTIONS ✓ CORS ✓</span>
+      <h3><span class="d" style="background:#ffd37a"></span>本地 AVDB 引擎</h3>
+      <div class="u">AVDB 引擎（内网）</div>
+      <ul>
+        <li>javdb/search?q=番号</li>
+        <li>javdb/movies/{id}（detail）</li>
+        <li>articles/javdb-gallery?number=</li>
+        <li>javdb/actors/{id} · series/{id}</li>
+        <li>javdb/movies/{id}/magnets</li>
+      </ul>
+    </div>
+    <div class="src">
+      <h3><span class="d" style="background:#9fd8ff"></span>imgproxy（图床转发）</h3>
+      <div class="u">:18098 → 公网 /vdimg</div>
+      <ul>
+        <li>JavDB 封面 / 剧照图床被墙</li>
+        <li>YouTube 缩略图</li>
+        <li>/i?u=&lt;urlencoded&gt; 统一样式</li>
+        <li>带 7 天 Cache-Control</li>
+      </ul>
+    </div>
+    <div class="src">
+      <h3><span class="d" style="background:#c9a8ff"></span>本机 enrich 服务 <span class="badge g">P0 已上线</span></h3>
+      <div class="u">:18097 → 公网 /enrich（CORS ✓）</div>
+      <ul>
+        <li><b>单次 TMDB 请求</b>聚合（append_to_response）</li>
+        <li>剧照 24 · 演员+角色 20 · 预告 8 · 同类 18</li>
+        <li>服务端持 Key + 出网代理 + 磁盘缓存 7 天</li>
+        <li>正经库命中率 100%（ProviderIds.Tmdb）</li>
+        <li>服务不可达 → 自动退回 Emby 原生区块</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="box">
+      <h3>🛡 降级路径（AVDB 不可达）</h3>
+      <ul>
+        <li><b>超时 5s</b> → 容器整体隐藏，Emby 原生区块不受任何影响</li>
+        <li><b>命中失败</b>（正经库/无番号）→ 仅显示 Emby 原生 + TMDB 模块</li>
+        <li><b>图片 404</b> → onerror 隐藏该图，不破版</li>
+        <li><b>缓存兜底</b> → localStorage 命中时先渲染旧数据再后台刷新</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>🔒 安全边界 & 开关</h3>
+      <ul>
+        <li>接口仅内网地址，<b>凭据一律 <span class="badge">X-API-Key</span> 注入，不写进前端硬编码</b></li>
+        <li>所有插值经 esc() 转义，杜绝 XSS</li>
+        <li>不外发任何用户/媒体数据；请求仅打内网</li>
+        <li>总开关 <span class="badge g">CFG.p2.enrich</span> + 分模块 <span class="badge">剧照/演员/预告/同类/磁力</span></li>
+        <li>容器名白名单：<span class="badge r">emby-18</span> 走 AVDB（P1），其余走 TMDB/原生</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="foot">P0：正经库「资料增强」容器（原生+TMDB） · P1：R18 剧照/演员/同系列（AVDB） · P2：磁力转存 + 预览弹框 · 每阶段独立上线、可回滚</div>
+</body></html>

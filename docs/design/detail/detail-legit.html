@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VANVY · 详情页设计稿 v1</title>
+<style>
+  :root{
+    --acc:#e8c66a; --acc2:#a8741a;        /* 黑金 */
+    --bg:#070608; --fg:#f3f4f6; --dim:#9aa0ad;
+    --card:rgba(255,255,255,.055); --line:rgba(255,255,255,.1);
+    --r:14px; --pad:clamp(18px,4vw,56px);
+    --bd-op:.85; --veil:.92;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--fg);
+    font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  .sw{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;gap:8px;
+    padding:7px;border-radius:13px;background:rgba(18,18,26,.9);border:1px solid var(--line);backdrop-filter:blur(14px)}
+  .sw button{height:32px;padding:0 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;
+    color:#c9ced8;background:rgba(255,255,255,.06);border:1px solid transparent}
+  .sw button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1408}
+
+  /* ── 顶部背景 hero ── */
+  .hero{position:relative;min-height:100svh;overflow:hidden;isolation:isolate}
+  .bd{position:absolute;inset:0;opacity:var(--bd-op)}
+  .bd img{width:100%;height:100%;object-fit:cover;object-position:center 22%}
+  .veil{position:absolute;inset:0;background:
+    linear-gradient(0deg,var(--bg) 0%, rgba(7,6,8,.92) 9%, rgba(7,6,8,.55) 26%, rgba(7,6,8,.15) 52%, rgba(7,6,8,.45) 100%)}
+  .hero-in{position:relative;z-index:5;max-width:1500px;margin:0 auto;
+    padding:calc(var(--pad) + 46px) var(--pad) 0;min-height:100svh;
+    display:flex;flex-direction:column;justify-content:center;gap:clamp(18px,3vh,34px)}
+
+  .top{display:flex;gap:clamp(18px,3vw,40px);align-items:flex-end}
+  .poster{flex:0 0 auto;width:clamp(140px,15vw,230px);border-radius:16px;overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.75);border:1px solid rgba(255,255,255,.12)}
+  .poster img{width:100%;aspect-ratio:2/3;object-fit:cover}
+  .info{flex:1 1 auto;min-width:0;padding-bottom:6px}
+  .crumb{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--acc);letter-spacing:3px;font-weight:700;margin-bottom:14px}
+  .crumb::before{content:"";width:28px;height:2px;background:var(--acc);border-radius:2px}
+  h1{font-size:clamp(30px,4.6vw,64px);line-height:1.06;font-weight:800;letter-spacing:-.5px;
+    text-shadow:0 6px 34px rgba(0,0,0,.8);max-width:20ch}
+  .meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;font-size:14px;color:#f0f2f5;
+    text-shadow:0 1px 3px rgba(0,0,0,1),0 3px 14px rgba(0,0,0,.95)}
+  .meta>span:not(.chip){padding:2px 0}
+  .star{color:var(--acc);font-weight:800}
+  .chip{padding:5px 12px;border-radius:8px;background:rgba(255,255,255,.09);border:1px solid var(--line);
+    font-size:12.5px;color:#eef0f4;backdrop-filter:blur(6px)}
+  .chip.gold{background:rgba(232,198,106,.16);border-color:rgba(232,198,106,.45);color:#f0d68c;font-weight:700}
+  .syn{margin-top:16px;max-width:62ch;color:#d6dae1;line-height:1.85;font-size:15px;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 2px 10px rgba(0,0,0,.85)}
+  .cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+  .btn{display:flex;align-items:center;gap:9px;height:50px;padding:0 28px;border-radius:12px;font-size:15px;
+    font-weight:700;cursor:pointer;border:1px solid transparent;transition:.22s;white-space:nowrap}
+  .btn.play{background:#fff;color:#0a0a0f}
+  .btn.play:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(255,255,255,.2)}
+  .btn.gold{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1408}
+  .btn.gold:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(232,198,106,.28)}
+  .btn.ghost{background:rgba(255,255,255,.1);color:#fff;border-color:var(--line);backdrop-filter:blur(8px)}
+  .btn.ghost:hover{background:rgba(255,255,255,.18)}
+
+  /* ── 第三方播放器条（刚需①）── */
+  .players{margin-top:6px}
+  .sec-label{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:2.5px;color:var(--dim);
+    font-weight:700;margin-bottom:12px;text-transform:uppercase}
+  .sec-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .ptool{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .tk{display:flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:8px;font-size:12px;
+    font-weight:600;cursor:pointer;color:#b9bec9;background:rgba(255,255,255,.05);border:1px solid var(--line);
+    transition:.18s;user-select:none}
+  .tk:hover{background:rgba(255,255,255,.12);color:#fff}
+  .tk.on{background:rgba(232,198,106,.16);border-color:rgba(232,198,106,.45);color:#f0d68c}
+  .tk .sw-dot{width:24px;height:14px;border-radius:8px;background:rgba(255,255,255,.18);position:relative;transition:.2s}
+  .tk .sw-dot::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;
+    background:#fff;transition:.2s}
+  .tk.on .sw-dot{background:var(--acc)}
+  .tk.on .sw-dot::after{left:12px}
+  .prow{display:flex;gap:10px;flex-wrap:wrap}
+  .pbtn{position:relative;display:flex;align-items:center;gap:10px;height:48px;padding:0 16px 0 10px;border-radius:12px;
+    font-size:13.5px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid var(--line);
+    color:#eef0f4;backdrop-filter:blur(10px);transition:.2s}
+  .pbtn:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
+  .pbtn:active{transform:translateY(0)}
+  .pbtn.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset,0 8px 24px rgba(232,198,106,.18)}
+  .pbtn .ico{width:30px;height:30px;border-radius:8px;background-size:contain;background-repeat:no-repeat;
+    background-position:center;background-color:rgba(0,0,0,.35);flex:0 0 auto}
+  .pbtn .nm{white-space:nowrap}
+  .pbtn .last{position:absolute;top:-7px;right:8px;font-size:9.5px;font-weight:800;letter-spacing:.5px;
+    padding:2px 6px;border-radius:6px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#1a1408}
+  .pbtn.icononly{padding:0 10px;gap:0}
+  .pbtn.icononly .nm{display:none}
+  .pnote{margin-top:10px;font-size:11.5px;color:var(--dim)}
+  .pnote b{color:#c9ced8}
+
+  /* ── JAV 信息区（刚需②）── */
+  .jav{border:1px solid rgba(232,198,106,.28);border-radius:16px;padding:18px 20px;
+    background:linear-gradient(135deg,rgba(232,198,106,.08),rgba(255,255,255,.03));backdrop-filter:blur(12px)}
+  .jav-hd{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .jav-code{font-size:20px;font-weight:800;letter-spacing:2px;color:var(--acc)}
+  .jav-badge{font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;
+    background:rgba(232,198,106,.18);border:1px solid rgba(232,198,106,.4);color:#f0d68c}
+  .jav-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .kv{display:flex;flex-direction:column;gap:4px}
+  .kv .k{font-size:11px;color:var(--dim);letter-spacing:1px}
+  .kv .v{font-size:14px;font-weight:600}
+  .actors{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .actor{display:flex;align-items:center;gap:10px;padding:7px 12px 7px 7px;border-radius:12px;
+    background:rgba(0,0,0,.32);border:1px solid var(--line);cursor:pointer;transition:.2s}
+  .actor:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .actor img{width:40px;height:40px;border-radius:9px;object-fit:cover;background:#1a1a22}
+  .actor .nm{font-size:13.5px;font-weight:700}
+  .actor .rl{font-size:11px;color:var(--dim)}
+
+  /* ── 下方内容区 ── */
+  .wrap{max-width:1500px;margin:0 auto;padding:46px var(--pad) 90px;position:relative;z-index:6;margin-top:-40px}
+  .row{margin-top:42px}
+  .row-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+  .row-hd h2{font-size:clamp(17px,1.4vw,21px);font-weight:700}
+  .row-hd span{font-size:12.5px;color:var(--dim)}
+  .row-hd .more{margin-left:auto;font-size:13px;color:var(--acc);cursor:pointer}
+  .strip{display:flex;gap:14px;overflow-x:auto;padding:6px 0 12px;scrollbar-width:none}
+  .strip::-webkit-scrollbar{display:none}
+  .still{flex:0 0 auto;width:clamp(200px,20vw,320px);aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+    cursor:pointer;position:relative;box-shadow:0 10px 28px rgba(0,0,0,.55)}
+  .still img{width:100%;height:100%;object-fit:cover;transition:.35s}
+  .still:hover img{transform:scale(1.06)}
+  .still::after{content:"⤢";position:absolute;right:10px;bottom:8px;font-size:14px;color:#fff;opacity:0;transition:.2s}
+  .still:hover::after{opacity:.9}
+  .acard{flex:0 0 auto;width:clamp(120px,11vw,160px);cursor:pointer;text-align:center}
+  .acard img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:50%;border:2px solid var(--line);transition:.25s}
+  .acard:hover img{border-color:var(--acc);transform:scale(1.05)}
+  .acard b{display:block;margin-top:10px;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .acard em{font-style:normal;font-size:11px;color:var(--dim)}
+  .mcard{flex:0 0 auto;width:clamp(126px,11.5vw,178px);cursor:pointer;transition:.25s}
+  .mcard .pv{position:relative;aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:#14141d;
+    box-shadow:0 10px 28px rgba(0,0,0,.55)}
+  .mcard .pv img{width:100%;height:100%;object-fit:cover}
+  .mcard .pv::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7),transparent 46%)}
+  .mcard:hover{transform:translateY(-8px) scale(1.03)}
+  .mcard .sc{position:absolute;top:9px;right:9px;z-index:3;font-size:11.5px;font-weight:800;color:#ffc93c;
+    background:rgba(0,0,0,.66);padding:4px 8px;border-radius:7px}
+  .mcard .cap{position:absolute;left:11px;right:11px;bottom:10px;z-index:3}
+  .mcard .cap b{display:block;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mcard .cap em{font-style:normal;font-size:11px;color:#b6bcc8}
+  .note{position:fixed;left:16px;bottom:16px;z-index:900;font-size:11.5px;color:#8b919d;
+    background:rgba(20,20,28,.88);border:1px solid var(--line);padding:7px 13px;border-radius:999px;backdrop-filter:blur(8px)}
+  @media(max-width:820px){
+    .hero-in{gap:14px;padding-top:calc(var(--pad) + 40px)}
+    .top{display:grid;grid-template-columns:30vw 1fr;gap:14px;align-items:start}
+    .poster{width:30vw}
+    h1{font-size:clamp(22px,6.4vw,32px)}
+    .syn{-webkit-line-clamp:2;font-size:13.5px;margin-top:10px}
+    .cta{margin-top:14px;gap:8px}
+    .btn{height:42px;font-size:13.5px;flex:1 1 auto;justify-content:center;padding:0 12px}
+    .players{margin-top:2px}
+    .prow{gap:7px}
+    .pbtn{height:36px;padding:0 11px;font-size:12.5px;gap:6px}
+    .pico{width:17px;height:17px;font-size:10px}
+    .jav{padding:14px 15px}
+    .jav-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .actor img{width:34px;height:34px}
+    .actor .nm{font-size:12.5px}
+    .actor{padding:6px 10px 6px 6px}
+  }
+  @media(max-width:420px){
+    .hero-in{gap:11px}
+    .poster{width:26vw}
+    h1{font-size:clamp(20px,6vw,26px)}
+    .meta{font-size:12.5px;gap:8px;margin-top:11px}
+    .chip{padding:4px 9px;font-size:11.5px}
+  }
+</style>
+</head>
+<body>
+
+<div class="sw" id="sw">
+  <button class="on" data-s="A">布局方案 A · 海报左</button>
+  <button data-s="B">方案 B · 全宽海报</button>
+</div>
+
+<!-- ══════════ hero ══════════ -->
+<section class="hero" id="hero">
+  <div class="bd"><img src="img/backdrop.jpg" alt=""></div>
+  <div class="veil"></div>
+
+  <div class="hero-in">
+    <div class="top">
+      <div class="poster"><img id="poster" src="img/poster.jpg" alt=""></div>
+      <div class="info">
+        <div class="crumb" id="crumb">电影 · MOVIE</div>
+        <h1 id="title">奥本海默</h1>
+        <div class="meta" id="meta"></div>
+        <p class="syn" id="syn"></p>
+        <div class="cta">
+          <div class="btn play">▶&nbsp; 立即播放</div>
+          <div class="btn ghost">＋&nbsp; 收藏</div>
+          <div class="btn ghost">ⓘ&nbsp; 更多</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第三方播放器 · 刚需① -->
+    <div class="players">
+      <div class="sec-label">第三方播放器 · 直接串流</div>
+      <div class="ptool" id="ptool">
+        <span class="tk on" data-k="onlyOS"><i class="sw-dot"></i>仅显示本机可用</span>
+        <span class="tk" data-k="iconOnly"><i class="sw-dot"></i>图标模式</span>
+        <span class="tk" data-k="multiPot"><i class="sw-dot"></i>多开 PotPlayer</span>
+        <span class="tk" data-k="strm"><i class="sw-dot"></i>STRM 直通</span>
+        <span class="tk" data-k="seek"><i class="sw-dot"></i>断点续播</span>
+      </div>
+      <div class="prow" id="prow"></div>
+      <div class="pnote">当前设备：<b id="osName">Windows</b> · 已自动隐藏不兼容的播放器 · <b>上次使用 PotPlayer</b>（点击直接调用）</div>
+    </div>
+
+    <!-- 🔞 JAV 条件模块：**仅当条目被识别为 JAV（标题含番号）才出现**
+         正经库（如本页的《奥本海默》）根本不显示此块 -->
+    <div class="jav" id="javBox" hidden>
+      <div class="jav-hd">
+        <span class="jav-code" id="jCode">—</span>
+        <span class="jav-badge">番号已识别</span>
+        <span class="jav-badge" id="jSrc">数据源：本地库</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--dim)">仅在 JAV 库生效</span>
+      </div>
+      <div class="jav-grid">
+        <div class="kv"><span class="k">番号</span><span class="v" id="jCode2">—</span></div>
+        <div class="kv"><span class="k">发行日期</span><span class="v" id="jDate">—</span></div>
+        <div class="kv"><span class="k">片长</span><span class="v" id="jLen">—</span></div>
+        <div class="kv"><span class="k">制作商</span><span class="v" id="jMaker">—</span></div>
+        <div class="kv"><span class="k">系列</span><span class="v" id="jSeries">—</span></div>
+        <div class="kv"><span class="k">评分</span><span class="v" id="jScore" style="color:var(--acc)">—</span></div>
+      </div>
+      <div class="actors" id="javActors"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 下方内容 ══════════ -->
+<main class="wrap">
+  <section class="row">
+    <div class="row-hd"><h2>剧照</h2><span>Production Stills</span><span class="more">全部 ›</span></div>
+    <div class="strip" id="stills"></div>
+  </section>
+
+  <section class="row">
+    <div class="row-hd"><h2>演员 / 导演</h2><span>Cast &amp; Crew</span><span class="more">全部 ›</span></div>
+    <div class="strip" id="cast"></div>
+  </section>
+
+  <section class="row">
+    <div class="row-hd"><h2>预告片</h2><span>Trailers</span><span class="more">全部 ›</span></div>
+    <div class="strip" id="trailers"></div>
+  </section>
+
+  <section class="row">
+    <div class="row-hd"><h2>更多类似</h2><span>随机推荐</span><span class="more">全部 ›</span></div>
+    <div class="strip" id="more"></div>
+  </section>
+</main>
+
+<div class="note">🎨 详情页设计稿 v1 · 真实数据（奥本海默 / 主 Emby 4.9.5）· 纯视觉</div>
+
+<script>
+var D=null;
+function esc(s){return String(s==null?'':s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+var OS_DETECT = (function(){
+  var ua=navigator.userAgent;
+  if(/android/i.test(ua)) return 'Android';
+  if(/iPad|iPhone|iPod/i.test(ua)) return 'iOS';
+  if(/Macintosh|MacIntel/i.test(ua)) return 'macOS';
+  if(/Windows/i.test(ua)) return 'Windows';
+  return 'Windows';
+})();
+// OS 兼容映射（与旧版 external-player.js 一致）
+var PLAYERS=[
+  {n:'PotPlayer',ico:'icon-PotPlayer.webp',os:['Windows'],last:1},
+  {n:'VLC',ico:'icon-VLC.webp',os:['Windows','macOS','Android','iOS']},
+  {n:'IINA',ico:'icon-IINA.webp',os:['macOS']},
+  {n:'Infuse',ico:'icon-infuse.webp',os:['macOS','iOS']},
+  {n:'nPlayer',ico:'icon-NPlayer.webp',os:['iOS','Android']},
+  {n:'MX Player',ico:'icon-MXPlayer.webp',os:['Android']},
+  {n:'MX Pro',ico:'icon-MXPlayerPro.webp',os:['Android']},
+  {n:'恒星播放器',ico:'icon-StellarPlayer.webp',os:['Windows','macOS','Android']},
+  {n:'MPV',ico:'icon-MPV.webp',os:['Windows','macOS','Android']},
+  {n:'弹弹Play',ico:'icon-DDPlay.webp',os:['Windows','Android']},
+  {n:'Fileball',ico:'icon-Fileball.webp',os:['macOS','iOS']},
+  {n:'SenPlayer',ico:'icon-SenPlayer.webp',os:['iOS']},
+  {n:'OmniPlayer',ico:'icon-OmniPlayer.webp',os:['macOS']},
+  {n:'FigPlayer',ico:'icon-FigPlayer.webp',os:['macOS']},
+  {n:'复制串流地址',ico:'icon-Copy.webp',os:null}   // null=全平台
+];
+var PTOOL={onlyOS:1,iconOnly:0,multiPot:0,strm:0,seek:0};
+function renderPlayers(){
+  var list=PLAYERS.filter(function(p){ return !(PTOOL.onlyOS && p.os && p.os.indexOf(OS_DETECT)===-1); });
+  document.getElementById('prow').innerHTML=list.map(function(p){
+    return '<div class="pbtn '+(p.last?'on':'')+(PTOOL.iconOnly?' icononly':'')+'" title="'+esc(p.n)+(p.os?'（'+p.os.join('/')+'）':'')+'">'
+      +(p.last?'<span class="last">上次</span>':'')
+      +'<span class="ico" style="background-image:url(icons/'+p.ico+')"></span>'
+      +'<span class="nm">'+esc(p.n)+'</span></div>';
+  }).join('');
+  document.getElementById('osName').textContent=OS_DETECT;
+}
+function bindPtool(){
+  document.getElementById('ptool').addEventListener('click',function(e){
+    var tk=e.target.closest('.tk'); if(!tk) return;
+    var k=tk.dataset.k; PTOOL[k]=PTOOL[k]?0:1;
+    tk.classList.toggle('on',!!PTOOL[k]);
+    renderPlayers();
+  });
+}
+
+fetch('data.json').then(r=>r.json()).then(function(d){
+  D=d; var it=d.item;
+  document.getElementById('title').textContent=it.title;
+  document.getElementById('crumb').textContent=(it.type==='Series'?'剧集 · SERIES':'电影 · MOVIE')
+    +(it.officialRating?'  ·  '+it.officialRating:'');
+  var rt=it.runtime?Math.floor(it.runtime/60)+'h '+(it.runtime%60)+'m':'';
+  document.getElementById('meta').innerHTML=
+    '<span class="star">★ '+it.rating+'</span>'
+    +(it.year?'<span>'+it.year+'</span>':'')
+    +(it.premiere?'<span>·</span><span>'+it.premiere+'</span>':'')
+    +(it.genres.length?'<span>·</span><span>'+it.genres.join(' / ')+'</span>':'')
+    +(rt?'<span>·</span><span>'+rt+'</span>':'')
+    +'<span class="chip gold">4K HDR</span><span class="chip">杜比全景声</span><span class="chip">中英特效</span>';
+  document.getElementById('syn').textContent=it.overview||'';
+  renderPlayers(); bindPtool();
+
+  // ── JAV 条件模块：标题含番号（如 ABC-123）才显示；正经片直接跳过 ──
+  (function(){
+    var m=(it.title||'').match(/\b([A-Z]{2,6})[-_ ]?(\d{2,5})\b/);
+    if(!m) return;                                     // 正经库 → 不显示
+    var box=document.getElementById('javBox'); box.hidden=false;
+    var code=(m[1]+'-'+m[2]).toUpperCase();
+    document.getElementById('jCode').textContent=code;
+    document.getElementById('jCode2').textContent=code;
+    document.getElementById('jDate').textContent=it.premiere||'—';
+    document.getElementById('jLen').textContent=(it.runtime||'—')+' 分钟';
+    document.getElementById('jMaker').textContent=(it.studios&&it.studios[0])||'—';
+    document.getElementById('jSeries').textContent='—';
+    document.getElementById('jScore').textContent='★ '+(it.rating||'—')+' / 10';
+    document.getElementById('javActors').innerHTML=it.people.slice(0,6).map(function(p,i){
+      return '<div class="actor"><img src="img/p'+i+'.jpg" onerror="this.style.visibility=\'hidden\'">'
+        +'<div><div class="nm">'+esc(p.name)+'</div><div class="rl">'+esc(p.role||p.type)+'</div></div></div>';
+    }).join('');
+  })();
+
+  // 剧照
+  document.getElementById('stills').innerHTML=[1,2,3,4].map(i=>
+    '<div class="still"><img src="img/bd'+i+'.jpg" onerror="this.src=\'img/backdrop.jpg\'"></div>').join('');
+
+  // 演员墙
+  document.getElementById('cast').innerHTML=it.people.slice(0,10).map((p,i)=>
+    '<div class="acard"><img src="img/p'+i+'.jpg" onerror="this.style.visibility=\'hidden\'">'
+    +'<b>'+esc(p.name)+'</b><em>'+esc(p.role||p.type)+'</em></div>').join('');
+
+  // 预告片（用剧照占位）
+  document.getElementById('trailers').innerHTML=[1,2,3].map(i=>
+    '<div class="still"><img src="img/bd'+i+'.jpg" onerror="this.src=\'img/backdrop.jpg\'"></div>').join('');
+
+  // 更多类似
+  var more=['img/poster.jpg','img/bd1.jpg','img/bd2.jpg','img/bd3.jpg','img/bd4.jpg','img/backdrop.jpg'];
+  document.getElementById('more').innerHTML=more.map((s,i)=>
+    '<div class="mcard"><div class="pv"><img src="'+s+'"><span class="sc">★ '+(8.8-i*0.3).toFixed(1)+'</span>'
+    +'<div class="cap"><b>相似影片 '+(i+1)+'</b><em>2024 · 剧情</em></div></div></div>').join('');
+});
+
+// 方案切换
+document.getElementById('sw').addEventListener('click',function(e){
+  if(e.target.tagName!=='BUTTON')return;
+  [].forEach.call(this.children,b=>b.classList.toggle('on',b===e.target));
+  var B=e.target.dataset.s==='B';
+  document.body.classList.toggle('layoutB',B);
+});
+</script>
+<style>
+  /* 方案 B：去掉左侧海报，背景图全宽，信息居中偏左 */
+  body.layoutB .poster{display:none}
+  body.layoutB .hero-in{justify-content:center}
+  body.layoutB .info{max-width:900px}
+  body.layoutB h1{font-size:clamp(34px,5.4vw,78px)}
+</style>
+</body>
+</html>

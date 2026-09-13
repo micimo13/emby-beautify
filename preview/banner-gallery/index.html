@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANVY · 首页轮播样式预览</title>
+<style>
+  :root{ --bg:#08080c; --card:#13131b; --line:rgba(255,255,255,.09);
+         --fg:#eef0f4; --dim:#8a90a0; --acc:#e8c66a; --pad:clamp(16px,3vw,40px); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--fg);
+    font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+
+  header{position:sticky;top:0;z-index:50;background:rgba(8,8,12,.92);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);padding:13px var(--pad)}
+  .hd{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16.5px;letter-spacing:2px}
+  .brand i{width:10px;height:10px;border-radius:50%;background:var(--acc);box-shadow:0 0 16px var(--acc)}
+  .sub{font-size:12.5px;color:var(--dim)}
+  .grow{flex:1 1 auto}
+
+  main{padding:var(--pad)}
+  .stagewrap{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .stage{position:relative;width:100%;height:min(62vh,620px);background:#000;overflow:hidden}
+  .stage iframe{position:absolute;top:0;left:0;width:1400px;height:800px;border:0;transform-origin:top left}
+
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;padding:13px 15px;border-top:1px solid var(--line)}
+  .tab{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:9px;
+    border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--fg);
+    font-size:13px;font-weight:600;cursor:pointer;transition:.18s}
+  .tab:hover{background:rgba(255,255,255,.12)}
+  .tab.on{background:var(--acc);color:#17130a;border-color:transparent}
+  .tab em{font-style:normal;font-size:11px;opacity:.65;font-family:ui-monospace,Menlo,monospace}
+
+  .meta{display:flex;gap:16px;flex-wrap:wrap;padding:12px 15px;border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--dim);line-height:1.7}
+  .meta b{color:#c9cfdb;font-weight:600}
+  .meta .k{color:var(--acc)}
+
+  footer{padding:20px var(--pad) 44px;color:var(--dim);font-size:12.5px;line-height:1.85}
+  code{font-family:ui-monospace,Menlo,monospace;background:rgba(255,255,255,.07);
+    padding:2px 6px;border-radius:5px;font-size:12px;color:#cfd5e2}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .btn{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 15px;border-radius:9px;
+    font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+    background:rgba(255,255,255,.06);color:var(--fg);transition:.18s}
+  .btn:hover{background:rgba(255,255,255,.14)}
+  .btn.pri{background:var(--acc);color:#17130a;border-color:transparent}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <div class="brand"><i></i>VANVY · 首页轮播样式预览</div>
+    <span class="sub">7 款设计师原创 · 真实组件渲染（非效果图）</span>
+    <div class="grow"></div>
+    <span class="sub">数据：本地真实影片 + 示例图</span>
+  </div>
+</header>
+
+<main>
+  <div class="stagewrap">
+    <div class="stage"><iframe id="fr" scrolling="no"></iframe></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="meta" id="meta"></div>
+  </div>
+</main>
+
+<footer>
+  <div><b style="color:#c9cfdb">说明</b>：本页直接加载<strong>部署用的同一份组件代码</strong>（JS + CSS），
+  配 mock 数据渲染，所以<b>预览 = 部署效果</b>。</div>
+  <div style="margin-top:8px">部署命令：<code id="cmd"></code></div>
+  <div class="bar">
+    <a class="btn pri" href="../loading-gallery/">← 加载页样式预览</a>
+    <a class="btn" href="../index.html">返回设计稿索引</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var STYLES = [
+    { k:'neo',     n:'NEO 霓虹赛博',   t:'赛博朋克',
+      d:'霓虹灯管发光 + 扫描线 + 网格地面 + 故障毛刺。深紫底配青/品红霓虹，<b>最抓眼球</b>。' },
+    { k:'glass',   n:'GLASS 毛玻璃',   t:'现代通透',
+      d:'毛玻璃卡片 + 模糊背景 + 细腻描边。<b>现代高级感</b>，百搭不挑片。' },
+    { k:'orbital', n:'ORBITAL 太空轨道', t:'科幻',
+      d:'星球轨道 + 星尘粒子 + 光环旋转。<b>科幻太空感</b>，适合科幻/太空题材库。' },
+    { k:'retro',   n:'RETRO 复古胶片', t:'怀旧',
+      d:'胶片颗粒 + VHS 扫描 + 暖色褪色。<b>复古电影感</b>，老片库绝配。' },
+    { k:'paper',   n:'PAPER 纸艺',     t:'文艺',
+      d:'纸质分层 + 撕边 + 印刷质感 + 衬线标题。<b>文艺杂志风</b>。' },
+    { k:'minimal', n:'MINIMAL 极简',   t:'克制',
+      d:'超大字排版 + 细线分隔 + 大量留白。<b>极简高级</b>，内容为王。' },
+    { k:'light',   n:'LIGHT 日光',     t:'明亮',
+      d:'米白暖调 + 柔和渐变 + 轻盈卡片。<b>唯一亮色款</b>，白天看不刺眼。' }
+  ];
+  var cur = new URLSearchParams(location.search).get('style') || 'neo';
+
+  var fr = document.getElementById('fr');
+  var tabs = document.getElementById('tabs');
+  var meta = document.getElementById('meta');
+  var cmd = document.getElementById('cmd');
+  var stage = document.querySelector('.stage');
+
+  function byKey(k){ for (var i=0;i<STYLES.length;i++) if (STYLES[i].k===k) return STYLES[i]; return STYLES[0]; }
+
+  function buildTabs(){
+    tabs.innerHTML = '';
+    STYLES.forEach(function(s){
+      var b = document.createElement('button');
+      b.className = 'tab' + (s.k===cur ? ' on' : '');
+      b.innerHTML = s.n + ' <em>' + s.k + '</em>';
+      b.onclick = function(){ cur = s.k; history.replaceState(null,'','?style='+cur); render(); };
+      tabs.appendChild(b);
+    });
+  }
+
+  function render(){
+    var s = byKey(cur);
+    buildTabs();
+    fr.src = 'preview.html?style=' + cur + '&t=' + Date.now();
+    meta.innerHTML = '<div><b>' + s.n + '</b> · <span class="k">' + s.t + '</span><br>' + s.d + '</div>';
+    cmd.textContent = 'bash install-ves.sh --container emby --features 2 --bstyle ' + cur + ' --yes';
+    setTimeout(fit, 80);
+  }
+
+  function fit(){
+    var w = stage.clientWidth, h = stage.clientHeight;
+    var sc = Math.max(w/1400, h/800);
+    if (!fr) return;
+    fr.style.transform = 'scale(' + sc + ')';
+    fr.style.left = ((w - 1400*sc)/2) + 'px';
+    fr.style.top  = ((h - 800*sc)/2) + 'px';
+  }
+
+  render();
+  window.addEventListener('resize', fit);
+  setTimeout(fit, 700); setTimeout(fit, 2000);
+})();
+</script>
+</body>
+</html>

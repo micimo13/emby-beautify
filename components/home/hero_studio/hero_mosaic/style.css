@@ -1,0 +1,169 @@
+/* ═══════════════════════════════════════════════════════════
+   Hero Studio · MOSAIC 马赛克墙（全屏背景）· 样式
+   要点：整块 hero = 一张背景图；文字 + 卡片列都浮在它上面
+   ═══════════════════════════════════════════════════════════ */
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-hero-mosaic, .vanvy-hero-mosaic * { box-sizing: border-box; }
+
+.vanvy-hero-mosaic { display: block; margin: 0; }
+
+.vanvy-hero-mosaic .vhm {
+  position: relative; width: 100%; height: var(--vh-hero-h, 100svh); min-height: 540px; overflow: hidden;
+  background: var(--vh-bg, #08080c); color: #fff; isolation: isolate;
+  font-family: "PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
+}
+
+/* ① 全屏背景（铺满整块 hero，不额外模糊）*/
+.vanvy-hero-mosaic .vhm-bg {
+  position: absolute; inset: -2%; background-size: cover; background-position: center 32%;
+  opacity: 1; transition: opacity .8s ease, transform 9s ease-out;
+}
+/* ② 轻遮罩：只在左侧压暗保证文字可读，右侧留清 */
+.vanvy-hero-mosaic .vhm-scrim {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(4,4,8,.92) 0%, rgba(4,4,8,.72) 30%, rgba(4,4,8,.28) 52%, rgba(4,4,8,.5) 100%),
+    linear-gradient(180deg, rgba(4,4,8,.34) 0%, transparent 22%, transparent 58%, rgba(4,4,8,.62) 100%);
+}
+
+/* ③ 内容网格：左文字 | 右卡片列（浮在背景上）*/
+.vanvy-hero-mosaic .vhm-in {
+  position: relative; z-index: 4; height: 100%;
+  max-width: 1600px; margin: 0 auto;
+  padding: clamp(22px,4vh,56px) clamp(20px,3.6vw,48px);
+  display: grid; grid-template-columns: 1.5fr minmax(230px, 300px);
+  gap: clamp(20px,3vw,52px); align-items: center;
+}
+
+/* 左：文字 */
+.vanvy-hero-mosaic .vhm-txt { max-width: 640px; }
+.vanvy-hero-mosaic .vhm-txt.in > * { animation: vhm-up .62s cubic-bezier(.22,.7,.24,1) both; }
+.vanvy-hero-mosaic .vhm-txt.in > *:nth-child(2) { animation-delay: .05s; }
+.vanvy-hero-mosaic .vhm-txt.in > *:nth-child(3) { animation-delay: .1s; }
+.vanvy-hero-mosaic .vhm-txt.in > *:nth-child(4) { animation-delay: .15s; }
+.vanvy-hero-mosaic .vhm-txt.in > *:nth-child(5) { animation-delay: .2s; }
+
+.vanvy-hero-mosaic .vhm-k {
+  display: inline-block; font-size: 11.5px; letter-spacing: 3.5px; font-weight: 700;
+  color: #17130a; background: linear-gradient(135deg, var(--vh-acc), var(--vh-acc2));
+  padding: 5px 12px; border-radius: 999px;
+}
+.vanvy-hero-mosaic .vhm-title {
+  margin: 15px 0 0; font-size: clamp(30px, 4vw, 60px); font-weight: 900; line-height: 1.06;
+  letter-spacing: -.8px; text-shadow: 0 6px 40px rgba(0,0,0,.9);
+}
+.vanvy-hero-mosaic .vhm-meta {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-top: 14px; font-size: 14px; color: #dfe4ec;
+}
+.vanvy-hero-mosaic .vhm-meta b { color: var(--vh-acc); }
+.vanvy-hero-mosaic .vhm-meta i { color: #6b7280; font-style: normal; }
+.vanvy-hero-mosaic .vhm-desc {
+  margin: 15px 0 0; font-size: 14.5px; line-height: 1.8; color: #c3cad6;
+  text-shadow: 0 2px 14px rgba(0,0,0,.9); max-width: 56ch;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.vanvy-hero-mosaic .vhm-cta { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.vanvy-hero-mosaic .vhm-btn {
+  display: flex; align-items: center; height: 46px; padding: 0 24px; border-radius: 11px;
+  font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: .2s;
+  white-space: nowrap;
+}
+.vanvy-hero-mosaic .vhm-btn.pri {
+  background: linear-gradient(135deg, var(--vh-acc), var(--vh-acc2)); color: #17130a;
+  box-shadow: 0 12px 36px color-mix(in srgb, var(--vh-acc) 34%, transparent);
+}
+.vanvy-hero-mosaic .vhm-btn.pri:hover { transform: translateY(-2px); box-shadow: 0 16px 48px color-mix(in srgb, var(--vh-acc) 50%, transparent); }
+.vanvy-hero-mosaic .vhm-btn:not(.pri) {
+  background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.22);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.vanvy-hero-mosaic .vhm-btn:not(.pri):hover { background: rgba(255,255,255,.22); }
+
+/* 右：备选卡片列（浮在背景上，可滚动）*/
+.vanvy-hero-mosaic .vhm-side {
+  align-self: center; max-height: 66vh; display: flex; flex-direction: column; gap: 10px;
+}
+.vanvy-hero-mosaic .vhm-side-hd {
+  font-size: 11.5px; letter-spacing: 2.5px; font-weight: 700; color: #cfd5e4;
+  display: flex; align-items: baseline; gap: 8px; padding-left: 2px;
+  text-shadow: 0 2px 10px rgba(0,0,0,.9);
+}
+.vanvy-hero-mosaic .vhm-side-hd span { font-size: 11px; color: #8a92a0; letter-spacing: 0; }
+.vanvy-hero-mosaic .vhm-tiles {
+  display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto; overscroll-behavior: contain; padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--vh-acc) 50%, transparent) transparent;
+}
+.vanvy-hero-mosaic .vhm-tiles::-webkit-scrollbar { width: 6px; }
+.vanvy-hero-mosaic .vhm-tiles::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--vh-acc) 50%, transparent); border-radius: 6px;
+}
+.vanvy-hero-mosaic .vhm-tile {
+  position: relative; flex: 0 0 auto; height: 92px; border-radius: 12px; overflow: hidden;
+  cursor: pointer; padding: 0; text-align: left;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(12,12,18,.4);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; transform: translateY(16px) scale(.97);
+  transition: opacity .5s ease, transform .5s cubic-bezier(.22,.7,.24,1),
+              box-shadow .3s ease, border-color .3s ease;
+}
+.vanvy-hero-mosaic .vhm-tile.in { opacity: 1; transform: none; }
+.vanvy-hero-mosaic .vhm-tile:hover {
+  border-color: color-mix(in srgb, var(--vh-acc) 70%, transparent);
+  box-shadow: 0 12px 40px rgba(0,0,0,.7), 0 0 0 1px color-mix(in srgb, var(--vh-acc) 40%, transparent);
+}
+.vanvy-hero-mosaic .vhm-tile-bg {
+  position: absolute; inset: 0; background-size: cover; background-position: center;
+  transition: transform .6s cubic-bezier(.22,.7,.24,1);
+}
+.vanvy-hero-mosaic .vhm-tile:hover .vhm-tile-bg { transform: scale(1.08); }
+.vanvy-hero-mosaic .vhm-tile-cap {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 11px 9px;
+  background: linear-gradient(180deg, transparent, rgba(4,4,8,.94));
+}
+.vanvy-hero-mosaic .vhm-tile-cap b { display: block; font-size: 13px; font-weight: 700; color: #fff; }
+.vanvy-hero-mosaic .vhm-tile-cap i { font-style: normal; font-size: 11px; color: #9aa2b0; }
+
+/* 箭头 / 底条 */
+.vanvy-hero-mosaic .vhm-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 8;
+  width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.22); color: #fff;
+  font-size: 20px; line-height: 1; cursor: pointer; transition: .2s;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.vanvy-hero-mosaic .vhm-arrow:hover { background: rgba(0,0,0,.72); border-color: var(--vh-acc); transform: translateY(-50%) scale(1.06); }
+.vanvy-hero-mosaic .vhm-arrow.l { left: clamp(8px,1.4vw,20px); }
+.vanvy-hero-mosaic .vhm-arrow.r { right: clamp(8px,1.4vw,20px); }
+
+.vanvy-hero-mosaic .vhm-bar {
+  position: absolute; left: 0; right: 0; bottom: 22px; z-index: 6;
+  display: flex; justify-content: center; gap: 8px;
+}
+.vanvy-hero-mosaic .vhm-b {
+  width: 28px; height: 3px; border-radius: 3px; border: 0; padding: 0; cursor: pointer;
+  background: rgba(255,255,255,.24); transition: .24s;
+}
+.vanvy-hero-mosaic .vhm-b.on { width: 46px; background: linear-gradient(90deg, var(--vh-acc), var(--vh-acc2)); }
+
+@keyframes vhm-up { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: none } }
+
+@media (max-width: 980px) {
+  .vanvy-hero-mosaic .vhm-in { grid-template-columns: 1fr; align-items: end; padding-bottom: 78px; }
+  .vanvy-hero-mosaic .vhm-side { display: none; }
+  .vanvy-hero-mosaic .vhm-scrim {
+    background: linear-gradient(180deg, rgba(4,4,8,.5) 0%, rgba(4,4,8,.3) 34%, rgba(4,4,8,.92) 100%);
+  }
+}
+@media (max-width: 620px) {
+  .vanvy-hero-mosaic .vhm { height: 80vh; height: var(--vh-hero-h, 100dvh); min-height: 470px; }
+  .vanvy-hero-mosaic .vhm-desc { -webkit-line-clamp: 2; }
+  .vanvy-hero-mosaic .vhm-arrow { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vanvy-hero-mosaic .vhm-bg { transition: opacity .4s ease; }
+  .vanvy-hero-mosaic .vhm-tile { transition: opacity .3s ease; }
+}

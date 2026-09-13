@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANVY · 加载页样式预览</title>
+<style>
+  :root{
+    --bg:#0a0a0e; --card:#13131b; --line:rgba(255,255,255,.09);
+    --fg:#eef0f4; --dim:#8a90a0; --acc:#e8c66a;
+    --pad:clamp(16px,3vw,40px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--fg);
+    font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+
+  header{position:sticky;top:0;z-index:50;background:rgba(10,10,14,.9);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);padding:14px var(--pad)}
+  .hd{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:2px}
+  .brand i{width:10px;height:10px;border-radius:50%;background:var(--acc);
+    box-shadow:0 0 16px var(--acc);transition:.3s}
+  .sub{font-size:12.5px;color:var(--dim);font-weight:500;letter-spacing:.4px}
+  .grow{flex:1 1 auto}
+
+  /* 配色选择 */
+  .themes{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .tbtn{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;
+    border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);
+    font-size:12.5px;cursor:pointer;color:var(--fg);transition:.18s;white-space:nowrap}
+  .tbtn:hover{background:rgba(255,255,255,.1)}
+  .tbtn.on{border-color:currentColor;background:rgba(255,255,255,.12);font-weight:700}
+  .tbtn .sw{width:13px;height:13px;border-radius:50%;flex:0 0 auto}
+
+  main{padding:var(--pad)}
+  .grid{display:grid;gap:clamp(14px,1.8vw,26px);
+    grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;transition:.25s;display:flex;flex-direction:column}
+  .card:hover{border-color:rgba(255,255,255,.22);transform:translateY(-2px)}
+  .card.wide{grid-column:1/-1}
+
+  .cap{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line)}
+  .cap b{font-size:14px;font-weight:700}
+  .cap .key{font-size:11px;color:var(--dim);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    background:rgba(255,255,255,.06);padding:2px 7px;border-radius:5px}
+  .cap .tag{margin-left:auto;font-size:11px;color:var(--acc);font-weight:600}
+
+  .stage{position:relative;width:100%;height:400px;background:#000;overflow:hidden}
+  .stage iframe{width:1280px;height:800px;border:0;transform-origin:top left;
+    position:absolute;top:0;left:0}
+  .stage.big{height:min(66vh,560px)}
+
+  .note{padding:11px 15px;font-size:12px;color:var(--dim);line-height:1.6;border-top:1px solid var(--line)}
+  .note b{color:#b9bfcc;font-weight:600}
+
+  footer{padding:22px var(--pad) 46px;color:var(--dim);font-size:12.5px;line-height:1.8}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,.07);
+    padding:2px 6px;border-radius:5px;font-size:12px;color:#cfd5e2}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+  .btn{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 15px;border-radius:9px;
+    font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+    background:rgba(255,255,255,.06);color:var(--fg);transition:.18s}
+  .btn:hover{background:rgba(255,255,255,.14)}
+  .btn.pri{background:var(--acc);color:#17130a;border-color:transparent}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <div class="brand"><i></i>VANVY · 加载页样式预览</div>
+    <span class="sub">10 套配色 × 6 款样式 · 实时切换</span>
+    <div class="grow"></div>
+    <div class="themes" id="themes"></div>
+  </div>
+</header>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <div><b style="color:#c9cfdb">说明</b>：本页渲染的是<strong>真实加载页代码</strong>（同一份 CSS + DOM 结构），
+  非效果图。部署时选对应样式即可。</div>
+  <div style="margin-top:8px">命令示例：<code id="cmd"></code></div>
+  <div class="bar">
+    <a class="btn pri" id="installBtn" target="_blank" rel="noopener">查看部署文档</a>
+    <a class="btn" href="../index.html">← 返回设计稿索引</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var THEMES = [
+    { k:'aurora',    n:'极光蓝', a:'#3ea6ff', b:'#7c5cff' },
+    { k:'blackgold', n:'黑金',   a:'#e8c66a', b:'#a8741a' },
+    { k:'champagne', n:'香槟金', a:'#f2dfa8', b:'#c9a86a' },
+    { k:'emerald',   n:'翡翠绿', a:'#10d9a3', b:'#0ea5e9' },
+    { k:'sakura',    n:'樱花粉', a:'#ff6b9d', b:'#c86dd7' },
+    { k:'sunset',    n:'落日橙', a:'#ff9a3d', b:'#ff4d6d' },
+    { k:'amber',     n:'琥珀金', a:'#ffc93c', b:'#e08e2b' },
+    { k:'crimson',   n:'赤霞红', a:'#ff4d5e', b:'#a1213f' },
+    { k:'violet',    n:'幻紫',   a:'#a855f7', b:'#6366f1' },
+    { k:'graphite',  n:'石墨灰', a:'#cbd5e1', b:'#64748b' }
+  ];
+
+  var STYLES = [
+    { k:'',        n:'默认 · 极简进度', tag:'推荐',
+      note:'LOGO + 文案 + 细进度线。<b>最克制耐看</b>，适合大多数场景。' },
+    { k:'aurora',  n:'极光',   tag:'炫',
+      note:'极光渐变背景 + 8 颗浮动粒子 + 双层旋转光环。<b>视觉最丰富</b>。' },
+    { k:'cinema',  n:'影院',   tag:'质感',
+      note:'电影胶片卷轴 + 放映机光束。<b>影视气质强</b>，配黑金最好看。' },
+    { k:'split',   n:'分屏',   tag:'设计感',
+      note:'左右异色面板 + 中缝分隔线对开。<b>现代设计感</b>。' },
+    { k:'minimal', n:'极简',   tag:'干净',
+      note:'只有三点脉冲动画。<b>最轻量</b>，无 LOGO 需求时首选。' },
+    { k:'logo',    n:'纯 LOGO',tag:'品牌',
+      note:'仅品牌 LOGO 呼吸/脉冲。<b>品牌露出最大化</b>。' }
+  ];
+
+  var cur = new URLSearchParams(location.search).get('theme') || 'blackgold';
+  var grid = document.getElementById('grid');
+  var themesEl = document.getElementById('themes');
+  var cmdEl = document.getElementById('cmd');
+
+  function themeObj(k){ for (var i=0;i<THEMES.length;i++) if (THEMES[i].k===k) return THEMES[i]; return THEMES[1]; }
+
+  function applyAccent(t){
+    document.documentElement.style.setProperty('--acc', t.a);
+    var b = document.querySelector('.brand i'); if (b) b.style.background = t.a;
+  }
+
+  function buildThemes(){
+    themesEl.innerHTML = '';
+    THEMES.forEach(function(t){
+      var b = document.createElement('span');
+      b.className = 'tbtn' + (t.k===cur?' on':'');
+      b.style.color = t.k===cur ? t.a : '';
+      b.innerHTML = '<i class="sw" style="background:linear-gradient(135deg,'+t.a+','+t.b+')"></i>'+t.n;
+      b.onclick = function(){
+        cur = t.k;
+        history.replaceState(null,'','?theme='+cur);
+        applyAccent(themeObj(cur));
+        update();
+      };
+      themesEl.appendChild(b);
+    });
+  }
+
+  function buildCards(){
+    grid.innerHTML = '';
+    STYLES.forEach(function(st, idx){
+      var card = document.createElement('div');
+      card.className = 'card' + (idx===0 ? ' wide' : '');
+      card.innerHTML =
+        '<div class="cap"><b>'+st.n+'</b><span class="key">'+(st.k||'default')+'</span>'
+        + '<span class="tag">'+st.tag+'</span></div>'
+        + '<div class="stage'+(idx===0?' big':'')+'"><iframe loading="lazy" '
+        + 'scrolling="no" data-style="'+st.k+'"></iframe></div>'
+        + '<div class="note">'+st.note+'</div>';
+      grid.appendChild(card);
+    });
+  }
+
+  function update(){
+    var ifr = grid.querySelectorAll('iframe');
+    var t = themeObj(cur);
+    Array.prototype.forEach.call(ifr, function(f){
+      f.src = 'preview.html?style=' + encodeURIComponent(f.dataset.style) + '&theme=' + cur;
+    });
+    cmdEl.textContent = 'bash install-ves.sh --container emby --features 1'
+      + (cur && cur!=='blackgold' ? ' --theme '+cur : '')
+      + (ifr.length ? '' : '');
+  }
+
+  // iframe 等比缩放填满卡片
+  function fit(){
+    var stages = document.querySelectorAll('.stage');
+    Array.prototype.forEach.call(stages, function(s){
+      var w = s.clientWidth, h = s.clientHeight;
+      var sc = Math.max(w/1280, h/800);       // cover 填充
+      var f = s.querySelector('iframe');
+      if (!f) return;
+      f.style.transform = 'scale('+sc+')';
+      f.style.left = ((w - 1280*sc)/2)+'px';
+      f.style.top  = ((h - 800*sc)/2)+'px';
+    });
+  }
+
+  document.getElementById('installBtn').href = '../docs/INSTALL.md';
+
+  buildThemes();
+  buildCards();
+  applyAccent(themeObj(cur));
+  update();
+  setTimeout(fit, 60);
+  window.addEventListener('resize', fit);
+  setTimeout(fit, 900);
+  setTimeout(fit, 2000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANVY · 轮播单款预览</title>
+<style>html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}</style>
+</head>
+<body>
+<script>
+(function () {
+  var Q = new URLSearchParams(location.search);
+  var STYLE = Q.get('style') || 'neo';
+  var ID = 'banner_' + STYLE;          // 注册名（核心引擎按此查找）
+  window.__PREVIEW_ID = STYLE;
+
+  // 顺序加载: mock 数据 → mock ApiClient → 引擎 → 组件
+  function load(src, cb) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = function () { cb(); };
+    s.onerror = function () { cb(new Error('load fail: ' + src)); };
+    document.head.appendChild(s);
+  }
+
+  load('mock-data.js', function () {
+    load('mock-api.js', function () {
+      load('comps/vanvy-carousel-core.js', function () {
+        load('comps/banner_' + STYLE + '/banner-' + STYLE + '.js', function (err) {
+          if (err) { document.body.innerHTML = '<div style="color:#f66;font:14px sans-serif;padding:20px">加载失败: ' + err.message + '</div>'; return; }
+          // 注入样式
+          var lk = document.createElement('link');
+          lk.rel = 'stylesheet';
+          lk.href = 'comps/banner_' + STYLE + '/style.css';
+          document.head.appendChild(lk);
+
+          // 挂载（root 类名 = vanvy-carousel-<id>，与核心引擎一致）
+          var root = document.createElement('div');
+          root.className = 'vanvy-carousel-' + ID;
+          document.body.appendChild(root);
+          try {
+            window.VanvyCarouselCore.mount(ID, root);
+          } catch (e) {
+            root.innerHTML = '<div style="color:#f66;font:14px sans-serif;padding:20px">渲染异常: ' + e.message + '</div>';
+          }
+          setTimeout(function () {
+            try { parent.postMessage({ vanvyPreviewReady: true, style: STYLE }, '*'); } catch (e) {}
+          }, 900);
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

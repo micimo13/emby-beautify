@@ -1,0 +1,150 @@
+/* ═══════════════════════════════════════════════════════════
+   Hero Studio · SPOTLIGHT 聚光 · 样式
+   ═══════════════════════════════════════════════════════════ */
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-hero-spotlight, .vanvy-hero-spotlight * { box-sizing: border-box; }
+
+.vanvy-hero-spotlight { display: block; margin: 0; }
+
+.vanvy-hero-spotlight .vhs {
+  position: relative; width: 100%; height: var(--vh-hero-h, 100svh); min-height: 500px; overflow: hidden;
+  background: #05050a; color: #fff; isolation: isolate;
+  font-family: "PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
+}
+
+/* 背景（暗）*/
+.vanvy-hero-spotlight .vhs-bg {
+  position: absolute; inset: -3%; background-size: cover; background-position: center;
+  filter: brightness(.58) saturate(1.02);
+  transition: opacity .7s ease, transform 9s ease-out;
+}
+/* 聚光：跟随鼠标的径向亮圈 */
+.vanvy-hero-spotlight .vhs-spot {
+  --mx: 50%; --my: 42%;
+  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(circle 340px at var(--mx) var(--my),
+    color-mix(in srgb, var(--vh-acc) .30) 0%, color-mix(in srgb, var(--vh-acc) .10) 42%, transparent 72%);
+  transition: background .18s linear;
+}
+/* 环境光：中央大光晕 + 暗角 */
+.vanvy-hero-spotlight .vhs-amb {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 52% at 50% 44%, rgba(255,255,255,.06) 0%, transparent 70%),
+    radial-gradient(ellipse 130% 110% at 50% 50%, transparent 42%, rgba(3,3,7,.68) 100%),
+    linear-gradient(90deg, rgba(3,3,7,.62) 0%, transparent 46%, transparent 62%, rgba(3,3,7,.5) 100%);
+  animation: vhs-breathe 6s ease-in-out infinite;
+}
+@keyframes vhs-breathe { 0%,100%{opacity:.9} 50%{opacity:1} }
+
+/* 三栏网格 */
+.vanvy-hero-spotlight .vhs-grid {
+  position: relative; z-index: 4; height: 100%;
+  max-width: 1500px; margin: 0 auto;
+  padding: clamp(26px,5vh,64px) clamp(20px,4.5vw,60px);
+  display: grid; grid-template-columns: 64px 1fr auto; gap: clamp(20px,3vw,48px); align-items: center;
+}
+/* 左侧序号轨 */
+.vanvy-hero-spotlight .vhs-side {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.vanvy-hero-spotlight .vhs-idx { font-size: 30px; font-weight: 900; color: var(--vh-acc); letter-spacing: -1px; }
+.vanvy-hero-spotlight .vhs-line {
+  flex: 1 1 auto; width: 1px; min-height: 70px;
+  background: linear-gradient(180deg, var(--vh-acc), transparent);
+}
+.vanvy-hero-spotlight .vhs-tot { font-size: 12px; color: #6b7280; letter-spacing: 1px; }
+
+/* 中间内容 */
+.vanvy-hero-spotlight .vhs-mid { max-width: 640px; padding-bottom: 6px; }
+.vanvy-hero-spotlight .vhs-kicker {
+  font-size: 11.5px; letter-spacing: 4px; color: var(--vh-acc); font-weight: 700; margin-bottom: 14px;
+}
+.vanvy-hero-spotlight .vhs-title {
+  margin: 0; font-size: clamp(34px, 4.6vw, 72px); font-weight: 900; line-height: 1.06;
+  letter-spacing: -1px; text-shadow: 0 4px 40px rgba(0,0,0,.9);
+  animation: vhs-in .6s cubic-bezier(.22,.7,.24,1) both;
+}
+.vanvy-hero-spotlight .vhs-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.vanvy-hero-spotlight .vhs-tags span {
+  font-size: 12.5px; padding: 5px 12px; border-radius: 999px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: #dfe4ec;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.vanvy-hero-spotlight .vhs-desc {
+  margin: 18px 0 0; font-size: 14.5px; line-height: 1.8; color: #a9b1bf;
+  text-shadow: 0 2px 14px rgba(0,0,0,.9);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.vanvy-hero-spotlight .vhs-cta { display: flex; gap: 12px; margin-top: 24px; }
+.vanvy-hero-spotlight .vhs-btn {
+  height: 44px; padding: 0 24px; border-radius: 10px; cursor: pointer;
+  border: 1px solid transparent; font-size: 14px; font-weight: 700; color: #1a1405;
+  background: linear-gradient(135deg,var(--vh-acc),var(--vh-acc2));
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--vh-acc) .3); transition: .18s;
+}
+.vanvy-hero-spotlight .vhs-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 40px color-mix(in srgb, var(--vh-acc) .46); }
+.vanvy-hero-spotlight .vhs-btn.ghost {
+  background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.2); box-shadow: none;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.vanvy-hero-spotlight .vhs-btn.ghost:hover { background: rgba(255,255,255,.18); }
+
+/* 右侧海报（倾斜 + 光边）*/
+.vanvy-hero-spotlight .vhs-poster {
+  width: clamp(180px, 17vw, 268px); aspect-ratio: 2/3; border-radius: 14px;
+  background-size: cover; background-position: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.1);
+  transform: perspective(900px) rotateY(-11deg) rotateX(2deg);
+  transition: transform .5s cubic-bezier(.22,.7,.24,1), box-shadow .5s ease;
+  animation: vhs-pop .7s cubic-bezier(.22,.7,.24,1) both;
+}
+.vanvy-hero-spotlight .vhs-poster:hover {
+  transform: perspective(900px) rotateY(-3deg) rotateX(0) translateY(-6px);
+  box-shadow: 0 40px 100px rgba(0,0,0,.9), 0 0 0 1px color-mix(in srgb, var(--vh-acc) .5), 0 0 50px color-mix(in srgb, var(--vh-acc) .16);
+}
+
+/* 底部分页点 */
+.vanvy-hero-spotlight .vhs-nav {
+  position: absolute; left: 0; right: 0; bottom: 22px; z-index: 6;
+  display: flex; justify-content: center;
+}
+.vanvy-hero-spotlight .vhs-dots { display: flex; gap: 9px; }
+.vanvy-hero-spotlight .vhs-dot {
+  width: 26px; height: 3px; border-radius: 3px; border: 0; padding: 0; cursor: pointer;
+  background: rgba(255,255,255,.16); transition: .24s;
+}
+.vanvy-hero-spotlight .vhs-dot.on { width: 44px; background: linear-gradient(90deg,var(--vh-acc),var(--vh-acc2)); }
+
+@keyframes vhs-in { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+@keyframes vhs-pop { from { opacity: 0; transform: perspective(900px) rotateY(-24deg) translateX(30px) } to { opacity: 1; transform: perspective(900px) rotateY(-11deg) rotateX(2deg) } }
+
+@media (max-width: 1080px) {
+  .vanvy-hero-spotlight .vhs-poster { display: none; }
+  .vanvy-hero-spotlight .vhs-grid { grid-template-columns: 52px 1fr; }
+}
+@media (max-width: 700px) {
+  .vanvy-hero-spotlight .vhs { height: 78vh; height: var(--vh-hero-h, 100dvh); min-height: 440px; }
+  .vanvy-hero-spotlight .vhs-side { display: none; }
+  .vanvy-hero-spotlight .vhs-grid { grid-template-columns: 1fr; padding: 24px 18px 70px; }
+  .vanvy-hero-spotlight .vhs-spot { background: radial-gradient(circle 200px at 50% 40%, color-mix(in srgb, var(--vh-acc) .24) 0%, transparent 70%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vanvy-hero-spotlight .vhs-amb { animation: none; }
+  .vanvy-hero-spotlight .vhs-bg { transition: opacity .3s ease; }
+}
+
+
+/* 切换箭头 */
+.vanvy-hero-spotlight .vhs-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 8;
+  width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.2); color: #fff;
+  font-size: 20px; line-height: 1; cursor: pointer; transition: .2s;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.vanvy-hero-spotlight .vhs-arrow:hover { background: rgba(0,0,0,.72); border-color: var(--vh-acc); transform: translateY(-50%) scale(1.06); }
+.vanvy-hero-spotlight .vhs-arrow.l { left: clamp(8px,1.4vw,20px); }
+.vanvy-hero-spotlight .vhs-arrow.r { right: clamp(8px,1.4vw,20px); }
+@media (max-width: 900px) { .vanvy-hero-spotlight .vhs-arrow { display: none; } }

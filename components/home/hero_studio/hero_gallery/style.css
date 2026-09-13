@@ -1,0 +1,121 @@
+/* ═══════════════════════════════════════════════════════════
+   Hero Studio · GALLERY 画廊 · 样式
+   （横向 snap 滚动，原生可滚动/可拖拽）
+   ═══════════════════════════════════════════════════════════ */
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-hero-gallery, .vanvy-hero-gallery * { box-sizing: border-box; }
+
+.vanvy-hero-gallery { display: block; margin: 0; }
+
+.vanvy-hero-gallery .vhg {
+  position: relative; width: 100%; height: var(--vh-hero-h, 100svh); min-height: 540px; overflow: hidden;
+  background: var(--vh-bg, #08080c); color: #fff; isolation: isolate;
+  font-family: "PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  display: flex; flex-direction: column; justify-content: center;
+}
+
+/* 虚化背景 */
+.vanvy-hero-gallery .vhg-bg {
+  position: absolute; inset: -4%; background-size: cover; background-position: center 28%;
+  opacity: .6; filter: blur(14px) saturate(1.1) brightness(.72);
+  transition: opacity .8s ease, transform 10s ease-out;
+}
+.vanvy-hero-gallery .vhg-fade {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 62% 54% at 50% 66%, rgba(0,0,0,.06) 0%, transparent 66%),
+    linear-gradient(180deg, rgba(5,5,10,.74) 0%, rgba(5,5,10,.16) 26%, rgba(5,5,10,.2) 62%, rgba(5,5,10,.84) 100%);
+}
+
+/* 头部 */
+.vanvy-hero-gallery .vhg-head {
+  position: relative; z-index: 5; text-align: center; padding: 0 20px;
+  margin-bottom: clamp(14px,2.4vh,30px); pointer-events: none;
+}
+.vanvy-hero-gallery .vhg-k {
+  font-size: 11px; letter-spacing: 4.5px; font-weight: 700; color: var(--vh-acc);
+}
+.vanvy-hero-gallery .vhg-title {
+  margin: 10px 0 0; font-size: clamp(26px, 3.3vw, 50px); font-weight: 900; letter-spacing: -.6px;
+  text-shadow: 0 4px 36px rgba(0,0,0,.9);
+}
+.vanvy-hero-gallery .vhg-sub {
+  margin-top: 9px; font-size: 13.5px; color: #aab2c0;
+}
+
+/* 滚动条容器（原生横向滚动）*/
+.vanvy-hero-gallery .vhg-scroll {
+  position: relative; z-index: 4; width: 100%;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none;
+  padding: clamp(18px,3vh,40px) 0; cursor: grab; outline: none;
+}
+.vanvy-hero-gallery .vhg-scroll::-webkit-scrollbar { display: none; }
+.vanvy-hero-gallery .vhg-scroll.drag { cursor: grabbing; }
+.vanvy-hero-gallery .vhg-track {
+  display: flex; align-items: center; gap: clamp(14px,1.6vw,26px);
+  padding: 0 50vw;            /* 让首尾也能居中 */
+  width: max-content;
+}
+.vanvy-hero-gallery .vhg-card {
+  flex: 0 0 auto; width: clamp(150px, 16vw, 248px);
+  scroll-snap-align: center; scroll-snap-stop: always;
+  border: 0; padding: 0; background: none; cursor: pointer;
+  transition: transform .5s cubic-bezier(.22,.7,.24,1), opacity .45s ease, filter .45s ease;
+  opacity: .5; filter: brightness(.62) saturate(.85); transform: scale(.86);
+}
+.vanvy-hero-gallery .vhg-card.on {
+  opacity: 1; filter: none; transform: scale(1.1) translateY(-6px);
+}
+.vanvy-hero-gallery .vhg-poster {
+  display: block; width: 100%; aspect-ratio: 2/3; border-radius: 14px;
+  background-size: cover; background-position: center;
+  box-shadow: 0 18px 44px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.09);
+  transition: box-shadow .45s ease;
+}
+.vanvy-hero-gallery .vhg-card.on .vhg-poster {
+  box-shadow: 0 30px 74px rgba(0,0,0,.85), 0 0 0 1.5px var(--vh-acc),
+              0 0 60px color-mix(in srgb, var(--vh-acc) 22%, transparent);
+}
+.vanvy-hero-gallery .vhg-info {
+  display: block; margin-top: 12px; text-align: center;
+  opacity: 0; transition: opacity .35s ease;
+}
+.vanvy-hero-gallery .vhg-card.on .vhg-info { opacity: 1; }
+.vanvy-hero-gallery .vhg-info b { display: block; font-size: 13.5px; font-weight: 700; color: #fff; }
+.vanvy-hero-gallery .vhg-info em { font-style: normal; font-size: 11.5px; color: #98a0ae; }
+
+/* 箭头 */
+.vanvy-hero-gallery .vhg-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 7;
+  width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.2); color: #fff;
+  font-size: 21px; line-height: 1; cursor: pointer; transition: .2s;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.vanvy-hero-gallery .vhg-arrow:hover { background: rgba(0,0,0,.72); border-color: var(--vh-acc); transform: translateY(-50%) scale(1.06); }
+.vanvy-hero-gallery .vhg-arrow.l { left: clamp(10px,1.8vw,26px); }
+.vanvy-hero-gallery .vhg-arrow.r { right: clamp(10px,1.8vw,26px); }
+
+/* 分页点 */
+.vanvy-hero-gallery .vhg-dots {
+  position: relative; z-index: 5; display: flex; justify-content: center; gap: 7px;
+  margin-top: clamp(10px,1.6vh,20px);
+}
+.vanvy-hero-gallery .vhg-dot {
+  width: 7px; height: 7px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+  background: rgba(255,255,255,.22); transition: .22s;
+}
+.vanvy-hero-gallery .vhg-dot.on { width: 26px; border-radius: 4px; background: linear-gradient(90deg, var(--vh-acc), var(--vh-acc2)); }
+
+@media (max-width: 760px) {
+  .vanvy-hero-gallery .vhg { height: 82vh; height: var(--vh-hero-h, 100dvh); min-height: 480px; }
+  .vanvy-hero-gallery .vhg-arrow { display: none; }
+  .vanvy-hero-gallery .vhg-card { width: clamp(130px, 34vw, 180px); }
+  .vanvy-hero-gallery .vhg-card.on { transform: scale(1.04); }
+  .vanvy-hero-gallery .vhg-track { padding: 0 24vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vanvy-hero-gallery .vhg-card { transition: opacity .3s ease; }
+  .vanvy-hero-gallery .vhg-bg { transition: opacity .4s ease; }
+}

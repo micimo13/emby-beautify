@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VES 安装引导 · 图文版</title>
+<style>
+  :root{--bg:#08080c;--card:#13131b;--line:rgba(255,255,255,.09);--fg:#eef0f4;--dim:#8a90a0;
+        --acc:#e8c66a;--acc2:#a8741a;--pad:clamp(16px,3.4vw,52px)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);line-height:1.75;
+    font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,.08);
+    padding:2px 7px;border-radius:6px;font-size:.92em;color:#dfe4ec}
+  pre{background:#0d0d14;border:1px solid var(--line);border-radius:12px;padding:15px 17px;
+    overflow-x:auto;font-size:13px;line-height:1.7;margin:10px 0}
+  pre code{background:none;padding:0;color:#cbd5e1}
+
+  header{position:sticky;top:0;z-index:50;background:rgba(8,8,12,.94);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);padding:12px var(--pad)}
+  .hd{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:1.2px}
+  .brand i{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 14px var(--acc)}
+  .nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  .nav a{font-size:12.5px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(255,255,255,.04);color:var(--fg)}
+  .nav a:hover{background:rgba(255,255,255,.12);text-decoration:none}
+
+  main{padding:0 var(--pad) 70px;max-width:1180px;margin:0 auto}
+  section{padding:42px 0;border-bottom:1px solid var(--line)}
+  section:last-child{border-bottom:0}
+  h2{margin:0 0 8px;font-size:clamp(20px,2.2vw,28px);font-weight:800;letter-spacing:.3px}
+  h3{margin:26px 0 10px;font-size:16.5px;font-weight:700;color:#dbe1ea}
+  h4{margin:18px 0 8px;font-size:14.5px;font-weight:700;color:#c3cad6}
+  .lead{color:var(--dim);font-size:14px;margin-bottom:22px}
+  p{margin:9px 0;color:#c3cad6}
+  ul,ol{margin:9px 0 9px 22px;color:#c3cad6}
+  li{margin:5px 0}
+
+  .hero{background:linear-gradient(135deg,rgba(232,198,106,.13),transparent 62%);
+    border:1px solid var(--line);border-radius:18px;padding:clamp(20px,3vw,38px);margin:34px 0 0}
+  .hero h1{margin:0 0 12px;font-size:clamp(22px,2.8vw,36px);font-weight:900;letter-spacing:-.4px}
+  .hero .sub{color:#b9c0cc;font-size:14.5px}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .badge{font-size:12px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.08);
+    border:1px solid var(--line);color:#dfe4ec}
+
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    transition:.2s;display:flex;flex-direction:column}
+  .card:hover{border-color:rgba(255,255,255,.22);transform:translateY(-2px)}
+  .card .thumb{height:132px;background:#0d0d14;background-size:cover;background-position:center top;
+    border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+  .card .thumb iframe{position:absolute;top:0;left:0;width:1200px;height:760px;border:0;
+    transform-origin:top left;pointer-events:none}
+  .card .body{padding:12px 14px;flex:1 1 auto;display:flex;flex-direction:column;gap:5px}
+  .card .t{display:flex;align-items:center;gap:8px}
+  .card b{font-size:14.5px}
+  .card .id{font-size:11px;color:var(--dim);font-family:ui-monospace,Menlo,monospace;
+    background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px}
+  .card .rec{font-size:10.5px;color:#17130a;background:linear-gradient(135deg,var(--acc),var(--acc2));
+    padding:2px 7px;border-radius:5px;font-weight:800;margin-left:auto}
+  .card .d{font-size:12.5px;color:var(--dim);line-height:1.6}
+  .card .fx{font-size:11.5px;color:#8a90a0;margin-top:auto;padding-top:6px;border-top:1px solid var(--line)}
+  .card .fx i{font-style:normal;color:var(--acc)}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:#aeb6c4;font-weight:600;font-size:12.5px}
+  td code{font-size:12.5px}
+
+  .tip{border-left:3px solid var(--acc);background:rgba(232,198,106,.07);padding:11px 15px;
+    border-radius:0 10px 10px 0;margin:14px 0;font-size:13.5px;color:#d3d9e4}
+  .warn{border-left-color:#f0a020;background:rgba(240,160,32,.08)}
+  .ok{border-left-color:#28c76f;background:rgba(40,199,111,.08)}
+
+  pre.steps{font-size:13.2px}
+  .kbd{display:inline-block;font-size:11.5px;padding:2px 7px;border-radius:5px;
+    background:rgba(255,255,255,.1);border:1px solid var(--line);font-family:ui-monospace,Menlo,monospace}
+
+  @media(max-width:640px){.nav{display:none}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <div class="brand"><i></i>VES 安装引导 · 图文版</div>
+    <div class="nav">
+      <a href="#quick">快速开始</a>
+      <a href="#banner">轮播样式</a>
+      <a href="#loading">加载页</a>
+      <a href="#theme">配色</a>
+      <a href="#logo">LOGO</a>
+      <a href="#backend">后端填写</a>
+      <a href="#imgproxy">图片代理</a>
+      <a href="#faq">常见问题</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<div class="hero">
+  <h1>Vanvy Emby Suite</h1>
+  <div class="sub">给你的 Emby 换上漂亮外衣：预热加载页 · 首页轮播 · 详情页 Hero · 第三方播放器 · JAV 增强 · 毛玻璃</div>
+  <div class="badges">
+    <span class="badge">支持 Emby 4.8 / 4.9</span>
+    <span class="badge">Docker 部署</span>
+    <span class="badge">一键回滚</span>
+    <span class="badge">不修改媒体文件</span>
+  </div>
+</div>
+
+<!-- ══════════════ 快速开始 ══════════════ -->
+<section id="quick">
+  <h2>① 快速开始</h2>
+  <div class="lead">三种方式，任选其一。</div>
+
+  <h3>方式 A · 在线一键安装（最省事）</h3>
+  <pre><code>curl -sL https://raw.githubusercontent.com/micimo13/emby-beautify/main/online-install.sh | bash</code></pre>
+  <p>会自动下载 → 探测你的 Emby → 弹出交互向导，一步步问你。</p>
+
+  <h3>方式 B · 交互向导（想要更多控制）</h3>
+  <pre><code>tar xzf ves.tar.gz &amp;&amp; cd ves-*
+bash install-ves.sh</code></pre>
+
+  <h3>方式 C · 一条命令直装（老手）</h3>
+  <pre><code>bash install-ves.sh --container emby \
+  --features 1,2,3,4,5,6 \
+  --theme blackgold \
+  --bstyle wave --lstyle cinema \
+  --frost weak --perrow 6 --yes</code></pre>
+
+  <div class="tip">
+    <b>向导会问你什么？</b><br>
+    ① 选容器 → ② 功能多选(1-6) → ③ 加载页样式 → ④ 浏览器标签图标 → ⑤ 轮播样式 →
+    ⑥ 配色(10套) → ⑦ 毛玻璃强度 → ⑧ 每行卡片数 → ⑨ 后端依赖(MetaTube/AVDB/图片代理) → ⑩ 确认
+  </div>
+
+  <table>
+    <tr><th>参数</th><th>取值</th></tr>
+    <tr><td><code>--container</code></td><td>容器名（必填）</td></tr>
+    <tr><td><code>--features</code></td><td><code>1</code>加载页 <code>2</code>轮播 <code>3</code>详情页 <code>4</code>播放器 <code>5</code>JAV <code>6</code>毛玻璃</td></tr>
+    <tr><td><code>--theme</code></td><td>见 <a href="#theme">配色</a></td></tr>
+    <tr><td><code>--bstyle</code></td><td>见 <a href="#banner">轮播样式</a></td></tr>
+    <tr><td><code>--lstyle</code></td><td>见 <a href="#loading">加载页样式</a></td></tr>
+    <tr><td><code>--frost</code></td><td><code>off</code> / <code>weak</code> / <code>mid</code> / <code>strong</code></td></tr>
+    <tr><td><code>--perrow</code></td><td>3-10（详情页每行卡片数）</td></tr>
+    <tr><td><code>--logo</code> / <code>--favicon</code></td><td>加载页 LOGO / 浏览器标签图标（本地路径或图片 URL）</td></tr>
+    <tr><td><code>--no-logo</code> / <code>--no-favicon</code></td><td>不用 LOGO / 不替换标签图标（保留 Emby 自带）</td></tr>
+    <tr><td><code>--proxy</code> / <code>--imgproxy</code></td><td>图片代理出网代理（HTTP/SOCKS5） / 一键部署图片代理</td></tr>
+    <tr><td><code>--uninstall</code></td><td>卸载并还原</td></tr>
+  </table>
+</section>
+
+<!-- ══════════════ 轮播样式 ══════════════ -->
+<section id="banner">
+  <h2>② 首页轮播样式</h2>
+  <div class="lead">共 14 款。前 7 款是<b>全新开发</b>（动态效果更强），后 7 款是历史设计款。
+  下面每张卡片都是<b>真实渲染</b>（鼠标移上去可交互）。</div>
+
+  <h3>★ 全新开发（推荐）</h3>
+  <div class="grid" id="gridHero"></div>
+
+  <h3>历史设计款</h3>
+  <div class="grid" id="gridLegacy"></div>
+
+  <div class="tip">
+    <b>不确定选哪个？</b> 建议先用 <code>生产版</code>（最稳妥，与官方风格一致），
+    或 <code>wave 波浪</code> / <code>gallery 画廊</code>（动态感强、不容易审美疲劳）。<br>
+    全屏预览：<a href="../hero-gallery/">HERO 新轮播</a> · <a href="../banner-gallery/">历史轮播</a>
+  </div>
+</section>
+
+<!-- ══════════════ 加载页 ══════════════ -->
+<section id="loading">
+  <h2>③ 预热加载页样式</h2>
+  <div class="lead">消除首屏白屏，展示品牌 LOGO。6 款可选。</div>
+  <div class="grid" id="gridLoading"></div>
+  <div class="tip">全屏预览（含 10 套配色实时切换）：<a href="../loading-gallery/">加载页画廊</a></div>
+  <h3>🖼 LOGO 怎么配置</h3>
+  <p><b>加载页 LOGO</b> 与 <b>浏览器标签图标（favicon）</b> 是两项独立设置，引导向导会分别问你。</p>
+  <pre><code># ① 加载页 LOGO：本地文件 或 图片 URL（两种都行）
+bash install-ves.sh --container emby --features 1 --logo /path/我的logo.png
+bash install-ves.sh --container emby --features 1 --logo https://img.example.com/logo.png
+
+# ② 浏览器标签图标：单独指定（png / ico / jpg / svg，同样支持 URL）
+bash install-ves.sh --container emby --features 1 --favicon https://img.example.com/tab.png
+
+# ③ 不要加载页 LOGO（只显示文字 + 进度线）
+bash install-ves.sh --container emby --features 1 --no-logo
+
+# ④ 不替换浏览器标签图标（保留 Emby 自带）
+bash install-ves.sh --container emby --features 1 --no-favicon
+
+# ⑤ 调加载页 LOGO 显示宽度
+bash install-ves.sh --container emby --features 1 --logo-width 240</code></pre>
+  <div class="tip">
+    <b>给定 URL 时会自动下载</b>（带图片魔数校验，下载到 HTML/404 页会拒绝并降级）；
+    内网环境下载失败可先设 <code>VANVY_PROXY_URL</code> 走代理（HTTP/SOCKS5）。<br>
+    <b>注意</b>：加载页 LOGO 与浏览器标签图标是<b>两项独立设置</b>，分别填。
+  </div>
+  <p>或者放进约定目录（<b>按容器名匹配</b>，多台机器各自不同 LOGO）：</p>
+  <pre><code>components/loading/vanvy/
+├── logo/brand.png          ← 通用加载页 LOGO（所有容器共用）
+└── logos/
+    ├── emby-302/brand.png  ← 仅 emby-302 使用（优先级更高）
+    ├── emby-302/favicon.png← 仅 emby-302 的浏览器标签图标
+    └── emby-18/brand.png
+    （favicon.png 不放会自动用同目录 brand.png 生成）</code></pre>
+  <div class="tip">
+    <b>建议</b>：透明底 PNG，宽度 400–800px，高度别超过 200px；标签图标 128×128 即可。<br>
+    <b>不提供也完全没问题</b> —— 加载页只显示文字和进度线，标签图标保留 Emby 原样，不会报错。
+  </div>
+</section>
+
+<!-- ══════════════ 配色 ══════════════ -->
+<section id="theme">
+  <h2>④ 配色（10 套）</h2>
+  <div class="lead">一处选择，<b>加载页 / 轮播 / 详情页三处同步生效</b>。</div>
+  <div class="grid" id="gridTheme"></div>
+</section>
+
+<!-- ══════════════ 后端填写 ══════════════ -->
+<section id="backend">
+  <h2>⑤ 后端服务地址怎么填</h2>
+  <div class="lead">这几项<b>全部可选</b>。不填 = 对应功能自动降级，<b>不影响其它模块</b>。</div>
+
+  <h3>🧩 JAV 增强（只有这个需要自建服务）</h3>
+  <p>装了 JAV 增强后，若想让页面显示番号 / 演员 / 标签 / 短评 / 外链，需要这些服务：</p>
+
+  <table>
+    <tr><th>服务</th><th>用途</th><th>填写格式（务必带协议头）</th><th>去哪拿</th></tr>
+    <tr>
+      <td><b>MetaTube</b></td>
+      <td>JAV 元数据：番号 / 演员 / 标签 / 发布日期 / 封面</td>
+      <td><code>http://192.168.1.10:28080</code><br><span style="color:#8a90a0;font-size:12px">内网 IP 直接填，端口按你实际部署的</span></td>
+      <td><a href="https://github.com/metatube-community" target="_blank" rel="noopener">github.com/metatube-community</a><br>（Emby/Jellyfin 刮削服务）</td>
+    </tr>
+    <tr>
+      <td><b>AVDB 引擎</b></td>
+      <td>JavDB 搜索 / 短评 / 剧照图片解码</td>
+      <td><code>http://192.168.1.10:38000</code><br>＋ 配套 <b>API Key</b>（形如 <code>9a60dc…</code>）</td>
+      <td>你所用的 JavDB 数据引擎后台</td>
+    </tr>
+    <tr>
+      <td><b>图片代理</b></td>
+      <td>图床被墙时转发图片（不做则部分图不显示）</td>
+      <td><code>https://你的域名/vdimg</code></td>
+      <td>自建 Nginx / CDN 反代，<b>可留空</b></td>
+    </tr>
+  </table>
+
+  <div class="tip warn">
+    <b>填写要点</b><br>
+    · 地址<b>必须带</b> <code>http://</code> 或 <code>https://</code> 前缀<br>
+    · 内网服务直接填内网 IP（例 <code>http://192.168.1.10:28080</code>）<br>
+    · 不确定能不能连通？<b>先留空安装</b>，之后再编辑容器内 <code>vanvy-detail/config.js</code> 补上即可<br>
+    · 向导里有简单格式校验，不像 URL 会提示你
+  </div>
+
+  <h4>🈶 演员名对不上？（简体 ⇄ 繁体/日文）</h4>
+  <p>本地 Emby 演员名可能是简体（如 <code>弥生美月</code>），JavDB 上却是繁体/日文
+  （<code>彌生美月</code> / <code>弥生みづき</code>）。<b>默认全自动处理</b>：
+  搜演员 → 取官方名 + 别名 → 逐个试搜作品 → 选标题命中最高的那个名。</p>
+  <table>
+    <tr><th>本地名</th><th>自动解析为</th><th>JavDB 演员页</th><th>作品</th></tr>
+    <tr><td>弥生美月</td><td><code>弥生みづき</code></td><td><code>/actors/Jekq</code></td><td>21 条 ✅</td></tr>
+    <tr><td>三上悠亚</td><td><code>三上悠亜</code></td><td><code>/actors/Av2e</code></td><td>11 条 ✅</td></tr>
+    <tr><td>桥本有菜（已改名）</td><td><code>新ありな</code></td><td><code>/actors/RJM8</code></td><td>22 条 ✅</td></tr>
+  </table>
+  <p>想手动指定（优先于自动）：</p>
+  <pre><code>VANVY_ACTOR_ALIAS='{"弥生美月":"弥生みづき","三上悠亚":["三上悠亜","三上悠亞"]}' \
+  bash install-ves.sh --container emby --features 5 --theme blackgold --yes</code></pre>
+  <div class="tip">
+    自动结果会缓存在浏览器 <code>localStorage</code>（key <code>vanvy:actorAlias:v1</code>），第二次打开秒出。
+  </div>
+
+  <div class="tip ok">
+    <b>完全不想折腾？</b><br>
+    直接一路回车跳过。JAV 页面会显示 <b>Emby 本地已有的信息</b>（标题、海报、简介），
+    只是拿不到番号/演员/短评这类增强数据。<b>其它 5 个模块完全不受影响。</b>
+  </div>
+
+  <h3>📧 TMDB（可选）</h3>
+  <p>轮播<b>不需要</b> TMDB —— 评分/年份直接取 Emby 本地数据。若想额外补全，可申请免费 Key：
+  <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org/settings/api</a>
+  （注意：国内访问需代理）。</p>
+
+  <div class="tip warn" id="imgproxy">
+    <b>③ 图片代理</b><br>
+    安装向导的第 ⑨ 步会问你（三选一）：<br>
+    <code>[0]</code> 跳过 ｜ <code>[1]</code> 已有图片代理服务 → 填地址 ｜ <code>[2]</code> <b>本机一键部署</b>（向导里直接问 <b>出网代理 HTTP/SOCKS5</b>）<br>
+    公共用户请自建，不要填别人的域名（流量会走对方服务器）。
+  </div>
+
+  <h3>🖼 图片代理：也可以手动搭（零依赖）</h3>
+  <p>向导选 <code>[2]</code> 时，它会自动跑下面这套；也可手动执行：</p>
+  <pre><code># ① 自检（不动系统，先看链路通不通）
+cd components/imgproxy
+bash install-imgproxy.sh --check
+
+# ② 有代理就这样装（把代理地址换成你自己的；HTTP/SOCKS5 都支持）
+sudo bash install-imgproxy.sh --systemd \
+     --proxy "socks5h://用户名:密码@你的代理:1080" \
+     --mode auto
+
+# ②' 没有 systemd / 想用 docker 容器跑
+sudo bash install-imgproxy.sh --docker \
+     --proxy "http://用户名:密码@你的代理:8080" --mode auto
+
+# ③ 没有代理（图床本身能直连）
+sudo bash install-imgproxy.sh --systemd --mode none</code></pre>
+
+  <p>然后在 nginx 里加一段反代（片段见 <code>components/imgproxy/nginx-vdimg.conf</code>），
+  装的时候填：</p>
+  <pre><code>③ 图片代理地址：https://你的域名/vdimg</code></pre>
+
+  <h4>代理怎么填</h4>
+  <table>
+    <tr><th>写法</th><th>说明</th><th>推荐</th></tr>
+    <tr><td><code>socks5h://用户:密码@主机:端口</code></td><td>SOCKS5，DNS 由代理解析（防污染）</td><td>⭐ 推荐</td></tr>
+    <tr><td><code>socks5://用户:密码@主机:端口</code></td><td>SOCKS5，本机解析 DNS</td><td>可用</td></tr>
+    <tr><td><code>http://用户:密码@主机:端口</code></td><td>HTTP 代理</td><td>可用</td></tr>
+  </table>
+  <p class="lead" style="margin-top:8px">多个代理用逗号分隔，前一个挂了自动试下一个。</p>
+
+  <h4>三种模式</h4>
+  <table>
+    <tr><th>模式</th><th>行为</th></tr>
+    <tr><td><code>none</code></td><td>从不走代理，全部直连</td></tr>
+    <tr><td><code>auto</code>（默认）</td><td>只有墙外域名（YouTube / DMM 等）走代理，省流量更快</td></tr>
+    <tr><td><code>all</code></td><td>所有请求都走代理</td></tr>
+  </table>
+
+  <div class="tip">
+    <b>验证是否成功</b>：浏览器打开<br>
+    <code>https://你的域名/vdimg/i?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2F_TRSvK-Omwc%2Fhqdefault.jpg</code><br>
+    能看到图片就对了。也可以访问 <code>/healthz</code> 看当前配置。
+  </div>
+
+  <div class="tip ok">
+    <b>不想搭？直接留空</b><br>
+    留空 = 直接用原图地址。少数图（JavDB 封面 / YouTube 缩略图）不显示，
+    <b>其它 5 个模块完全不受影响</b>。
+  </div>
+
+  <h3>📝 也可以提前写进配置文件</h3>
+  <pre><code>cp vanvy.env.example vanvy.env
+vi vanvy.env     # 填好下面这些
+
+VANVY_METATUBE_BASE="http://192.168.1.10:28080"
+VANVY_AVDB_BASE="http://192.168.1.10:38000"
+VANVY_AVDB_KEY="你的Key"
+VANVY_IMG_PROXY="https://你的域名/vdimg"   # 图片代理对外地址
+
+# 若用 VES 自带 imgproxy 本机部署，还可选填：
+VANVY_PROXY_URL="socks5h://用户:密码@你的代理:1080"   # 出网代理（HTTP/SOCKS5）
+VANVY_PROXY_MODE="auto"                                # auto | all | none
+VANVY_IMG_PORT="18098"                                 # 图片代理监听端口</code></pre>
+  <p>装的时候会自动读，不再重复问你。</p>
+</section>
+
+<!-- ══════════════ FAQ ══════════════ -->
+<section id="faq">
+  <h2>⑥ 常见问题</h2>
+
+  <h4>装完没变化？</h4>
+  <p>浏览器 <span class="kbd">Ctrl</span>+<span class="kbd">F5</span> 强制刷新。
+  仍无变化 → <code>docker exec &lt;容器&gt; grep -c vanvy /system/dashboard-ui/index.html</code>，看是不是 0。</p>
+
+  <h4>Emby 升级后美化没了？</h4>
+  <p>正常 —— 升级会覆盖 <code>index.html</code>。用持久化工具一条命令恢复：</p>
+  <pre><code>bash scripts/ves-persist.sh save    --container emby   # 部署后先备份
+bash scripts/ves-persist.sh restore --container emby   # 升级后恢复</code></pre>
+
+  <h4>加载页一直不消失？</h4>
+  <p>它会等轮播就绪，最长 12 秒强制淡出（内置兜底）。若一直卡 → 检查轮播是否装成功。</p>
+
+  <h4>JAV 页面没有番号/演员？</h4>
+  <p>未配 MetaTube。见 <a href="#backend">第 ⑤ 节</a>。</p>
+
+  <h4>支持群晖 / 裸机 Emby 吗？</h4>
+  <p>目前只支持 <b>Docker 部署</b>的 Emby。</p>
+
+  <h4>影响我原有数据吗？</h4>
+  <p>不影响。只在容器内追加 <code>vanvy-*</code> 目录 + 修改 <code>index.html</code>，
+  不碰媒体文件、不改数据库；<code>--uninstall</code> 可完整还原。</p>
+
+  <h4>多台 Emby 能一起装吗？</h4>
+  <p>可以，逐台执行 <code>--container &lt;各自容器名&gt;</code>。</p>
+
+  <h4>想卸载？</h4>
+  <pre><code>bash install-ves.sh --container emby --uninstall</code></pre>
+</section>
+
+</main>
+
+<script>
+(function () {
+  var U = '../hero-gallery/preview.html';
+  var UH = '../hero-gallery/home.html';   // 生产版专用预览
+  var B = '../banner-gallery/preview.html';
+  var L = '../loading-gallery/preview.html';
+
+  var HERO = [
+    {id:'hero_banner', cn:'★ 生产版', __home:1, d:'经典满屏 Hero，最稳妥（官方推荐）', fx:'背景推拉 · 箭头 · 分页点', rec:1},
+    {id:'classic',    cn:'经典满屏',  d:'底部文案 + 左右箭头 + 分页点', fx:'文案逐层上浮'},
+    {id:'cinema',     cn:'电影感',    d:'满屏背景 + 右侧可滚动缩略图轨', fx:'KenBurns · 三层视差 · 逐字标题'},
+    {id:'spotlight',  cn:'聚光',      d:'鼠标光斑跟随 + 3D 倾斜海报', fx:'光斑跟随 · 呼吸光晕'},
+    {id:'gallery',    cn:'画廊',      d:'横向滑动大图廊（可拖拽/滚轮）', fx:'snap 居中放大 · 拖拽'},
+    {id:'wave',       cn:'波浪',      d:'海报沿弧线起伏，当前卡发光', fx:'正弦排布 · 拖拽/滚轮'},
+    {id:'mosaic',     cn:'马赛克墙',  d:'左大图+右卡片列，全屏背景', fx:'全屏背景 · 卡片依次翻入'}
+  ];
+  var LEGACY = [
+    {id:'neo',     cn:'霓虹赛博', d:'霓虹灯管+扫描线+网格地面', fx:'赛博朋克风'},
+    {id:'glass',   cn:'毛玻璃',   d:'玻璃卡片+模糊背景',        fx:'现代通透'},
+    {id:'orbital', cn:'太空轨道', d:'星球轨道+星尘粒子',        fx:'科幻'},
+    {id:'retro',   cn:'复古胶片', d:'胶片颗粒+VHS扫描',         fx:'怀旧'},
+    {id:'paper',   cn:'纸艺',     d:'纸质分层+印刷质感',        fx:'文艺'},
+    {id:'minimal', cn:'极简',     d:'超大排版+留白',            fx:'克制'},
+    {id:'light',   cn:'日光',     d:'米白暖调，唯一亮色款',      fx:'明亮'}
+  ];
+  var LOADING = [
+    {id:'',        cn:'默认 · 极简进度', d:'LOGO + 文案 + 细进度线', fx:'最克制耐看', rec:1},
+    {id:'aurora',  cn:'极光',   d:'极光渐变 + 8 颗浮粒子 + 双层旋转光环', fx:'最丰富'},
+    {id:'cinema',  cn:'影院',   d:'胶片卷轴环抱 LOGO + 放映机光束',      fx:'影视气质'},
+    {id:'split',   cn:'分屏',   d:'左右异色面板 + 中缝分隔线',           fx:'设计感'},
+    {id:'minimal', cn:'极简',   d:'只有三点脉冲动画',                   fx:'最轻量'},
+    {id:'logo',    cn:'纯 LOGO', d:'品牌 LOGO 呼吸发光',                fx:'品牌露出'}
+  ];
+  var THEMES = [
+    {k:'blackgold',n:'黑金',a:'#e8c66a',b:'#a8741a',rec:1},
+    {k:'aurora',   n:'极光蓝',a:'#3ea6ff',b:'#7c5cff'},
+    {k:'champagne',n:'香槟金',a:'#f2dfa8',b:'#c9a86a'},
+    {k:'emerald',  n:'翡翠绿',a:'#10d9a3',b:'#0ea5e9'},
+    {k:'sakura',   n:'樱花粉',a:'#ff6b9d',b:'#c86dd7'},
+    {k:'sunset',   n:'落日橙',a:'#ff9a3d',b:'#ff4d6d'},
+    {k:'amber',    n:'琥珀金',a:'#ffc93c',b:'#e08e2b'},
+    {k:'crimson',  n:'赤霞红',a:'#ff4d5e',b:'#a1213f'},
+    {k:'violet',   n:'幻紫',  a:'#a855f7',b:'#6366f1'},
+    {k:'graphite', n:'石墨灰',a:'#cbd5e1',b:'#64748b'}
+  ];
+
+  function esc(s){return String(s).replace(/[<>&"]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
+
+  function card(o, src, theme) {
+    var url = o.__home
+      ? src + '?theme=' + (theme || 'blackgold') + '&t=' + Date.now()
+      : src + '?style=' + encodeURIComponent(o.id) + (theme ? '&theme=' + theme : '') + '&t=' + Date.now();
+    return '<div class="card">'
+      + '<div class="thumb"><iframe loading="lazy" src="' + url + '" scrolling="no"></iframe></div>'
+      + '<div class="body"><div class="t"><b>' + esc(o.cn) + '</b>'
+      + '<span class="id">' + esc(o.id || 'default') + '</span>'
+      + (o.rec ? '<span class="rec">推荐</span>' : '')
+      + '</div><div class="d">' + o.d + '</div>'
+      + '<div class="fx">动态：<i>' + o.fx + '</i></div></div></div>';
+  }
+  function themeCard(t) {
+    return '<div class="card"><div class="thumb" style="height:96px;background:linear-gradient(135deg,'
+      + t.a + ',' + t.b + ')"></div><div class="body"><div class="t"><b>' + t.n + '</b>'
+      + '<span class="id">' + t.k + '</span>' + (t.rec ? '<span class="rec">默认</span>' : '')
+      + '</div><div class="d" style="font-family:ui-monospace,Menlo,monospace;font-size:12px">'
+      + t.a + ' → ' + t.b + '</div></div></div>';
+  }
+
+  document.getElementById('gridHero').innerHTML   = HERO.map(function(o){return card(o, o.__home ? UH : U);}).join('');
+  document.getElementById('gridLegacy').innerHTML = LEGACY.map(function(o){return card(o, B);}).join('');
+  document.getElementById('gridLoading').innerHTML= LOADING.map(function(o){return card(o, L);}).join('');
+  document.getElementById('gridTheme').innerHTML  = THEMES.map(themeCard).join('');
+
+  // iframe 等比缩放填充满缩略图
+  function fit() {
+    document.querySelectorAll('.thumb').forEach(function (th) {
+      var f = th.querySelector('iframe'); if (!f) return;
+      var w = th.clientWidth, h = th.clientHeight;
+      var W = 1200, H = 760;
+      var sc = Math.max(w / W, h / H);
+      f.style.transform = 'scale(' + sc + ')';
+      f.style.left = ((w - W * sc) / 2) + 'px';
+      f.style.top  = ((h - H * sc) / 2) + 'px';
+    });
+  }
+  window.addEventListener('resize', fit);
+  setTimeout(fit, 300); setTimeout(fit, 1500); setTimeout(fit, 3500);
+})();
+</script>
+</body>
+</html>

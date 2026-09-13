@@ -1,0 +1,125 @@
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-carousel-banner_light, .vanvy-carousel-banner_light * { box-sizing: border-box; }
+
+.vanvy-carousel-banner_light {
+  position:relative; width:100%; height:78vh; height:var(--vh-hero-h, 100dvh); min-height:420px; overflow:hidden;
+  border-radius:8px; font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+}
+
+
+
+
+.vanvy-carousel-banner_light .light {
+  position:relative; width:100vw; height:100%; overflow:hidden;
+  background:linear-gradient(160deg,#fdfbf5 0%, #f6f2e8 40%, #efe8d8 100%);
+}
+/* 柔光 */
+.vanvy-carousel-banner_light .light::before {
+  content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(600px 350px at 75% 25%, rgba(255,214,140,.35), transparent 60%),
+    radial-gradient(500px 300px at 20% 80%, rgba(160,210,255,.25), transparent 60%),
+    radial-gradient(400px 250px at 50% 50%, rgba(255,255,255,.4), transparent 60%);
+}
+/* 底部弧光 */
+.vanvy-carousel-banner_light .light::after {
+  content:""; position:absolute; left:-10%; right:-10%; bottom:-30%; height:60%;
+  background:radial-gradient(60% 100% at 50% 100%, rgba(255,214,140,.25), transparent 70%);
+}
+
+.vanvy-carousel-banner_light .light-slide { position:absolute; inset:0; display:flex; align-items:center; padding:0 9%; gap:60px; z-index:2; }
+
+/* 海报 — 浅色卡片 */
+.vanvy-carousel-banner_light .light-poster {
+  width:320px; height:470px; flex-shrink:0; position:relative;
+  border-radius:18px; overflow:hidden;
+  background:linear-gradient(170deg,#fefdfa,#f0e9db);
+  box-shadow:
+    0 20px 50px rgba(180,160,120,.25),
+    0 4px 12px rgba(180,160,120,.12),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  border:1px solid rgba(255,255,255,.8);
+}
+.vanvy-carousel-banner_light .light-poster::before {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(150deg,rgba(255,255,255,.7) 0%, transparent 40%);
+}
+.vanvy-carousel-banner_light .light-poster .vanvy-carousel-banner_light .frame {
+  position:absolute; inset:14px; border-radius:12px; border:1px solid rgba(180,160,120,.25);
+}
+
+.vanvy-carousel-banner_light .light-info { flex:1; max-width:600px; position:relative; }
+.vanvy-carousel-banner_light .light-chip {
+  display:inline-block; padding:5px 18px; margin-bottom:18px; font-size:12px; letter-spacing:3px;
+  color:#8a7355; background:rgba(255,255,255,.7); border-radius:30px;
+  box-shadow:0 4px 14px rgba(180,160,120,.15), inset 0 1px 0 rgba(255,255,255,.9);
+  border:1px solid rgba(180,160,120,.2);
+}
+.vanvy-carousel-banner_light .light-title {
+  font-size:56px; font-weight:800; line-height:1.1; color:#3d3528; margin-bottom:10px;
+  letter-spacing:1px;
+}
+.vanvy-carousel-banner_light .light-sub { font-size:15px; color:#a08a68; letter-spacing:6px; margin-bottom:20px; font-weight:500; }
+.vanvy-carousel-banner_light .light-meta { display:flex; gap:8px; margin-bottom:20px; }
+.vanvy-carousel-banner_light .light-tag {
+  padding:4px 14px; font-size:12px; border-radius:20px; color:#6b5a40;
+  background:rgba(255,255,255,.6); border:1px solid rgba(180,160,120,.25);
+}
+.vanvy-carousel-banner_light .light-desc {
+  font-size:15px; line-height:1.9; color:#7a6d58; margin-bottom:26px; max-width:500px;
+}
+.vanvy-carousel-banner_light .light-btns { display:flex; gap:12px; }
+.vanvy-carousel-banner_light .light-btn {
+  padding:13px 36px; font-size:14px; letter-spacing:1px; cursor:pointer; border:none; border-radius:40px;
+  font-weight:600; transition:.2s;
+}
+.vanvy-carousel-banner_light .light-btn.play {
+  background:linear-gradient(135deg,#ffd98a,#f5b84b); color:#5a4316;
+  box-shadow:0 8px 24px rgba(245,184,75,.4), inset 0 1px 0 rgba(255,255,255,.6);
+}
+.vanvy-carousel-banner_light .light-btn.play:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(245,184,75,.5); }
+.vanvy-carousel-banner_light .light-btn.detail {
+  background:rgba(255,255,255,.6); color:#6b5a40; border:1px solid rgba(180,160,120,.3);
+}
+.vanvy-carousel-banner_light .light-btn.detail:hover { background:rgba(255,255,255,.9); }
+
+/* 顶栏 */
+.vanvy-carousel-banner_light .light-nav {
+  position:absolute; top:22px; left:9%; right:9%; z-index:3;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:12px 24px; border-radius:40px;
+  background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.8);
+  backdrop-filter:blur(16px); box-shadow:0 8px 24px rgba(180,160,120,.12);
+}
+.vanvy-carousel-banner_light .light-logo { font-size:14px; font-weight:700; letter-spacing:3px; color:#5a4a30; }
+.vanvy-carousel-banner_light .light-navlink { font-size:12px; color:#8a7355; letter-spacing:1px; }
+
+/* 底部缩略条 */
+.vanvy-carousel-banner_light .light-thumbs {
+  position:absolute; bottom:28px; left:50%; transform:translateX(-50%); display:flex; gap:12px; z-index:3;
+  padding:10px 18px; border-radius:30px;
+  background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.8);
+  backdrop-filter:blur(12px); box-shadow:0 8px 24px rgba(180,160,120,.12);
+}
+.vanvy-carousel-banner_light .light-thumb { width:88px; height:50px; border-radius:10px; background:rgba(255,255,255,.5); border:1px solid rgba(180,160,120,.2); cursor:pointer; }
+.vanvy-carousel-banner_light .light-thumb.active { background:rgba(255,255,255,.9); box-shadow:0 0 14px rgba(245,184,75,.4); border-color:#f5b84b; }
+/* 云朵 */
+.vanvy-carousel-banner_light .light-cloud { position:absolute; border-radius:50%; background:rgba(255,255,255,.5); filter:blur(20px); }
+.vanvy-carousel-banner_light .light-cloud.c1 { width:160px; height:40px; top:18%; right:12%; }
+.vanvy-carousel-banner_light .light-cloud.c2 { width:100px; height:28px; top:30%; right:30%; }
+
+.vanvy-carousel-banner_light [data-poster] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_light [data-thumb] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_light [data-overlay] { position:absolute; inset:0; background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.55)); }
+
+
+/* ── 满屏背景图（Vanvy backdrop layer）────────────────────── */
+.vanvy-carousel-banner_light .vbd-bd {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-size:cover; background-position:center 32%;
+  opacity:.46; transform:scale(1.04); transition:opacity .6s ease;
+}
+.vanvy-carousel-banner_light .vbd-scrim {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(160deg, rgba(253,251,245,.90) 0%, rgba(246,242,232,.86) 40%, rgba(239,232,216,.92) 100%);
+}

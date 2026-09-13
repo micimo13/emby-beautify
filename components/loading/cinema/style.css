@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════════════════════
+   VANVY Loading · CINEMA 影院版
+   胶片卷轴环抱 LOGO + 放映机光束 + 黑金质感
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes cinema-reel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes cinema-reel-spin-r { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+@keyframes cinema-beam { 0%, 100% { opacity: .22; } 50% { opacity: .55; } }
+@keyframes cinema-bar {
+  0%   { width: 6%;  opacity: 1; }
+  60%  { width: 58%; opacity: 1; }
+  100% { width: 100%; opacity: 0; }
+}
+@keyframes cinema-holes { from { background-position: 0 0; } to { background-position: -60px 0; } }
+
+/* ── 根容器 ── */
+#vanvy-loading.vl-style-cinema {
+  position: fixed; inset: 0; z-index: 99999;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(ellipse 60% 42% at 50% 30%, color-mix(in srgb, var(--vl-acc) 16%, transparent) 0%, transparent 72%),
+    linear-gradient(180deg, var(--vl-bg) 0%, color-mix(in srgb, var(--vl-acc) 9%, var(--vl-bg)) 50%, var(--vl-bg) 100%);
+  overflow: hidden;
+  transition: opacity .6s ease;
+}
+#vanvy-loading.vl-style-cinema.vl-hide { opacity: 0; pointer-events: none; }
+
+/* 顶部放映机光束 */
+#vanvy-loading.vl-style-cinema .vl-bg {
+  position: absolute; inset: 0;
+  background: conic-gradient(from 180deg at 50% -10%,
+    transparent 0deg,
+    color-mix(in srgb, var(--vl-acc) 13%, transparent) 14deg,
+    transparent 28deg);
+  animation: cinema-beam 4.5s ease-in-out infinite;
+}
+
+/* 上下两条胶片齿孔 */
+#vanvy-loading.vl-style-cinema::before,
+#vanvy-loading.vl-style-cinema::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 22px; opacity: .5;
+  background-image:
+    linear-gradient(90deg, var(--vl-acc) 0 8px, transparent 8px 18px);
+  background-size: 18px 100%;
+  animation: cinema-holes 2.4s linear infinite;
+}
+#vanvy-loading.vl-style-cinema::before { top: 6%;    -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
+#vanvy-loading.vl-style-cinema::after  { bottom: 6%; -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
+
+/* 内容 */
+#vanvy-loading.vl-style-cinema .vl-inner {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 26px;
+}
+
+/* ── 卷轴环抱 LOGO（关键修复：居中 + 同心）── */
+#vanvy-loading.vl-style-cinema .vl-logo-wrap {
+  position: relative;
+  width: 168px; height: 168px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* 卷轴：绝对定位居中，只让内圈旋转（避免 transform 覆盖居中）*/
+#vanvy-loading.vl-style-cinema .vl-reel {
+  position: absolute; inset: 0; margin: auto;
+  width: 168px; height: 168px; border-radius: 50%;
+  background: radial-gradient(circle,
+    transparent 0 46%,
+    color-mix(in srgb, var(--vl-acc) 26%, var(--vl-bg)) 46% 62%,
+    transparent 62%);
+  border: 1.5px solid color-mix(in srgb, var(--vl-acc) 42%, transparent);
+  box-shadow:
+    0 0 34px color-mix(in srgb, var(--vl-acc) 22%, transparent),
+    inset 0 0 26px color-mix(in srgb, var(--vl-acc) 14%, transparent);
+}
+#vanvy-loading.vl-style-cinema .vl-reel::before {
+  content: ''; position: absolute; inset: 9px; border-radius: 50%;
+  border: 2px dashed color-mix(in srgb, var(--vl-acc) 55%, transparent);
+  animation: cinema-reel-spin 7s linear infinite;
+}
+#vanvy-loading.vl-style-cinema .vl-reel::after {
+  content: ''; position: absolute; inset: 26px; border-radius: 50%;
+  border: 1px dotted color-mix(in srgb, var(--vl-acc) 42%, transparent);
+  animation: cinema-reel-spin-r 11s linear infinite;
+}
+
+/* LOGO 光晕 + LOGO 本体（居于卷轴正中）*/
+#vanvy-loading.vl-style-cinema .vl-glow {
+  position: absolute; inset: 18%; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--vl-acc) 30%, transparent) 0%, transparent 72%);
+  filter: blur(18px);
+}
+#vanvy-loading.vl-style-cinema .vl-logo {
+  position: relative; z-index: 1;
+  width: 92px; height: 92px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 18px color-mix(in srgb, var(--vl-acc) 45%, transparent));
+}
+
+/* 进度条 */
+#vanvy-loading.vl-style-cinema .vl-bar {
+  position: relative; width: 250px; height: 2px; overflow: hidden;
+  background: color-mix(in srgb, var(--vl-acc) 18%, transparent);
+}
+#vanvy-loading.vl-style-cinema .vl-bar i {
+  display: block; height: 100%; width: 0; position: absolute; left: 0;
+  background: linear-gradient(90deg, transparent, var(--vl-acc), var(--vl-acc2));
+  animation: cinema-bar 2.4s ease-in-out infinite;
+}
+
+/* 品牌字 */
+#vanvy-loading.vl-style-cinema .vl-brand {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 15px; font-weight: 700; letter-spacing: 7px;
+  color: var(--vl-acc); text-indent: 7px;
+  text-shadow: 0 0 22px color-mix(in srgb, var(--vl-acc) 55%, transparent);
+}
+
+/* 服务器名文案 */
+#vanvy-loading.vl-style-cinema .vl-caption { bottom: 13%; }
+
+#vanvy-loading.vl-style-cinema.hide-out { animation: cinema-fadeout .6s ease forwards; }
+@keyframes cinema-fadeout { 0% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }

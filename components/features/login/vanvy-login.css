@@ -1,0 +1,116 @@
+/* ═══════════════════════════════════════════════════════════════════
+   vanvy-login · 样式（黑金 + 毛玻璃；只覆盖外观，不动原生控件功能）
+   作用域：body.vl-users / body.vl-pwd 之内
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 页面背景：满屏渐变 + 柔光斑（不遮挡任何交互）── */
+.vl-orn { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  background:
+    var(--vanvy-login-bg, none) center/cover no-repeat,
+    radial-gradient(1200px 620px at 72% -12%, rgba(232,198,106,.16), transparent 62%),
+    radial-gradient(960px 520px at 8% 108%, rgba(232,198,106,.10), transparent 60%),
+    linear-gradient(160deg, #16130d 0%, #0a0a0d 52%, #07060a 100%);
+  background-size: cover, auto, auto, auto;
+}
+.vl-orn::after { content: ""; position: absolute; inset: 0;
+  background: rgba(7,6,8, var(--vanvy-login-tint, .42)); }
+.vl-orn-glow { position: absolute; width: 46vw; height: 46vw; border-radius: 50%; filter: blur(90px);
+  opacity: .34; background: radial-gradient(circle, var(--vanvy-accent, #e8c66a), transparent 66%);
+  left: -10vw; top: -14vw; animation: vlFloat 18s ease-in-out infinite; }
+.vl-orn-glow2 { left: auto; right: -12vw; bottom: -18vw; top: auto; opacity: .22; animation-delay: -7s; }
+@keyframes vlFloat { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(2vw,3vw,0) scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .vl-orn-glow { animation: none; } }
+
+/* 内容抬到装饰层之上 */
+body.vl-users .view, body.vl-pwd .view { position: relative; z-index: 1; }
+
+/* ── 卡片头（品牌）── */
+.vl-head { display: flex; align-items: center; gap: 13px; margin: 0 0 18px; }
+.vl-head .vl-logo { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 13px; overflow: hidden;
+  display: grid; place-items: center; font-weight: 900; font-size: 20px; color: #1a1408;
+  background: linear-gradient(135deg, var(--vanvy-accent, #e8c66a), var(--vanvy-accent-2, #a8741a));
+  box-shadow: 0 8px 22px rgba(0,0,0,.5); }
+.vl-head .vl-logo img { width: 100%; height: 100%; object-fit: cover; }
+.vl-head .vl-txt { display: flex; flex-direction: column; line-height: 1.32; }
+.vl-head .vl-txt b { font-size: 16px; font-weight: 800; color: #f2f4f8; letter-spacing: .3px; }
+.vl-head .vl-txt i { font-style: normal; font-size: 11.5px; color: rgba(255,255,255,.45); }
+
+/* ── 用户选择页：h1 排版 + 卡片行留白 ── */
+body.vl-users .scrollSlider > h1 { font-size: 13px !important; font-weight: 500 !important;
+  color: rgba(255,255,255,.4) !important; letter-spacing: 1px; text-transform: uppercase; }
+body.vl-users .scrollSlider > h1:nth-of-type(2) { font-size: 26px !important; font-weight: 800 !important;
+  color: #f2f4f8 !important; letter-spacing: .4px; text-transform: none; margin-bottom: 6px; }
+body.vl-users .itemsContainer { margin-top: 10px; }
+
+/* 用户卡：圆角 + 描边 + 悬停金环（不改结构，只上样式）*/
+body.vl-users .squareCard .cardBox {
+  border-radius: 16px; overflow: hidden; background: rgba(22,20,26,.55);
+  border: 1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(var(--vanvy-login-blur, 22px)) saturate(130%);
+  -webkit-backdrop-filter: blur(var(--vanvy-login-blur, 22px)) saturate(130%);
+  box-shadow: 0 14px 34px rgba(0,0,0,.45);
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+body.vl-users .squareCard:hover .cardBox,
+body.vl-users .squareCard:focus-within .cardBox {
+  transform: translateY(-3px);
+  border-color: rgba(232,198,106,.62);
+  box-shadow: 0 18px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(232,198,106,.35), 0 0 24px rgba(232,198,106,.18);
+}
+body.vl-users .squareCard .cardText-first { background: transparent; color: #eef0f4; font-weight: 600; }
+body.vl-users .squareCard .cardImageContainer { border-radius: 14px 14px 0 0; }
+
+/* ── 密码页：表单卡片化（毛玻璃）── */
+body.vl-pwd .vl-form {
+  max-width: 460px !important; width: calc(100% - 32px); margin: 6vh auto 0 !important;
+  padding: 26px 26px 22px !important; border-radius: 20px;
+  background: rgba(20,19,24,.62) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  backdrop-filter: blur(var(--vanvy-login-blur, 22px)) saturate(135%);
+  -webkit-backdrop-filter: blur(var(--vanvy-login-blur, 22px)) saturate(135%);
+  box-shadow: 0 30px 70px rgba(0,0,0,.66), inset 0 1px 0 rgba(255,255,255,.06);
+  animation: vlPop .34s cubic-bezier(.22,.7,.24,1) both;
+}
+@keyframes vlPop { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+body.vl-pwd .vl-form h1 { font-size: 20px !important; font-weight: 800 !important; color: #f2f4f8 !important; }
+body.vl-pwd .vl-form .emby-input,
+body.vl-pwd .vl-form input[type=text], body.vl-pwd .vl-form input[type=password] {
+  border-radius: 11px !important; background: rgba(255,255,255,.05) !important;
+  border: 1px solid rgba(255,255,255,.14) !important; color: #f2f4f8 !important;
+  padding: 9px 12px !important; transition: border-color .18s, box-shadow .18s, background .18s;
+}
+body.vl-pwd .vl-form .emby-input:focus,
+body.vl-pwd .vl-form input:focus {
+  outline: none !important; border-color: rgba(232,198,106,.7) !important;
+  box-shadow: 0 0 0 3px rgba(232,198,106,.16) !important; background: rgba(255,255,255,.07) !important;
+}
+body.vl-pwd .vl-form .inputLabel { color: rgba(255,255,255,.55) !important; font-size: 12.5px !important; }
+/* 主按钮：金色渐变（4.8/4.9 实际类名：.paperSubmit / .emby-button）*/
+body.vl-pwd .vl-form .paperSubmit, body.vl-pwd .vl-form .button-submit, body.vl-pwd .vl-form .raised.button-submit {
+  border-radius: 11px !important; font-weight: 800 !important; letter-spacing: .3px;
+  color: #1a1408 !important; border: 0 !important;
+  background: linear-gradient(135deg, var(--vanvy-accent, #e8c66a), var(--vanvy-accent-2, #a8741a)) !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.45); transition: filter .18s, transform .18s;
+}
+body.vl-pwd .vl-form .paperSubmit:hover, body.vl-pwd .vl-form .button-submit:hover { filter: brightness(1.08); transform: translateY(-1px); }
+body.vl-pwd .vl-form .buttonCancel, body.vl-pwd .vl-form .button-cancel, body.vl-pwd .vl-form .btnForgotPassword {
+  border-radius: 11px !important; color: rgba(255,255,255,.66) !important;
+  background: rgba(255,255,255,.06) !important; border: 1px solid rgba(255,255,255,.12) !important;
+}
+body.vl-pwd .vl-form .buttonCancel:hover, body.vl-pwd .vl-form .btnForgotPassword:hover { color: #fff !important; background: rgba(255,255,255,.11) !important; }
+body.vl-pwd .vl-form .block { width: 100% !important; }
+body.vl-pwd .vl-form .chkRememberLogin { accent-color: var(--vanvy-accent, #e8c66a); }
+
+/* 不支持 backdrop-filter → 回落不透明，保证可读 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  body.vl-pwd .vl-form { background: #17161c !important; }
+  body.vl-users .squareCard .cardBox { background: #1b1a21; }
+}
+
+/* 顶栏在登录页保持干净 */
+body.vl-users .skinHeader, body.vl-pwd .skinHeader { background: transparent !important; }
+
+@media (max-width: 620px) {
+  body.vl-pwd .vl-form { margin-top: 3vh !important; padding: 20px 18px 18px !important; }
+  .vl-head { margin-bottom: 14px; }
+}

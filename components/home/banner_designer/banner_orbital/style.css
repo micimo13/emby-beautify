@@ -1,0 +1,127 @@
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-carousel-banner_orbital, .vanvy-carousel-banner_orbital * { box-sizing: border-box; }
+
+.vanvy-carousel-banner_orbital {
+  position:relative; width:100%; height:78vh; height:var(--vh-hero-h, 100dvh); min-height:420px; overflow:hidden;
+  border-radius:8px; font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+}
+
+
+
+
+.vanvy-carousel-banner_orbital .orbital {
+  position:relative; width:100vw; height:100%; overflow:hidden;
+  background:radial-gradient(1200px 700px at 50% 40%, #0d1530 0%, #05081a 55%, #02030c 100%);
+}
+/* 星空 */
+.vanvy-carousel-banner_orbital .orbital::before {
+  content:""; position:absolute; inset:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,.8), transparent),
+    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1.8px 1.8px at 65% 20%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1px 1px at 80% 55%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1.3px 1.3px at 10% 80%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1.6px 1.6px at 90% 85%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1.2px 1.2px at 75% 40%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1px 1px at 55% 90%, rgba(255,255,255,.5), transparent);
+  animation:twinkle 4s ease-in-out infinite alternate;
+}
+@keyframes twinkle { from{opacity:.7} to{opacity:1} }
+/* 星云 */
+.vanvy-carousel-banner_orbital .orbital::after {
+  content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(500px 300px at 30% 30%, rgba(88,101,242,.12), transparent 60%),
+    radial-gradient(400px 250px at 75% 65%, rgba(56,189,248,.1), transparent 60%),
+    radial-gradient(300px 200px at 60% 25%, rgba(168,85,247,.08), transparent 60%);
+}
+
+/* 轨道环 */
+.vanvy-carousel-banner_orbital .orbit-ring { position:absolute; left:50%; top:50%; border-radius:50%; border:1px solid rgba(120,160,255,.15); transform:translate(-50%,-50%); }
+.vanvy-carousel-banner_orbital .orbit-ring.r1 { width:520px; height:520px; }
+.vanvy-carousel-banner_orbital .orbit-ring.r2 { width:760px; height:760px; border-color:rgba(120,160,255,.08); }
+.vanvy-carousel-banner_orbital .orbit-ring.r3 { width:1000px; height:1000px; border-color:rgba(120,160,255,.05); }
+.vanvy-carousel-banner_orbital .orbit-dash { position:absolute; left:50%; top:50%; border-radius:50%; border:1px dashed rgba(140,180,255,.2); transform:translate(-50%,-50%); width:640px; height:640px; animation:rotate 60s linear infinite; }
+@keyframes rotate { to{transform:translate(-50%,-50%) rotate(360deg)} }
+
+/* 轨道上的卫星卡片 */
+.vanvy-carousel-banner_orbital .sat {
+  position:absolute; width:130px; height:76px; border-radius:10px; cursor:pointer;
+  background:rgba(20,28,60,.75); border:1px solid rgba(120,160,255,.3);
+  backdrop-filter:blur(8px); box-shadow:0 8px 24px rgba(0,0,0,.5);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; color:rgba(255,255,255,.6); letter-spacing:1px;
+  transition:.3s;
+}
+.vanvy-carousel-banner_orbital .sat:hover { border-color:rgba(140,180,255,.6); transform:scale(1.05); }
+.vanvy-carousel-banner_orbital .sat.s1 { top:50%; left:calc(50% - 260px - 65px); margin-top:-38px; }
+.vanvy-carousel-banner_orbital .sat.s2 { top:50%; left:calc(50% + 260px - 65px); margin-top:-38px; }
+.vanvy-carousel-banner_orbital .sat.s3 { top:calc(50% - 260px - 38px); left:50%; margin-left:-65px; }
+.vanvy-carousel-banner_orbital .sat.s4 { top:calc(50% + 260px - 38px); left:50%; margin-left:-65px; }
+.vanvy-carousel-banner_orbital .sat.s5 { top:calc(50% - 184px - 38px); left:calc(50% - 184px - 65px); }
+.vanvy-carousel-banner_orbital .sat.s6 { top:calc(50% + 184px - 38px); left:calc(50% + 184px - 65px); }
+
+/* 主海报 */
+.vanvy-carousel-banner_orbital .orbital-main {
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:240px; height:340px; z-index:3; border-radius:14px; overflow:hidden;
+  background:linear-gradient(165deg,#1a2450,#0a1030);
+  border:1px solid rgba(140,180,255,.35);
+  box-shadow:
+    0 0 0 1px rgba(140,180,255,.1),
+    0 20px 60px rgba(0,0,0,.6),
+    0 0 60px rgba(88,101,242,.2);
+  display:flex; align-items:center; justify-content:center;
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{margin-top:0} 50%{margin-top:-10px} }
+.vanvy-carousel-banner_orbital .orbital-main::after {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.55));
+}
+.vanvy-carousel-banner_orbital .orbital-main .vanvy-carousel-banner_orbital .m-title {
+  position:absolute; bottom:14px; left:0; right:0; text-align:center; z-index:2;
+  color:#fff; font-size:15px; font-weight:700; letter-spacing:3px;
+  text-shadow:0 2px 12px rgba(0,0,0,.8);
+}
+.vanvy-carousel-banner_orbital .orbital-main .vanvy-carousel-banner_orbital .m-sub { position:absolute; bottom:36px; left:0; right:0; text-align:center; z-index:2; color:rgba(140,180,255,.9); font-size:9px; letter-spacing:3px; }
+
+/* 左侧信息 */
+.vanvy-carousel-banner_orbital .orbital-info { position:absolute; left:7%; top:50%; transform:translateY(-50%); z-index:4; max-width:340px; }
+.vanvy-carousel-banner_orbital .orbital-tag { display:inline-block; padding:3px 12px; margin-bottom:14px; font-size:11px; letter-spacing:3px; color:var(--vanvy-accent, #93c5fd); border:1px solid rgba(var(--vanvy-accent-rgb, 147,197,253),.3); border-radius:20px; background:rgba(var(--vanvy-accent-rgb, 147,197,253),.06); }
+.vanvy-carousel-banner_orbital .orbital-title { font-size:44px; font-weight:800; color:#fff; line-height:1.15; margin-bottom:10px; letter-spacing:1px; text-shadow:0 4px 30px rgba(0,0,0,.6); }
+.vanvy-carousel-banner_orbital .orbital-sub { font-size:13px; color:var(--vanvy-accent, #93c5fd); letter-spacing:5px; margin-bottom:16px; }
+.vanvy-carousel-banner_orbital .orbital-meta { display:flex; gap:8px; margin-bottom:16px; }
+.vanvy-carousel-banner_orbital .orbital-chip { padding:3px 12px; font-size:11px; border-radius:20px; color:rgba(255,255,255,.85); background:rgba(var(--vanvy-accent-rgb, 147,197,253),.1); border:1px solid rgba(var(--vanvy-accent-rgb, 147,197,253),.25); }
+.vanvy-carousel-banner_orbital .orbital-desc { font-size:14px; line-height:1.8; color:rgba(255,255,255,.65); margin-bottom:22px; }
+.vanvy-carousel-banner_orbital .orbital-btn {
+  padding:11px 30px; font-size:13px; letter-spacing:2px; cursor:pointer; border:none; border-radius:6px;
+  background:linear-gradient(135deg,#5865f2,#8b5cf6); color:#fff; font-weight:600;
+  box-shadow:0 8px 24px rgba(88,101,242,.35);
+}
+.vanvy-carousel-banner_orbital .orbital-btn:hover { filter:brightness(1.15); }
+
+/* 底部缩略条 */
+.vanvy-carousel-banner_orbital .orbital-thumbs { position:absolute; bottom:28px; left:50%; transform:translateX(-50%); display:flex; gap:10px; z-index:5; }
+.vanvy-carousel-banner_orbital .orbital-thumb { width:104px; height:58px; border-radius:8px; background:rgba(20,28,60,.6); border:1px solid rgba(120,160,255,.25); cursor:pointer; position:relative; overflow:hidden; }
+.vanvy-carousel-banner_orbital .orbital-thumb.active { border-color:var(--vanvy-accent, #93c5fd); box-shadow:0 0 14px rgba(var(--vanvy-accent-rgb, 147,197,253),.4); }
+.vanvy-carousel-banner_orbital .orbital-thumb.active::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent,rgba(var(--vanvy-accent-rgb, 147,197,253),.1)); }
+
+.vanvy-carousel-banner_orbital [data-poster] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_orbital [data-thumb] { background-size:cover; background-position:center; }
+.vanvy-carousel-banner_orbital [data-overlay] { position:absolute; inset:0; background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.55)); }
+
+
+/* ── 满屏背景图（Vanvy backdrop layer）────────────────────── */
+.vanvy-carousel-banner_orbital .vbd-bd {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-size:cover; background-position:center 32%;
+  opacity:.55; transform:scale(1.04); transition:opacity .6s ease;
+}
+.vanvy-carousel-banner_orbital .vbd-scrim {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(1200px 700px at 50% 40%, rgba(13,21,48,.58) 0%, rgba(5,8,26,.80) 55%, rgba(2,3,12,.93) 100%);
+}

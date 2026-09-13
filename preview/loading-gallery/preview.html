@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANVY Loading · 单款预览</title>
+<link rel="stylesheet" href="vanvy-loading.css">
+<link rel="stylesheet" id="vstyle-css">
+<style>
+  /* 预览容器：真实加载页是 position:fixed inset:0，这里限制在 iframe 内即可 */
+  html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}
+  #vanvy-loading.vl{cursor:default}
+</style>
+</head>
+<body>
+<div id="vanvy-loading" class="vl"></div>
+<script>
+(function () {
+  var Q = new URLSearchParams(location.search);
+  var STYLE = Q.get('style') || '';
+  var THEME = Q.get('theme') || 'blackgold';
+
+  var PRESETS = {
+    aurora:   { a:'#3ea6ff', b:'#7c5cff', bg:'#08080c' },
+    blackgold:{ a:'#e8c66a', b:'#a8741a', bg:'#070608' },
+    champagne:{ a:'#f2dfa8', b:'#c9a86a', bg:'#08070a' },
+    emerald:  { a:'#10d9a3', b:'#0ea5e9', bg:'#050b0a' },
+    sakura:   { a:'#ff6b9d', b:'#c86dd7', bg:'#0c070c' },
+    sunset:   { a:'#ff9a3d', b:'#ff4d6d', bg:'#0c0805' },
+    amber:    { a:'#ffc93c', b:'#e08e2b', bg:'#0a0805' },
+    crimson:  { a:'#ff4d5e', b:'#a1213f', bg:'#0c0507' },
+    violet:   { a:'#a855f7', b:'#6366f1', bg:'#08060e' },
+    graphite: { a:'#cbd5e1', b:'#64748b', bg:'#0a0b0d' }
+  };
+
+  var STYLE_HTML = {
+    aurora: [
+      '<div class="vl-bg"></div>',
+      '<div class="vl-particles">',
+      '<i class="vp vp-1"></i><i class="vp vp-2"></i><i class="vp vp-3"></i><i class="vp vp-4"></i>',
+      '<i class="vp vp-5"></i><i class="vp vp-6"></i><i class="vp vp-7"></i><i class="vp vp-8"></i>',
+      '</div>',
+      '<div class="vl-inner">',
+      '  <div class="vl-logo-wrap"><div class="vl-glow"></div><div class="vl-ring"></div><div class="vl-ring vl-ring-2"></div>',
+      '    <img class="vl-logo" src="brand.png" alt="" onerror="this.style.display=&quot;none&quot;"></div>',
+      '  <div class="vl-bar"><i></i></div>',
+      '  <div class="vl-brand">VANVY</div>',
+      '</div>'
+    ].join(''),
+    cinema: [
+      '<div class="vl-bg"></div>',
+      '<div class="vl-inner">',
+      '  <div class="vl-logo-wrap">',
+      '    <div class="vl-reel"></div><div class="vl-glow"></div>',
+      '    <img class="vl-logo" src="brand.png" alt="" onerror="this.style.display=&quot;none&quot;">',
+      '  </div>',
+      '  <div class="vl-bar"><i></i></div>',
+      '  <div class="vl-brand">CINEMA</div>',
+      '</div>'
+    ].join(''),
+    split: [
+      '<div class="vl-split-l"></div><div class="vl-split-r"></div>',
+      '<div class="vl-inner">',
+      '  <div class="vl-logo-wrap"><img class="vl-logo" src="brand.png" alt="" onerror="this.style.display=&quot;none&quot;"></div>',
+      '  <div class="vl-bar"><i></i></div>',
+      '  <div class="vl-brand">VANVY</div>',
+      '</div>'
+    ].join(''),
+    minimal: [
+      '<div class="vl-inner">',
+      '  <div class="vl-dots"><i></i><i></i><i></i></div>',
+      '  <div class="vl-brand">Loading</div>',
+      '</div>'
+    ].join(''),
+    logo: [
+      '<div class="vl-inner">',
+      '  <div class="vl-logo-wrap"><img class="vl-logo" src="brand.png" alt="" onerror="this.style.display=&quot;none&quot;"></div>',
+      '  <div class="vl-brand">VANVY</div>',
+      '</div>'
+    ].join('')
+  };
+
+  var CAPTION = '正在准备 Link Media Server 的媒体库';
+  var el = document.getElementById('vanvy-loading');
+  var p = PRESETS[THEME] || PRESETS.blackgold;
+
+  el.style.setProperty('--vl-acc', p.a);
+  el.style.setProperty('--vl-acc2', p.b);
+  el.style.setProperty('--vl-bg', p.bg);
+  el.setAttribute('data-vl-theme', THEME);
+
+  if (STYLE && STYLE_HTML[STYLE]) {
+    document.getElementById('vstyle-css').href = 'styles/' + STYLE + '.css';
+    el.setAttribute('data-vl-style', STYLE);
+    el.classList.add('vl-style-' + STYLE);
+    el.innerHTML = STYLE_HTML[STYLE] + '<div class="vl-caption">' + CAPTION + '</div>';
+  } else {
+    // 默认款：极简进度
+    el.innerHTML = [
+      '<div class="vl-inner">',
+      '  <img class="vl-logo" src="brand.png" alt="" onerror="this.style.display=&quot;none&quot;">',
+      '  <div class="vl-text">' + CAPTION + '</div>',
+      '  <div class="vl-bar"><i></i></div>',
+      '  <div class="vl-sub">LOADING</div>',
+      '</div>'
+    ].join('');
+  }
+
+  // 通知父页已就绪
+  try { parent.postMessage({ vanvyPreviewReady: true, style: STYLE || 'default', theme: THEME }, '*'); } catch (e) {}
+})();
+</script>
+</body>
+</html>

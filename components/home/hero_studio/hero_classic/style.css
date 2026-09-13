@@ -1,0 +1,132 @@
+/* ═══════════════════════════════════════════════════════════
+   Hero Studio · CLASSIC 经典满屏 · 样式
+   （视觉语言对齐原始设计稿 mockup/index.html）
+   ═══════════════════════════════════════════════════════════ */
+/* 统一盒模型：Emby 全局是 content-box，会让 height:100% + padding 溢出（移动端按钮被切）*/
+.vanvy-hero-classic, .vanvy-hero-classic * { box-sizing: border-box; }
+
+.vanvy-hero-classic { display: block; margin: 0; }
+
+.vanvy-hero-classic .vhk {
+  position: relative; width: 100%; height: var(--vh-hero-h, 100svh);
+  min-height: min(560px, 100svh); overflow: hidden; isolation: isolate;
+  background: var(--vh-bg, #08080c); color: #f5f6f8;
+  font-family: "PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  border-radius: 0 0 18px 18px;
+}
+
+/* 幻灯片 */
+.vanvy-hero-classic .vhk-slide {
+  position: absolute; inset: 0; opacity: 0; visibility: hidden;
+  transition: opacity .9s ease, visibility .9s;
+}
+.vanvy-hero-classic .vhk-slide.on { opacity: 1; visibility: visible; }
+.vanvy-hero-classic .vhk-bd {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 24%;
+  transform: scale(1.06); will-change: transform;
+}
+.vanvy-hero-classic .vhk-veil {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(8,8,12,.92) 0%, rgba(8,8,12,.66) 32%, rgba(8,8,12,.08) 60%, rgba(8,8,12,0) 100%),
+    linear-gradient(0deg, var(--vh-bg,#08080c) 1%, rgba(8,8,12,.5) 20%, rgba(8,8,12,0) 56%);
+}
+
+/* 内容（底部对齐）*/
+.vanvy-hero-classic .vhk-in {
+  position: relative; z-index: 5; height: 100%;
+  max-width: 1560px; margin: 0 auto;
+  padding: 96px clamp(20px,4.5vw,64px) clamp(96px,15vh,166px);
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.vanvy-hero-classic .vhk-in.in > * { animation: vhk-up .7s cubic-bezier(.22,.7,.24,1) both; }
+.vanvy-hero-classic .vhk-in.in > *:nth-child(2) { animation-delay: .06s; }
+.vanvy-hero-classic .vhk-in.in > *:nth-child(3) { animation-delay: .12s; }
+.vanvy-hero-classic .vhk-in.in > *:nth-child(4) { animation-delay: .18s; }
+.vanvy-hero-classic .vhk-in.in > *:nth-child(5) { animation-delay: .24s; }
+
+.vanvy-hero-classic .vhk-tag {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12.5px; letter-spacing: 5px; font-weight: 700;
+  color: var(--vh-acc); margin-bottom: clamp(12px,2vh,20px);
+}
+.vanvy-hero-classic .vhk-tag::before {
+  content: ''; width: 30px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--vh-acc), var(--vh-acc2));
+}
+.vanvy-hero-classic .vhk-h1 {
+  margin: 0; font-size: clamp(34px, 4.8vw, 74px); font-weight: 900; line-height: 1.06;
+  letter-spacing: -.5px; text-shadow: 0 6px 42px rgba(0,0,0,.85);
+}
+.vanvy-hero-classic .vhk-meta {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin: clamp(14px,2.4vh,22px) 0 clamp(12px,2vh,18px);
+  font-size: clamp(12.5px,1.1vw,14.5px); color: #cfd3dc;
+}
+.vanvy-hero-classic .vhk-meta .star { color: var(--vh-acc); font-weight: 800; }
+.vanvy-hero-classic .vhk-meta i { color: #4b5563; font-style: normal; }
+.vanvy-hero-classic .vhk-meta .chip {
+  padding: 5px 12px; border-radius: 8px; font-size: 12.5px; color: #e7e9ee;
+  background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.13);
+}
+.vanvy-hero-classic .vhk-syn {
+  margin: 0; max-width: 56ch; font-size: clamp(13.5px,1.05vw,15.5px);
+  line-height: 1.85; color: #b9bec9;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.vanvy-hero-classic .vhk-cta { display: flex; gap: 14px; margin-top: clamp(20px,3.4vh,32px); flex-wrap: wrap; }
+.vanvy-hero-classic .vhk-btn {
+  display: flex; align-items: center; height: clamp(44px,5.2vh,52px);
+  padding: 0 clamp(20px,2.4vw,30px); border-radius: 12px;
+  font-size: clamp(14px,1.1vw,15.5px); font-weight: 700; cursor: pointer;
+  border: 1px solid transparent; transition: .22s; white-space: nowrap;
+}
+.vanvy-hero-classic .vhk-btn.play {
+  background: linear-gradient(135deg, var(--vh-acc), var(--vh-acc2)); color: #17130a;
+  box-shadow: 0 12px 38px color-mix(in srgb, var(--vh-acc) 34%, transparent);
+}
+.vanvy-hero-classic .vhk-btn.play:hover { transform: translateY(-2px); box-shadow: 0 16px 48px color-mix(in srgb, var(--vh-acc) 50%, transparent); }
+.vanvy-hero-classic .vhk-btn.ghost {
+  background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.16);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.vanvy-hero-classic .vhk-btn.ghost:hover { background: rgba(255,255,255,.18); }
+
+/* 左右箭头 */
+.vanvy-hero-classic .vhk-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 7;
+  width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.18); color: #fff;
+  font-size: 20px; line-height: 1; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: .2s; opacity: 0;
+}
+.vanvy-hero-classic .vhk:hover .vhk-arrow { opacity: 1; }
+.vanvy-hero-classic .vhk-arrow:hover { background: rgba(0,0,0,.68); border-color: var(--vh-acc); }
+.vanvy-hero-classic .vhk-arrow.l { left: clamp(12px,2vw,26px); }
+.vanvy-hero-classic .vhk-arrow.r { right: clamp(12px,2vw,26px); }
+
+/* 分页点 */
+.vanvy-hero-classic .vhk-dots {
+  position: absolute; left: clamp(20px,4.5vw,64px); bottom: clamp(38px,7vh,72px); z-index: 6;
+  display: flex; gap: 9px;
+}
+.vanvy-hero-classic .vhk-dot {
+  width: 9px; height: 9px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+  background: rgba(255,255,255,.28); transition: .24s;
+}
+.vanvy-hero-classic .vhk-dot.on { width: 30px; border-radius: 5px; background: linear-gradient(90deg, var(--vh-acc), var(--vh-acc2)); }
+
+@keyframes vhk-up { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: none } }
+
+@media (max-width: 760px) {
+  .vanvy-hero-classic .vhk { height: 88vh; height: var(--vh-hero-h, 100dvh); min-height: 470px; }
+  .vanvy-hero-classic .vhk-in { padding: 84px 18px 88px; }
+  .vanvy-hero-classic .vhk-syn { -webkit-line-clamp: 2; }
+  .vanvy-hero-classic .vhk-arrow { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vanvy-hero-classic .vhk-slide { transition: opacity .3s ease; }
+  .vanvy-hero-classic .vhk-in.in > * { animation: none; }
+}

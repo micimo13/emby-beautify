@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><title>卡片预告片 · 改版示意</title>
+<link rel="stylesheet" href="vanvy-list-trailer.css">
+<style>
+  html,body{margin:0;background:radial-gradient(1200px 600px at 68% -8%,#201a12,#0a0a0d 55%,#070608);
+    color:#efe9df;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;padding:30px 42px 38px}
+  h3.sec{font-size:15px;margin:0 0 6px;color:#e8c66a;font-weight:800;letter-spacing:.5px}
+  p.sub{font-size:12px;color:rgba(255,255,255,.45);margin:0 0 18px;line-height:1.8}
+  .row{display:flex;gap:22px;flex-wrap:wrap}
+  .cell{width:300px}
+  .cell .cap{font-size:12px;color:#a49b8c;margin-top:9px;line-height:1.7}
+  .cell .cap b{color:#e8c66a}
+  /* 复刻 Emby 卡片结构：卡片 = 图片区 + 底部文字行 */
+  .cardBox{position:relative;border-radius:10px;overflow:hidden;background:#16171d;box-shadow:0 10px 26px rgba(0,0,0,.5)}
+  .cardImageContainer{display:block;width:100%;height:172px;border:0;padding:0;
+    background:url(backdrop1.jpg) center/cover;position:relative;overflow:hidden}
+  .cardText{padding:9px 11px;font-size:12.5px;color:#cfd3dc;background:#191a21}
+  /* B：模拟「正在播放预告片」（真实环境此处是 <video>/<iframe> 画面）*/
+  .b .cardImageContainer{background-image:url(backdrop2.jpg)}
+  .b .vtl-sim{position:absolute;inset:0;z-index:3;background:url(backdrop3.jpg) center/cover;
+    animation:simIn .35s ease both}
+  @keyframes simIn{from{opacity:.55}to{opacity:1}}
+  .b .vtl-sim::after{content:"";position:absolute;left:14px;bottom:12px;width:0;height:0;
+    border-left:9px solid rgba(255,255,255,.85);border-top:6px solid transparent;border-bottom:6px solid transparent}
+</style></head><body>
+
+<h3 class="sec">卡片预告片 · 改版后（对齐原作者设计）</h3>
+<p class="sub">有预告片的卡片：一圈<b style="color:#e8c66a">金色描边 + 柔光</b>（边框小特效）｜鼠标移上去 <b style="color:#e8c66a">就地直接播放</b>｜右上角小按钮 <b style="color:#e8c66a">展开弹框</b> 全屏看<br>
+（旧版问题：预览层贴在整张卡片上 → 连底部文字行一起盖住，看上去就是"一大块黑块"；且用纯黑底 + 模糊，观感很糙）</p>
+
+<div class="row">
+  <div class="cell">
+    <div class="cardBox">
+      <button class="cardImageContainer">
+        <i class="vtl-ring"></i>
+      </button>
+      <div class="cardText">红海行动 2</div>
+      <button class="vtl-expand" title="看预告片" style="opacity:1;transform:none">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+    <div class="cap"><b>A · 静止态</b><br>有预告片 → 金环提示 + 右上角展开按钮（悬停时更亮）</div>
+  </div>
+
+  <div class="cell b">
+    <div class="cardBox vtl-playing">
+      <button class="cardImageContainer">
+        <div class="vtl-sim"></div>
+        <i class="vtl-ring"></i>
+      </button>
+      <div class="cardText">红海行动 2</div>
+      <button class="vtl-expand" title="看预告片" style="opacity:1;transform:none">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+    <div class="cap"><b>B · 悬停播放中</b><br>只覆盖<b>海报区</b>（不盖底部文字），金环高亮</div>
+  </div>
+
+  <div class="cell">
+    <div class="cardBox">
+      <button class="cardImageContainer" style="background-image:url(backdrop3.jpg)"></button>
+      <div class="cardText">没有预告片的片子</div>
+    </div>
+    <div class="cap"><b>C · 无预告片</b><br>既没有金环、也没有按钮，完全不打扰</div>
+  </div>
+</div>
+
+</body></html>
