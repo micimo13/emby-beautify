@@ -58,6 +58,8 @@
     border-bottom:1px solid var(--line);position:relative;overflow:hidden}
   .card .thumb iframe{position:absolute;top:0;left:0;width:1200px;height:760px;border:0;
     transform-origin:top left;pointer-events:none}
+  .card .thumb img.thumb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    object-position:center top;display:block}
   .card .body{padding:12px 14px;flex:1 1 auto;display:flex;flex-direction:column;gap:5px}
   .card .t{display:flex;align-items:center;gap:8px}
   .card b{font-size:14.5px}
@@ -205,13 +207,14 @@ bash install-ves.sh --container emby --features 1,2,3,4,5,6,7,8 \
 <!-- ══════════════ 加载页 ══════════════ -->
 <section id="loading">
   <h2>③ 预热加载页样式</h2>
-  <div class="lead"><b>8 款</b>可选（新增 <b>orbit 轨道</b> / <b>pulse 声波</b>）。
+  <div class="lead"><b>8 款</b>可选：默认 · 极光 · 影院 · 分屏 · 极简 · 纯 LOGO · 轨道 · 声波。
   也可 <code>--lstyle orbit</code> 直接指定。</div>
   <div class="grid" id="gridLoading"></div>
   <div class="tip">全屏预览（含 10 套配色实时切换）：<a href="../loading-gallery/">加载页画廊</a>
   ・ 新增两款：<a href="../loading-lab/orbit.html">orbit</a> / <a href="../loading-lab/pulse.html">pulse</a>（或 <a href="../loading-lab/">lab 索引</a>）</div>
   <h3>🔐 登录页风格（8 套）</h3>
   <p>与加载页一样，登录页也是<b>一套 DOM、8 种外观</b>（改动仅限样式，不碰任何原生控件与事件）：</p>
+  <div class="grid" id="gridLogin"></div>
   <table>
     <tr><th>值</th><th>风格</th><th>适合</th></tr>
     <tr><td><code>glass</code></td><td>黑金毛玻璃（默认）</td><td>与详情页/轮播同语言，沉稳耐看</td></tr>
@@ -522,8 +525,18 @@ bash scripts/ves-persist.sh restore --container emby   # 升级后恢复</code><
     {id:'split',   cn:'分屏',   d:'左右异色面板 + 中缝分隔线',           fx:'设计感'},
     {id:'minimal', cn:'极简',   d:'只有三点脉冲动画',                   fx:'最轻量'},
     {id:'logo',    cn:'纯 LOGO', d:'品牌 LOGO 呼吸发光',                fx:'品牌露出'},
-    {id:'orbit',   cn:'轨道 ★新', d:'三层同心轨道反向自转 + 卫星点 + 扫描光', fx:'秩序感'},
-    {id:'pulse',   cn:'声波 ★新', d:'16 根频谱音柱错峰起伏 + 中央光晕',       fx:'影音气质'}
+    {id:'orbit',   cn:'轨道', d:'三层同心轨道反向自转 + 卫星点 + 扫描光', fx:'秩序感'},
+    {id:'pulse',   cn:'声波', d:'16 根频谱音柱错峰起伏 + 中央光晕',       fx:'影音气质'}
+  ];
+  var LOGIN = [
+    {id:'glass',   cn:'黑金毛玻璃', rec:1, d:'与详情页/轮播同语言，沉稳耐看', fx:'毛玻璃 + 金色点缀'},
+    {id:'aurora',  cn:'极光',     d:'流动光带，通透',                fx:'极光渐变'},
+    {id:'cinema',  cn:'影院',     d:'上下遮幅 + 胶片颗粒',            fx:'电影感'},
+    {id:'minimal', cn:'极简浅色', d:'白天 / 办公环境',                fx:'浅色留白'},
+    {id:'split',   cn:'左右分屏', d:'品牌与表单分区（窄屏自动堆叠）',  fx:'分屏布局'},
+    {id:'neon',    cn:'霓虹赛博', d:'发光描边 + 扫描线',              fx:'霓虹发光'},
+    {id:'paper',   cn:'纸感暖色', d:'米色纸面，安静',                  fx:'纸质纹理'},
+    {id:'orbital', cn:'轨道',     d:'同心环缓转（与加载页 orbit 呼应）', fx:'同心环'}
   ];
   var THEMES = [
     {k:'blackgold',n:'黑金',a:'#e8c66a',b:'#a8741a',rec:1},
@@ -552,6 +565,16 @@ bash scripts/ves-persist.sh restore --container emby   # 升级后恢复</code><
       + '</div><div class="d">' + o.d + '</div>'
       + '<div class="fx">动态：<i>' + o.fx + '</i></div></div></div>';
   }
+  function loginCard(o) {
+    return '<div class="card">'
+      + '<div class="thumb"><img class="thumb-img" loading="lazy" src="../login-lab/'
+      + o.id + '.png" alt="' + o.id + '"></div>'
+      + '<div class="body"><div class="t"><b>' + esc(o.cn) + '</b>'
+      + '<span class="id">' + esc(o.id) + '</span>'
+      + (o.rec ? '<span class="rec">默认</span>' : '')
+      + '</div><div class="d">' + o.d + '</div>'
+      + '<div class="fx">风格：<i>' + o.fx + '</i></div></div></div>';
+  }
   function themeCard(t) {
     return '<div class="card"><div class="thumb" style="height:96px;background:linear-gradient(135deg,'
       + t.a + ',' + t.b + ')"></div><div class="body"><div class="t"><b>' + t.n + '</b>'
@@ -563,6 +586,7 @@ bash scripts/ves-persist.sh restore --container emby   # 升级后恢复</code><
   document.getElementById('gridHero').innerHTML   = HERO.map(function(o){return card(o, o.__home ? UH : U);}).join('');
   document.getElementById('gridLegacy').innerHTML = LEGACY.map(function(o){return card(o, B);}).join('');
   document.getElementById('gridLoading').innerHTML= LOADING.map(function(o){return card(o, L);}).join('');
+  document.getElementById('gridLogin').innerHTML  = LOGIN.map(loginCard).join('');
   document.getElementById('gridTheme').innerHTML  = THEMES.map(themeCard).join('');
 
   // iframe 等比缩放填充满缩略图

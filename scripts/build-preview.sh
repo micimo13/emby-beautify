@@ -3,7 +3,7 @@
 #  构建可视化预览页（从组件源码生成 → 保证「预览 = 实际部署效果」）
 #  用法: bash scripts/build-preview.sh [--out /vol1/1001/web/mockup]
 #  产出:
-#    <out>/loading-gallery/   加载页：10 配色 × 6 样式
+#    <out>/loading-gallery/   加载页：10 配色 × 8 样式（自动收录）
 #    <out>/banner-gallery/    首页轮播：7 款设计师样式
 # =============================================================================
 set -eu
@@ -15,10 +15,16 @@ OUT="/vol1/1001/web/mockup"
 S="$ROOT/components/loading/vanvy"
 D="$OUT/loading-gallery"
 mkdir -p "$D/styles"
-cp "$S/vanvy-loading.css" "$D/vanvy-loading.css"
-for st in aurora cinema minimal split logo; do
-  cp "$ROOT/components/loading/$st/style.css" "$D/styles/$st.css"
+# 加载样式：自动收录 components/loading/<style>/style.css 下所有款
+#  ⚠️ 曾写死白名单（aurora cinema minimal split logo）→ 新增的 orbit/pulse 漏发，
+#     页面里这两张缩略图 404 后回落到「默认·极简」，看起来就是「效果图没换」
+for d in "$ROOT"/components/loading/*/; do
+  st="$(basename "$d")"
+  [ "$st" = "vanvy" ] && continue          # 核心目录，非样式款
+  [ -f "$d/style.css" ] || continue
+  cp "$d/style.css" "$D/styles/$st.css"
 done
+cp "$S/vanvy-loading.css" "$D/vanvy-loading.css"
 cp "$ROOT/preview/loading-gallery/preview.html" "$D/preview.html"
 cp "$ROOT/preview/loading-gallery/index.html"   "$D/index.html"
 if [ -f "$S/logos/emby-302/brand.png" ]; then

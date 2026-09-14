@@ -160,6 +160,14 @@ banner() {
 # 是否具备可交互终端（有控制终端就能问问题）
 if [ -r /dev/tty ]; then HAS_TTY=1; else HAS_TTY=0; fi
 
+# 归一化终端输入：清掉 ANSI/控制字符，尤其是「粘贴」时终端自动加的
+#   bracketed-paste 标记 ESC[200~ … ESC[201~。
+#   ⚠️ 不清洗的后果（2026-09-14 用户实测）：粘贴 "1,2,3,…" 后首个 token 变成
+#   "[200~1" → 被当成非法功能项丢弃 → 功能①丢失 → 加载页 LOGO/标签图标提问整段消失。
+_sanitize_input() {
+  printf '%s' "$1" | tr -d '\r\000-\010\013\014\016-\037' | sed -e 's/\[200~//g' -e 's/\[201~//g'
+}
+
 uread() {
   # 只从控制终端读答案。
   # 🔴 绝对不要读 stdin：`curl … | bash` 时 stdin 是脚本本体，
@@ -169,6 +177,7 @@ uread() {
   local __v="$1" __d="$2" __r=""
   if [ "$HAS_TTY" = "1" ]; then
     read -r __r </dev/tty 2>/dev/null || __r=""
+    __r="$(_sanitize_input "$__r")"
   fi
   eval "$__v=\"\${__r:-\$__d}\""
 }
@@ -179,6 +188,7 @@ uread_req() {
   local __v="$1" __d="$2" __why="$3" __r=""
   if [ "$HAS_TTY" = "1" ]; then
     read -r __r </dev/tty 2>/dev/null || __r=""
+    __r="$(_sanitize_input "$__r")"
   fi
   if [ -z "$__r" ]; then
     echo ""
@@ -353,21 +363,31 @@ if [ -z "$FEATURES" ]; then
   ask "选择 [默认 $_defk]: "; uread FSEL "$_defk"
   FEATURES="$FSEL"
 fi
-SEL=()
+# 归一化功能选择串：all/全选/* → 全选；全角数字/逗号 → 半角
+case "$(printf '%s' "$FEATURES" | tr -d ' \t' | tr 'A-Z' 'a-z')" in
+  all|全选|全部|\*) FEATURES="$(seq -s, 1 "$FEAT_MAX")";;
+esac
+FEATURES="$(printf '%s' "$FEATURES" | sed -e 's/，/,/g; s/０/0/g; s/１/1/g; s/２/2/g; s/３/3/g; s/４/4/g; s/５/5/g; s/６/6/g; s/７/7/g; s/８/8/g; s/９/9/g')"
+SEL=(); _BAD=""
 for n in $(echo "$FEATURES" | tr ',' ' '); do
   case "$n" in
     '') continue;;
     *[!0-9]*)
       # 兼容直接写功能名（如 --features loading,detail），不区分大小写
       _n="$(printf '%s' "$n" | tr 'A-Z' 'a-z')"
-      case " $FEAT_KEYS " in *" $_n "*) SEL+=("$_n");; *) warn "忽略未知功能项：$n";; esac
+      case " $FEAT_KEYS " in *" $_n "*) SEL+=("$_n");; *) _BAD="${_BAD:+$_BAD、}[$n]";; esac
       ;;
     *)
-      [ "$n" -ge 1 ] && [ "$n" -le "$FEAT_MAX" ] || { warn "忽略越界功能号：$n"; continue; }
+      [ "$n" -ge 1 ] && [ "$n" -le "$FEAT_MAX" ] || { _BAD="${_BAD:+$_BAD、}[$n·越界]"; continue; }
       SEL+=("$(echo "$FEAT_KEYS" | cut -d' ' -f"$n")")
       ;;
   esac
 done
+# 有被丢弃的项就明确报出来（避免「静默少装」——功能①被丢时加载页提问会整段消失）
+if [ -n "$_BAD" ]; then
+  warn "无法识别的功能项，已忽略：$_BAD"
+  echo "   ${C_DIM}有效输入：1-${FEAT_MAX}（逗号分隔）或功能名；留空 / 输入 all = 全选${C_OFF}"
+fi
 # 归一化去重（⚠️ 不能写成 SEL=("${UNIQ[@]:-}")：空数组会展开成一个空串，
 #   导致后面的「未选择任何功能」检查失效 → 什么也不装却报部署成功）
 UNIQ=(); for s in "${SEL[@]:-}"; do [ -z "$s" ] && continue; case " ${UNIQ[*]:-} " in *" $s "*) ;; *) UNIQ+=("$s");; esac; done
@@ -490,11 +510,11 @@ if has loading && [ "${NOLOGO:-0}" = "0" ] && [ -z "${LOGOFILE:-}" ]; then
   echo "  🖼 加载页 LOGO（可跳过）"
   echo "  ──────────────────────────────────────────────────────────────"
   echo "     [0] 用默认（${_ldef}）"
-  echo "     [1] 指定图片文件（png/jpg/svg/webp）"
+  echo "     [1] 指定图片文件或图片 URL（png/jpg/svg/webp）"
   echo "     [2] 不要 LOGO（只用文字 + 进度线）"
   ask "选择 [默认 0]: "; uread LSEL "0"
   case "$LSEL" in
-    1) ask "图片路径: "; uread _lf ""; [ -n "$_lf" ] && LOGOFILE="$_lf";;
+    1) ask "图片路径或图片 URL: "; uread _lf ""; [ -n "$_lf" ] && LOGOFILE="$_lf";;
     2) NOLOGO=1;;
   esac
   if [ "${NOLOGO:-0}" = "0" ] && [ -z "${LOGOW:-}" ]; then
@@ -531,7 +551,7 @@ if has loading && [ "${NOFAVICON:-0}" = "0" ] && [ -z "${FAVICONFILE:-}" ]; then
   echo "  🏷 浏览器标签图标（favicon，可跳过）"
   echo "  ──────────────────────────────────────────────────────────────"
   echo "     [0] 用加载页 LOGO（默认）"
-  echo "     [1] 单独指定图片文件（png/ico/jpg/svg）"
+  echo "     [1] 单独指定图片文件或 URL（png/ico/jpg/svg）"
   echo "     [2] 不替换（保留 Emby 自带标签图标）"
   ask "选择 [默认 0]: "; uread FVSEL "0"
   case "$FVSEL" in

@@ -133,8 +133,13 @@ copy_comp() {  # $1=源目录 $2=目标子路径
   cp -r "$1" "$D/$2"
 }
 copy_comp components/loading/vanvy                        components/loading/vanvy
-for s in aurora cinema minimal split logo; do
-  [ -d "components/loading/$s" ] && copy_comp "components/loading/$s" "components/loading/$s"
+# 加载页样式：自动收录所有 components/loading/<样式>/style.css
+#   （以前写死白名单 aurora cinema minimal split logo，漏了 orbit/pulse
+#    → 线上包缺这两款样式，向导只列 6 款。改成自动发现，新增样式无需再改此处）
+for _ld in components/loading/*/; do
+  _ls="$(basename "$_ld")"
+  [ "$_ls" = "vanvy" ] && continue
+  [ -f "$_ld/style.css" ] && copy_comp "$_ld" "components/loading/$_ls"
 done
 copy_comp components/features/detail                      components/features/detail
 copy_comp components/features/list_trailer                components/features/list_trailer
